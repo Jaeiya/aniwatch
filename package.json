@@ -1,0 +1,29 @@
+{
+  "name": "aniwatch",
+  "version": "1.0.0",
+  "description": "Default project description",
+  "type": "module",
+  "main": "bin/main.js",
+  "bin": {
+    "aniwatch": "./bin/main.js"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development node ./bin/main.js"
+  },
+  "keywords": [],
+  "author": "Jaeiya",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@types/source-map-support": "^0.5.6",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.6.0",
+    "prettier": "2.8.1",
+    "source-map-support": "^0.5.21"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

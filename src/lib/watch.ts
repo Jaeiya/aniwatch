@@ -7,11 +7,14 @@ const _cc = Logger.consoleColors;
 export function watchAnime(epName: string, epNum: string, workingDir: string) {
   validateParams([epName, epNum, workingDir]);
   Logger.info(`Working directory: ${_cc.bgn}${workingDir}`);
+
   tryCreateWatchedDir(workingDir);
   const saneEpNum = toEpisodeNum(Number(epNum));
   const fansubFileNames = filterFansubs(workingDir, epName, `- ${saneEpNum}`);
+
   validateFileNames(fansubFileNames, epName, saneEpNum);
   moveFileToWatchedDir(fansubFileNames[0], workingDir);
+
   Logger.info(
     `Moved ${_cc.yw}${fitString(
       fansubFileNames[0].split(`- ${saneEpNum}`)[0].trimEnd(),

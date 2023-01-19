@@ -18,5 +18,14 @@ export function fitString(str: string, maxLength: number) {
   return str;
 }
 
+export async function tryCatchAsync<T>(p: Promise<T>): Promise<T | Error> {
+  try {
+    const data = await p;
+    return data;
+  } catch (e) {
+    return Error((e as Error).message);
+  }
+}
+
 export const pathResolve = resolve;
 export const pathJoin = join;

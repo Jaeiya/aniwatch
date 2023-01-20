@@ -12,4 +12,10 @@ export class HTTP {
       })
     );
   }
+  static get(url: URL, token?: string) {
+    const headers = token ? { Authorization: `Bearer ${token}` } : null;
+    return tryCatchAsync(
+      fetch(url, headers ? { method: 'GET', headers } : { method: 'GET' })
+    );
+  }
 }

@@ -46,6 +46,10 @@ export class Logger {
   static print(color: keyof typeof _cc, tag: string, msg: string) {
     log(tag, msg, color);
   }
+
+  static printRaw(color: keyof typeof _cc, tag: string, msg: string) {
+    return `${_cc[color]}${toTag(tag)}${_cc.x} ${msg}`;
+  }
 }
 
 function log(tagName: string, msg: string, color: keyof typeof _cc) {

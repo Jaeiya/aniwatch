@@ -6,7 +6,7 @@ const _consoleColors = {
   /** Bright Red */
   brd: '\u001B[91m',
   /** Dark Green */
-  dgn: '\u001B[32m',
+  gn: '\u001B[32m',
   /** Bright Green */
   bgn: '\u001B[92m',
   /** Yellow */
@@ -36,7 +36,7 @@ export class Logger {
   static readonly consoleColors = _consoleColors;
 
   static info(msg: string) {
-    log('info', msg, 'dgn');
+    log('info', msg, 'gn');
   }
 
   static error(msg: string) {

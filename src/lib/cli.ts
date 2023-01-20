@@ -7,7 +7,7 @@ export class CLI {
       output: process.stdout,
     });
 
-    const answer = await new Promise((rs) => {
+    const answer = await new Promise<string>((rs) => {
       rl.question(query, rs);
     });
     rl.close();

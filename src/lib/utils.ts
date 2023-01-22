@@ -27,5 +27,10 @@ export async function tryCatchAsync<T>(p: Promise<T>): Promise<T | Error> {
   }
 }
 
+export function truncateStr(str: string, length: number) {
+  const substr = str.substring(0, length);
+  return substr.length < str.length ? `${substr}...` : str;
+}
+
 export const pathResolve = resolve;
 export const pathJoin = join;

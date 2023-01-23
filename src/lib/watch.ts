@@ -1,21 +1,7 @@
-import {
-  existsSync,
-  futimes,
-  mkdirSync,
-  readdirSync,
-  renameSync,
-  truncate,
-} from 'node:fs';
-import { CLI } from './cli.js';
+import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import { KitsuAPI } from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
-import {
-  fitString,
-  pathJoin,
-  titleFromAnimeFileName,
-  toEpisodeNum,
-  truncateStr,
-} from './utils.js';
+import { fitString, pathJoin, titleFromAnimeFileName, toEpisodeNum } from './utils.js';
 
 const _cc = Logger.consoleColors;
 

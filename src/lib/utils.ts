@@ -32,5 +32,9 @@ export function truncateStr(str: string, length: number) {
   return substr.length < str.length ? `${substr}...` : str;
 }
 
+export function titleFromAnimeFileName(name: string, ep: string) {
+  return name.replace(`[subsplease]`, '').split(`- ${ep}`)[0].trim();
+}
+
 export const pathResolve = resolve;
 export const pathJoin = join;

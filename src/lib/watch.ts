@@ -7,7 +7,7 @@ import {
   truncate,
 } from 'node:fs';
 import { CLI } from './cli.js';
-import { KitsuAPI } from './kitsu.js';
+import { KitsuAPI } from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
 import {
   fitString,

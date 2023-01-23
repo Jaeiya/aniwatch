@@ -1,10 +1,17 @@
 import { readFile } from 'fs/promises';
-import { Logger } from './logger.js';
-import { pathJoin, tryCatchAsync } from './utils.js';
-import { z, ZodError } from 'zod';
-import { HTTP } from './http.js';
+import { Logger } from '../logger.js';
+import { displayZodErrors, pathJoin, tryCatchAsync } from '../utils.js';
+import { HTTP } from '../http.js';
 import { existsSync, writeFileSync } from 'fs';
-import { CLI } from './cli.js';
+import { CLI } from '../cli.js';
+import {
+  AnimeCache,
+  ConfigFile,
+  LibraryInfo,
+  LibraryPatchRespData,
+  UserData,
+  UserDataResp,
+} from './kitsu-schemas.js';
 
 type AuthTokenResp = {
   access_token: string;
@@ -14,79 +21,8 @@ type AuthTokenResp = {
   scope: string;
   created_at: number;
 };
-
-type UserDataResp = z.infer<typeof UserDataResp>;
-const UserDataResp = z.object({
-  data: z.array(
-    z.object({
-      id: z.string(),
-      attributes: z.object({
-        name: z.string(),
-        about: z.string(),
-      }),
-    })
-  ),
-  included: z.array(
-    z.object({
-      attributes: z.object({
-        statsData: z.object({
-          time: z.number().optional(),
-          completed: z.number().optional(),
-        }),
-      }),
-    })
-  ),
-});
-type UserData = UserDataResp['data'][0] & {
-  stats: UserDataResp['included'][0]['attributes']['statsData'];
-};
-
-type ConfigFile = z.infer<typeof ConfigFile>;
-const ConfigFile = z.object({
-  id: z.string(),
-  urls: z.object({
-    profile: z.string(),
-    library: z.string(),
-  }),
-  stats: z.object({
-    secondsSpentWatching: z.number(),
-    completedSeries: z.number(),
-  }),
-  about: z.string(),
-  username: z.string(),
-  password: z.string(),
-  access_token: z.string(),
-  refresh_token: z.string(),
-});
-
-const LibraryInfo = z.object({
-  data: z.array(
-    z.object({
-      id: z.string(),
-    })
-  ),
-  included: z.array(
-    z.object({
-      id: z.string(),
-      attributes: z.object({
-        titles: z.object({
-          en: z.string(),
-          en_jp: z.string(),
-        }),
-        canonicalTitle: z.string(),
-      }),
-    })
-  ),
-});
-
-const LibraryPatchRespData = z.object({
-  data: z.object({
-    id: z.string(),
-    attributes: z.object({
-      progress: z.number(),
-    }),
-  }),
-});
+type AuthTokens = Pick<AuthTokenResp, 'access_token'> &
+  Pick<AuthTokenResp, 'refresh_token'>;
 
 type LibraryPatchData = {
   data: {
@@ -99,8 +35,6 @@ type LibraryPatchData = {
 };
 
 type CachedAnime = [libID: string, cannonTitle: string, englishTitle: string][];
-type AnimeCache = z.infer<typeof AnimeCache>;
-const AnimeCache = z.array(z.tuple([z.string(), z.string(), z.string()]));
 
 const _workingDir = process.cwd();
 const _cc = Logger.consoleColors;
@@ -114,6 +48,14 @@ export class KitsuAPI {
     return this.#animeCache.slice(0);
   }
 
+  get #activeAnimeFilterURL() {
+    const url = new URL(this.#config.urls.library);
+    url.searchParams.append('filter[status]', 'current');
+    url.searchParams.append('page[limit]', '200');
+    url.searchParams.append('include', 'anime');
+    return url;
+  }
+
   async init() {
     this.#config = await this.#tryLoadConfig();
     this.#animeCache = await this.#tryLoadAnimeCache();
@@ -121,27 +63,31 @@ export class KitsuAPI {
 
   displayCacheInfo() {
     const cache = this.animeCache;
-    Logger.info(`${_cc.byw}Anime Cache Info`);
-    Logger.info(`${_cc.bcn}Cached Anime: ${_cc.gn}${cache.length}`);
+    Logger.chainInfo([
+      `${_cc.byw}Anime Cache Info`,
+      `${_cc.bcn}Cached Anime: ${_cc.gn}${cache.length}`,
+    ]);
     cache.forEach((c) => {
-      console.log('');
-      Logger.info(`${_cc.bcn}title_jp:${_cc.x} ${c[1]}`);
-      Logger.info(`${_cc.cn}title_en:${_cc.x} ${c[2]}`);
-      Logger.info(
-        `${_cc.bcn}Entry:${_cc.x} ${_cc.yw}https://kitsu.io/api/edge/library-entries/${c[0]}`
-      );
+      Logger.chainInfo([
+        '',
+        `${_cc.bcn}title_jp:${_cc.x} ${c[1]}`,
+        `${_cc.cn}title_en:${_cc.x} ${c[2]}`,
+        `${_cc.bcn}Entry:${_cc.x} ${_cc.yw}https://kitsu.io/api/edge/library-entries/${c[0]}`,
+      ]);
     });
   }
 
   displayUserProfile() {
-    Logger.info(`${_cc.byw}Current User Profile`);
-    Logger.info(`${_cc.bcn}Name:${_cc.x}${_cc.gn} ${this.#config.username}`);
-    Logger.info(`${_cc.bcn}About:${_cc.x} ${this.#config.about}`);
-    Logger.info(`${_cc.bcn}Link:${_cc.x}${_cc.gn} ${this.#config.urls.profile}`);
-    Logger.info(`${_cc.bcn}Watch Time:${_cc.x}${_cc.gn} ${this.#getTimeWatchedStr()}`);
-    Logger.info(
-      `${_cc.bcn}Series Completed:${_cc.x}${_cc.gn} ${this.#config.stats.completedSeries}`
-    );
+    Logger.chainInfo([
+      `${_cc.byw}Current User Profile`,
+      `${_cc.bcn}Name:${_cc.x}${_cc.gn} ${this.#config.username}`,
+      `${_cc.bcn}About:${_cc.x} ${this.#config.about}`,
+      `${_cc.bcn}Link:${_cc.x}${_cc.gn} ${this.#config.urls.profile}`,
+      `${_cc.bcn}Watch Time:${_cc.x}${_cc.gn} ${this.#getTimeWatchedStr()}`,
+      `${_cc.bcn}Series Completed:${_cc.x}${_cc.gn} ${
+        this.#config.stats.completedSeries
+      }`,
+    ]);
   }
 
   async updateAnime(url: string, data: LibraryPatchData) {
@@ -150,15 +96,13 @@ export class KitsuAPI {
       JSON.stringify(data),
       this.#config.access_token
     );
-    if (resp instanceof Error) {
-      Logger.error(resp.message);
-      process.exit(1);
-    }
     const resolvedData = await resp.json();
     if (resp.status > 200) {
-      console.log('');
-      Logger.error(`${_cc.rd}Kitsu API Error`);
-      Logger.error(resolvedData['errors'][0]['detail']);
+      Logger.chainError([
+        '',
+        `${_cc.rd}Kitsu API Error`,
+        resolvedData['errors'][0]['detail'],
+      ]);
       process.exit(1);
     }
     const libData = LibraryPatchRespData.safeParse(resolvedData);
@@ -186,7 +130,7 @@ export class KitsuAPI {
     }
     const cachedAnime = await this.#populateCurrentAnimeCache();
     this.#animeCache = cachedAnime;
-    Logger.info(`Cache Reloaded: ${_cc.bgn}${cachedAnime.length}`);
+    Logger.info(`${_cc.bcn}Cache Reloaded: ${_cc.byw}${cachedAnime.length}`);
   }
 
   async #tryLoadAnimeCache() {
@@ -208,42 +152,29 @@ export class KitsuAPI {
   }
 
   async #populateCurrentAnimeCache(): Promise<CachedAnime> {
-    const url = new URL(this.#config.urls.library);
-    url.searchParams.append('filter[status]', 'current');
-    url.searchParams.append('page[limit]', '200');
-    url.searchParams.append('include', 'anime');
-    const resp = await HTTP.get(url, this.#config.access_token);
-    if (resp instanceof Error) {
-      Logger.error(resp.message);
-      process.exit(1);
-    }
+    const resp = await HTTP.get(this.#activeAnimeFilterURL, this.#config.access_token);
     const zodResp = LibraryInfo.safeParse(await resp.json());
-    if (zodResp.success) {
-      const cache: AnimeCache = [];
-      zodResp.data.included.forEach((anime, i) => {
-        cache.push([
-          zodResp.data.data[i].id,
-          anime.attributes.canonicalTitle.trim(),
-          anime.attributes.titles.en.trim(),
-        ]);
-      });
-      this.#saveCache(cache);
-      return cache;
-    } else {
+    if (!zodResp.success) {
       displayZodErrors(zodResp.error, 'Library Parse Failed');
       process.exit(1);
     }
+    const cache: AnimeCache = [];
+    zodResp.data.included.forEach((anime, i) => {
+      cache.push([
+        zodResp.data.data[i].id,
+        anime.attributes.canonicalTitle.trim(),
+        anime.attributes.titles.en.trim(),
+      ]);
+    });
+    this.#saveCache(cache);
+    return cache;
   }
 
-  async #getUser(name: string) {
+  async #getUserData(name: string) {
     const url = new URL('https://kitsu.io/api/edge/users');
     url.searchParams.append('filter[name]', name);
     url.searchParams.append('include', 'stats');
     const resp = await HTTP.get(url);
-    if (resp instanceof Error) {
-      Logger.error(resp.message);
-      process.exit(1);
-    }
     const zodResp = UserDataResp.safeParse(await resp.json());
     if (!zodResp.success) {
       displayZodErrors(zodResp.error, 'User Data Failed to Parse');
@@ -284,20 +215,19 @@ export class KitsuAPI {
     const data = await this.#tryGetDataFromResp<AuthTokenResp>(resp);
     this.#config.access_token = data.access_token;
     this.#config.refresh_token = data.refresh_token;
-    this.#saveConfig(this.#config, 'Saved');
-    Logger.info(`Refreshed Access Token: ${data.access_token}`);
+    this.#saveConfig(this.#config);
+    Logger.chainInfo([
+      `${_cc.bcn}Config File: ${_cc.byw}Saved`,
+      `Refreshed Access Token: ${data.access_token}`,
+    ]);
   }
 
-  async #tryGetDataFromResp<T = unknown>(resp: Error | Response) {
-    if (resp instanceof Error) {
-      Logger.error(resp.message);
-      process.exit(1);
-    }
+  async #tryGetDataFromResp<T = unknown>(resp: Response) {
     const data = await resp.json();
     if (resp.status > 200) {
-      console.log('');
-      Logger.error(`${data['error']}`);
-      if (data['error'] == 'invalid_grant') {
+      const errorType = data['error'];
+      Logger.chainError(['', `${errorType}`]);
+      if (errorType == 'invalid_grant') {
         Logger.error(`${_cc.byw}Make sure you entered the correct password`);
       }
       Logger.error(`${data['error_description']}`);
@@ -307,27 +237,41 @@ export class KitsuAPI {
   }
 
   async #tryLoadConfig() {
-    const configRes = await tryCatchAsync(
+    const configResp = await tryCatchAsync(
       readFile(pathJoin(_workingDir, 'aniwatch.json'))
     );
-    if (configRes instanceof Error) {
-      if (configRes.message.includes('ENOENT')) {
+    if (configResp instanceof Error) {
+      if (configResp.message.includes('ENOENT')) {
         Logger.info(`Missing Config -- ${_cc.ma}Setup Activated${_cc.x}`);
         return await this.#trySetupConfig();
       }
-      Logger.error(configRes.message);
+      Logger.error(configResp.message);
       process.exit(1);
     }
-    const config = validateConfig(JSON.parse(configRes.toString('utf-8')));
-    return config;
+    const zodRes = ConfigFile.safeParse(JSON.parse(configResp.toString('utf-8')));
+    if (!zodRes.success) {
+      displayZodErrors(zodRes.error, 'Config Files Errors');
+      process.exit(1);
+    }
+    return zodRes.data;
   }
 
   async #trySetupConfig() {
     const user = await this.#promptUser();
     const password = await this.#promptPassword();
     const tokens = await this.#getAuthTokens(user.attributes.name, password);
+    const configFile = this.#serializeConfigData(user, password, tokens);
+    this.#saveConfig(configFile);
+    Logger.chainInfo(['', `${_cc.bcn}Config File:${_cc.x} ${_cc.byw}Created`]);
+    return configFile;
+  }
+
+  #serializeConfigData(user: UserData, password: string, tokens: AuthTokens) {
     if (!user.stats.time || !user.stats.completed) {
-      Logger.error('Stats Undefined');
+      Logger.chainError([
+        'Failed to Serialize Config Data',
+        `${_cc.bcn}Stats Undefined: ${_cc.byw}stats.time${_cc.x} || ${_cc.byw}stats.completed`,
+      ]);
       process.exit(1);
     }
     const configFile: ConfigFile = {
@@ -345,8 +289,6 @@ export class KitsuAPI {
       password,
       ...tokens,
     };
-    console.log('');
-    this.#saveConfig(configFile, 'Created');
     return configFile;
   }
 
@@ -355,14 +297,14 @@ export class KitsuAPI {
     const username = await CLI.prompt(
       Logger.printRaw('ma', 'prompt', `${_cc.bwt}Enter Kitsu username:${_cc.x} `)
     );
-    const user = await this.#getUser(username);
-    console.log('');
-    Logger.info(`${_cc.bcn}Name: ${_cc.gn}${user.attributes.name}`);
-    Logger.info(
-      `${_cc.bcn}Profile: ${_cc.gn}https://kitsu.io/users/${user.attributes.name}`
-    );
-    Logger.info(`${_cc.bcn}About: ${_cc.x}${user.attributes.about}`);
-    console.log('');
+    const user = await this.#getUserData(username);
+    Logger.chainInfo([
+      '',
+      `${_cc.bcn}Name: ${_cc.gn}${user.attributes.name}`,
+      `${_cc.bcn}Profile: ${_cc.gn}https://kitsu.io/users/${user.attributes.name}`,
+      `${_cc.bcn}About: ${_cc.x}${user.attributes.about}`,
+      '',
+    ]);
     const isVerifiedUser =
       (await CLI.prompt(
         Logger.printRaw('ma', 'prompt', `${_cc.yw}Is this you? ${_cc.bwt}(y/n) `)
@@ -375,17 +317,14 @@ export class KitsuAPI {
 
   async #promptPassword() {
     console.log('');
-    return await CLI.prompt(
-      Logger.printRaw('ma', 'prompt', `${_cc.bwt}Enter password: ${_cc.byw}`)
-    );
+    return await CLI.prompt(Logger.promptRaw(`${_cc.bwt}Enter password: ${_cc.byw}`));
   }
 
-  #saveConfig(config: ConfigFile, msg: string) {
+  #saveConfig(config: ConfigFile) {
     writeFileSync(
       pathJoin(_workingDir, 'aniwatch.json'),
       JSON.stringify(config, null, 2)
     );
-    Logger.info(`Config File: ${_cc.bgn}${msg}`);
   }
 
   #saveCache(cache: AnimeCache) {
@@ -402,21 +341,4 @@ export class KitsuAPI {
       ? daysWatchingAnime.toFixed(1) + ' Days'
       : hoursWatchingAnime.toFixed(1) + ' Hours';
   }
-}
-
-function validateConfig(configObj: object) {
-  const zodRes = ConfigFile.safeParse(configObj);
-  if (!zodRes.success) {
-    displayZodErrors(zodRes.error, 'Config Files Errors');
-    process.exit(1);
-  }
-  return zodRes.data;
-}
-
-function displayZodErrors(zodError: ZodError, msg: string) {
-  console.log('');
-  Logger.error(`${_cc.rd}${msg}`);
-  zodError.issues.forEach((issue) => {
-    Logger.error(`${_cc.yw}${issue.path}${_cc.x}: ${issue.message}`);
-  });
 }

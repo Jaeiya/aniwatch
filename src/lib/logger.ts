@@ -39,8 +39,32 @@ export class Logger {
     log('info', msg, 'gn');
   }
 
+  static chainInfo(msgs: string[]) {
+    msgs.forEach((msg) => {
+      if (msg) {
+        this.info(msg);
+      } else {
+        console.log('');
+      }
+    });
+  }
+
   static error(msg: string) {
     log('error', msg, 'rd');
+  }
+
+  static chainError(msgs: string[]) {
+    msgs.forEach((msg) => {
+      if (msg) {
+        this.error(msg);
+      } else {
+        console.log('');
+      }
+    });
+  }
+
+  static promptRaw(msg: string) {
+    return this.printRaw('bbe', 'prompt', msg);
   }
 
   static print(color: keyof typeof _cc, tag: string, msg: string) {

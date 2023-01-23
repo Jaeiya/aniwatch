@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { CLI } from './lib/cli.js';
-import { KitsuAPI } from './lib/kitsu.js';
+import { KitsuAPI } from './lib/kitsu/kitsu.js';
 import { Logger } from './lib/logger.js';
 import { isDev, pathResolve } from './lib/utils.js';
 import { watchAnime } from './lib/watch.js';

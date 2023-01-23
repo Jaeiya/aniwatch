@@ -1,4 +1,8 @@
 import { resolve, join } from 'path';
+import { ZodError } from 'zod';
+import { Logger } from './logger.js';
+
+const _cc = Logger.consoleColors;
 
 export function isDev() {
   return process.env.NODE_ENV == 'development';
@@ -16,6 +20,14 @@ export function fitString(str: string, maxLength: number) {
     return `${str.substring(0, maxLength)}...`;
   }
   return str;
+}
+
+export function displayZodErrors(zodError: ZodError, msg: string) {
+  console.log('');
+  Logger.error(`${_cc.rd}${msg}`);
+  zodError.issues.forEach((issue) => {
+    Logger.error(`${_cc.yw}${issue.path}${_cc.x}: ${issue.message}`);
+  });
 }
 
 export async function tryCatchAsync<T>(p: Promise<T>): Promise<T | Error> {

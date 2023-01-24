@@ -21,6 +21,14 @@ if (CLI.tryFlag('rebuild-cache')) {
 } else if (CLI.tryFlag('display-cache')) {
   k.displayCacheInfo();
 } else if (CLI.tryFlag('find-anime')) {
+  findAnime();
+} else if (CLI.tryFlag('rss-feed')) {
+  await getRSSFeedInfo();
+} else if (!CLI.getAllFlags().length) {
+  execWatchAnime();
+}
+
+function findAnime() {
   const animeList = k.findAnime(CLI.flagArgs[0]);
   animeList.forEach((anime) => {
     Logger.chainInfo([
@@ -29,14 +37,18 @@ if (CLI.tryFlag('rebuild-cache')) {
       '',
     ]);
   });
-} else if (CLI.tryFlag('rss-feed')) {
+}
+
+async function getRSSFeedInfo() {
   const result = await rss.getFansubRSS(CLI.flagArgs[0]);
   Logger.chainInfo([
     `${_cc.bcn}Entry Count: ${_cc.gn}${result.entryCount}`,
     `${_cc.bcn}Latest: ${_cc.yw}${result.latestTitle}`,
     `${_cc.bcn}RSS: ${_cc.x}${result.rss}`,
   ]);
-} else if (!CLI.getAllFlags().length) {
+}
+
+function execWatchAnime() {
   if (CLI.flagArgs.length < 2 || CLI.flagArgs.length > 3) {
     Logger.error('Please provide an anime name and episode number to watch.');
     Logger.error(

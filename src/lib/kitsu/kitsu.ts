@@ -141,7 +141,7 @@ export class KitsuAPI {
   async #tryLoadAnimeCache() {
     if (!existsSync(pathJoin(_workingDir, '.aniwatch.cache'))) {
       const animeCache = await this.#populateCurrentAnimeCache();
-      Logger.info(`Cached Anime: ${_cc.bgn}${animeCache.length}`);
+      Logger.info(`${_cc.bcn}Cached Anime: ${_cc.bgn}${animeCache.length}`);
       return animeCache;
     }
     const zodResp = AnimeCache.safeParse(

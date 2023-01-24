@@ -1,9 +1,8 @@
 import { HTTP } from './http.js';
-import { readFileSync } from 'fs';
-import { pathJoin } from './utils.js';
 import { Logger } from './logger.js';
 
 const _nyaaURLStr = 'https://nyaa.si';
+const _cc = Logger.consoleColors;
 
 export async function getFansubRSS(animeName: string) {
   const url = new URL(_nyaaURLStr);
@@ -25,6 +24,7 @@ export async function getFansubRSS(animeName: string) {
 }
 
 async function getLatestAnimeEntry(html: string) {
+  Logger.info(`${_cc.byw}Importing JSDOM Library...`);
   const JSDOM = (await import('jsdom')).JSDOM;
   const dom = new JSDOM(html);
   const els = dom.window.document.querySelectorAll<HTMLTableRowElement>('.success');

@@ -3,7 +3,6 @@ import { Logger } from '../logger.js';
 import { displayZodErrors, pathJoin, tryCatchAsync } from '../utils.js';
 import { HTTP } from '../http.js';
 import { existsSync, writeFileSync } from 'fs';
-import { CLI } from '../cli.js';
 import {
   AnimeCache,
   ConfigFile,
@@ -39,6 +38,7 @@ type CachedAnime = [libID: string, cannonTitle: string, englishTitle: string][];
 const _workingDir = process.cwd();
 const _cc = Logger.consoleColors;
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
+const _prompt = Logger.prompt;
 
 export class KitsuAPI {
   #config = {} as ConfigFile;
@@ -262,12 +262,9 @@ export class KitsuAPI {
   }
 
   async #trySetupConfig() {
-    console.log('');
     const hasCreationConsent =
-      (await CLI.prompt(
-        Logger.promptRaw(
-          `${_cc.yw}Proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `
-        )
+      (await _prompt(
+        `${_cc.yw}Proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `
       )) == 'y';
     if (!hasCreationConsent) {
       Logger.chainInfo(['', `${_cc.byw}Setup Aborted`]);
@@ -309,20 +306,16 @@ export class KitsuAPI {
   }
 
   async #promptUser(): Promise<UserData> {
-    const username = await CLI.prompt(
-      Logger.promptRaw(`${_cc.bwt}Enter Kitsu username:${_cc.x} `)
-    );
+    const username = await _prompt(`${_cc.yw}Enter Kitsu username:${_cc.byw} `);
     const user = await this.#getUserData(username);
     Logger.chainInfo([
       '',
       `${_cc.bcn}Name: ${_cc.gn}${user.attributes.name}`,
       `${_cc.bcn}Profile: ${_cc.gn}https://kitsu.io/users/${user.attributes.name}`,
       `${_cc.bcn}About: ${_cc.x}${user.attributes.about}`,
-      '',
     ]);
     const isVerifiedUser =
-      (await CLI.prompt(Logger.promptRaw(`${_cc.yw}Is this you? ${_cc.bwt}(y/n) `))) ==
-      'y';
+      (await _prompt(`${_cc.yw}Is this you? ${_cc.bwt}(y/n):${_cc.byw} `)) == 'y';
     if (!isVerifiedUser) {
       return await this.#promptUser();
     }
@@ -330,8 +323,7 @@ export class KitsuAPI {
   }
 
   async #promptPassword() {
-    console.log('');
-    return await CLI.prompt(Logger.promptRaw(`${_cc.bwt}Enter password: ${_cc.byw}`));
+    return await _prompt(`${_cc.yw}Enter password:${_cc.byw} `);
   }
 
   #saveConfig(config: ConfigFile) {

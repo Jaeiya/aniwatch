@@ -1,3 +1,5 @@
+import readline from 'readline';
+
 const _maxTagLength = 10;
 
 const _consoleColors = {
@@ -73,6 +75,21 @@ export class Logger {
 
   static printRaw(color: keyof typeof _cc, tag: string, msg: string) {
     return `${_cc[color]}${toTag(tag)}${_cc.x} ${msg}`;
+  }
+
+  static async prompt(query: string) {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    const answer = await new Promise<string>((rs) => {
+      // It's cleaner to have prompt spaced from prior logs
+      console.log('');
+      rl.question(Logger.promptRaw(query), rs);
+    });
+    rl.close();
+    return answer;
   }
 }
 

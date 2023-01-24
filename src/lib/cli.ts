@@ -1,4 +1,3 @@
-import readline from 'readline';
 import { Logger } from './logger.js';
 
 type ValidShortFlags = typeof _validShortFlags[number];
@@ -149,18 +148,5 @@ export class CLI {
       );
       process.exit(1);
     }
-  }
-
-  static async prompt(query: string) {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-
-    const answer = await new Promise<string>((rs) => {
-      rl.question(query, rs);
-    });
-    rl.close();
-    return answer;
   }
 }

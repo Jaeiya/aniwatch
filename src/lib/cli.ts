@@ -4,8 +4,14 @@ import { Logger } from './logger.js';
 type ValidShortFlags = typeof _validShortFlags[number];
 type ValidLongFlags = typeof _validLongFlags[number];
 
-const _validShortFlags = <const>['r', 'p', 'c', 'f'];
-const _validLongFlags = <const>['reload-cache', 'profile', 'cache', 'find-anime'];
+const _validShortFlags = <const>['rc', 'p', 'c', 'f', 'rss'];
+const _validLongFlags = <const>[
+  'rebuild-cache',
+  'profile',
+  'display-cache',
+  'find-anime',
+  'rss-feed',
+];
 
 const _cc = Logger.consoleColors;
 
@@ -21,38 +27,25 @@ export class CLI {
     return this.allArgs.filter((arg) => !flags.includes(arg));
   }
 
-  static tryReloadFlag() {
-    const isValidFlag = this.hasShortFlag('r') || this.hasLongFlag('reload-cache');
+  static tryRebuildCacheFlag() {
+    const isValidFlag = this.hasShortFlag('rc') || this.hasLongFlag('rebuild-cache');
     if (!isValidFlag) return false;
-    this.testSingleFlagConfig('r');
+    this.testSingleFlagConfig('rebuild-cache');
     return true;
   }
 
   static tryProfileFlag() {
     const isValidFlag = this.hasShortFlag('p') || this.hasLongFlag('profile');
     if (!isValidFlag) return false;
-    this.testSingleFlagConfig('p');
+    this.testSingleFlagConfig('profile');
     return true;
   }
 
   static tryCacheFlag() {
-    const isValidFlag = this.hasShortFlag('c') || this.hasLongFlag('cache');
+    const isValidFlag = this.hasShortFlag('c') || this.hasLongFlag('display-cache');
     if (!isValidFlag) return false;
-    this.testSingleFlagConfig('c');
+    this.testSingleFlagConfig('display-cache');
     return true;
-  }
-
-  static tryFlag(flag: ValidLongFlags) {
-    switch (flag) {
-      case 'cache':
-        return this.tryCacheFlag();
-      case 'reload-cache':
-        return this.tryReloadFlag();
-      case 'find-anime':
-        return this.tryFindAnimeFlag();
-      case 'profile':
-        return this.tryProfileFlag();
-    }
   }
 
   static tryFindAnimeFlag() {
@@ -72,6 +65,40 @@ export class CLI {
       process.exit(1);
     }
     return true;
+  }
+
+  static tryRSSFlag() {
+    const isValidFlag = this.hasShortFlag('rss') || this.hasLongFlag('rss-feed');
+    if (!isValidFlag) return false;
+    this.validateNumberOfFlags(1, 'rss-feed');
+    if (this.allArgs.length > 2) {
+      this.displayInvalidFlagInfo(
+        `Only ${_cc.byw}1${_cc.x} argument allowed for ${_cc.byw}-rss`
+      );
+      process.exit(1);
+    }
+    if (this.allArgs.length == 1) {
+      this.displayInvalidFlagInfo(
+        `${_cc.byw}-rss${_cc.x} requires ${_cc.byw}1${_cc.x} argument`
+      );
+      process.exit(1);
+    }
+    return true;
+  }
+
+  static tryFlag(flag: ValidLongFlags) {
+    switch (flag) {
+      case 'display-cache':
+        return this.tryCacheFlag();
+      case 'rebuild-cache':
+        return this.tryRebuildCacheFlag();
+      case 'find-anime':
+        return this.tryFindAnimeFlag();
+      case 'profile':
+        return this.tryProfileFlag();
+      case 'rss-feed':
+        return this.tryRSSFlag();
+    }
   }
 
   static getAllFlags = () => {
@@ -113,7 +140,7 @@ export class CLI {
     }
   }
 
-  static testSingleFlagConfig(flag: ValidShortFlags | ValidLongFlags) {
+  static testSingleFlagConfig(flag: ValidLongFlags) {
     this.validateNumberOfFlags(1, flag);
 
     if (this.allArgs.length > 1) {

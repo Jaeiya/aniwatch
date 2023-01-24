@@ -64,7 +64,7 @@ export class Logger {
   }
 
   static promptRaw(msg: string) {
-    return this.printRaw('bbe', 'prompt', msg);
+    return this.printRaw('ma', 'prompt', msg);
   }
 
   static print(color: keyof typeof _cc, tag: string, msg: string) {

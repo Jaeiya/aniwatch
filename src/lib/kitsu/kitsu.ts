@@ -43,9 +43,14 @@ const _prompt = Logger.prompt;
 export class KitsuAPI {
   #config = {} as ConfigFile;
   #animeCache: CachedAnime = [];
+  #firstSetup = false;
 
   get animeCache() {
     return this.#animeCache.slice(0);
+  }
+
+  get isFirstSetup() {
+    return this.#firstSetup;
   }
 
   get #activeAnimeFilterURL() {
@@ -276,6 +281,7 @@ export class KitsuAPI {
     const configFile = this.#serializeConfigData(user, password, tokens);
     this.#saveConfig(configFile);
     Logger.chainInfo(['', `${_cc.bcn}Config File:${_cc.x} ${_cc.byw}Created`]);
+    this.#firstSetup = true;
     return configFile;
   }
 

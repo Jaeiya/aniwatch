@@ -49,6 +49,9 @@ async function getRSSFeedInfo() {
 }
 
 function execWatchAnime() {
+  if (!CLI.allArgs.length && k.isFirstSetup) {
+    return;
+  }
   if (CLI.flagArgs.length < 2 || CLI.flagArgs.length > 3) {
     Logger.error('Please provide an anime name and episode number to watch.');
     Logger.error(

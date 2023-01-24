@@ -117,13 +117,18 @@ export class KitsuAPI {
   }
 
   findAnime(name: string) {
-    const anime = this.#animeCache.filter((anime) =>
-      anime[1].toLowerCase().includes(name.toLowerCase())
-    );
-    return anime;
+    const animeList: string[][] = [];
+    this.#animeCache.forEach((anime) => {
+      const hasCanonTitle = anime[1].toLowerCase().includes(name.toLowerCase());
+      const hasEnglishTitle = anime[2].toLowerCase().includes(name.toLowerCase());
+      if (hasCanonTitle || hasEnglishTitle) {
+        animeList.push([anime[1], anime[2]]);
+      }
+    });
+    return animeList;
   }
 
-  async reloadAnimeCache() {
+  async rebuildCache() {
     if (!this.#config.access_token) {
       Logger.error('KitsuAPI not initialized');
       process.exit(1);

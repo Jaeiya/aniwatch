@@ -25,7 +25,11 @@ if (CLI.tryFlag('reload-cache')) {
 } else if (CLI.tryFlag('find-anime')) {
   const animeList = k.findAnime(CLI.flagArgs[0]);
   animeList.forEach((anime) => {
-    console.log(anime[1]);
+    Logger.chainInfo([
+      `${_cc.bcn}title_jp: ${_cc.x}${anime[0]}`,
+      `${_cc.bcn}title_en: ${_cc.x}${anime[1]}`,
+      '',
+    ]);
   });
 } else if (!CLI.getAllFlags().length) {
   if (CLI.flagArgs.length < 2 || CLI.flagArgs.length > 3) {

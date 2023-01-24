@@ -266,7 +266,7 @@ export class KitsuAPI {
     const hasCreationConsent =
       (await CLI.prompt(
         Logger.promptRaw(
-          `${_cc.yw}Do you want to proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `
+          `${_cc.yw}Proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `
         )
       )) == 'y';
     if (!hasCreationConsent) {

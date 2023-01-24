@@ -271,7 +271,7 @@ export class KitsuAPI {
       )) == 'y';
     if (!hasCreationConsent) {
       Logger.chainInfo(['', `${_cc.byw}Setup Aborted`]);
-      process.exit(1);
+      process.exit(0);
     }
     const user = await this.#promptUser();
     const password = await this.#promptPassword();

@@ -1,10 +1,10 @@
 import { HTTP } from './http.js';
-import { JSDOM } from 'jsdom';
 import { readFileSync } from 'fs';
 import { pathJoin } from './utils.js';
 import { Logger } from './logger.js';
 
 const _nyaaURLStr = 'https://nyaa.si';
+
 export async function getFansubRSS(animeName: string) {
   const url = new URL(_nyaaURLStr);
   url.searchParams.append('f', '2');
@@ -15,7 +15,7 @@ export async function getFansubRSS(animeName: string) {
     console.log(await resp.text());
     process.exit(1);
   }
-  const [entryCount, title] = getLatestAnimeEntry(await resp.text());
+  const [entryCount, title] = await getLatestAnimeEntry(await resp.text());
   url.searchParams.append('page', 'rss');
   return {
     entryCount,
@@ -24,7 +24,8 @@ export async function getFansubRSS(animeName: string) {
   };
 }
 
-function getLatestAnimeEntry(html: string) {
+async function getLatestAnimeEntry(html: string) {
+  const JSDOM = (await import('jsdom')).JSDOM;
   const dom = new JSDOM(html);
   const els = dom.window.document.querySelectorAll<HTMLTableRowElement>('.success');
   if (!els[0]) {

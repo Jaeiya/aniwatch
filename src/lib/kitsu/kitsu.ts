@@ -262,6 +262,17 @@ export class KitsuAPI {
   }
 
   async #trySetupConfig() {
+    console.log('');
+    const hasCreationConsent =
+      (await CLI.prompt(
+        Logger.promptRaw(
+          `${_cc.yw}Do you want to proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `
+        )
+      )) == 'y';
+    if (!hasCreationConsent) {
+      Logger.chainInfo(['', `${_cc.byw}Setup Aborted`]);
+      process.exit(1);
+    }
     const user = await this.#promptUser();
     const password = await this.#promptPassword();
     const tokens = await this.#getAuthTokens(user.attributes.name, password);
@@ -298,7 +309,6 @@ export class KitsuAPI {
   }
 
   async #promptUser(): Promise<UserData> {
-    console.log('');
     const username = await CLI.prompt(
       Logger.printRaw('ma', 'prompt', `${_cc.bwt}Enter Kitsu username:${_cc.x} `)
     );

@@ -20,8 +20,9 @@ export async function watchAnime(
   const fansubFileNames = filterFansubs(workingDir, epName, `- ${saneEpNum}`);
 
   validateFileNames(fansubFileNames, epName, saneEpNum);
-  const cachedAnime = kitsu.animeCache.filter((anime) =>
-    anime[1].toLowerCase().includes(epName)
+  const cachedAnime = kitsu.animeCache.filter(
+    (anime) =>
+      anime[1].toLowerCase().includes(epName) || anime[2].toLowerCase().includes(epName)
   );
   if (!cachedAnime.length) {
     console.log('');

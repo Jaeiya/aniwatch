@@ -310,7 +310,7 @@ export class KitsuAPI {
 
   async #promptUser(): Promise<UserData> {
     const username = await CLI.prompt(
-      Logger.printRaw('ma', 'prompt', `${_cc.bwt}Enter Kitsu username:${_cc.x} `)
+      Logger.promptRaw(`${_cc.bwt}Enter Kitsu username:${_cc.x} `)
     );
     const user = await this.#getUserData(username);
     Logger.chainInfo([
@@ -321,9 +321,8 @@ export class KitsuAPI {
       '',
     ]);
     const isVerifiedUser =
-      (await CLI.prompt(
-        Logger.printRaw('ma', 'prompt', `${_cc.yw}Is this you? ${_cc.bwt}(y/n) `)
-      )) == 'y';
+      (await CLI.prompt(Logger.promptRaw(`${_cc.yw}Is this you? ${_cc.bwt}(y/n) `))) ==
+      'y';
     if (!isVerifiedUser) {
       return await this.#promptUser();
     }

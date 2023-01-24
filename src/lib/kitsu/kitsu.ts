@@ -247,7 +247,7 @@ export class KitsuAPI {
     );
     if (configResp instanceof Error) {
       if (configResp.message.includes('ENOENT')) {
-        Logger.info(`Missing Config -- ${_cc.ma}Setup Activated${_cc.x}`);
+        Logger.info(`Missing Config -- ${_cc.bgn}Setup Activated${_cc.x}`);
         return await this.#trySetupConfig();
       }
       Logger.error(configResp.message);

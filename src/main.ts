@@ -29,6 +29,8 @@ if (CLI.tryFlag('rebuild-cache')) {
   k.displayCacheInfo();
 } else if (CLI.tryFlag('find-anime')) {
   findAnime();
+} else if (CLI.tryHelpFlag()) {
+  help.displayFullHelp();
 } else if (CLI.tryFlag('rss-feed')) {
   await getRSSFeedInfo();
 } else if (!CLI.getAllFlags().length) {

@@ -4,13 +4,14 @@ import help from './help.js';
 type ValidShortFlags = typeof _validShortFlags[number];
 type ValidLongFlags = typeof _validLongFlags[number];
 
-const _validShortFlags = <const>['rc', 'p', 'c', 'f', 'rss'];
+const _validShortFlags = <const>['rc', 'p', 'c', 'f', 'rss', 'h'];
 const _validLongFlags = <const>[
   'rebuild-cache',
   'profile',
   'cache',
   'find-anime',
   'rss-feed',
+  'help',
 ];
 
 const _cc = Logger.consoleColors;
@@ -52,6 +53,17 @@ export class CLI {
 
   static tryCacheFlag() {
     const isValidFlag = CLI.hasShortFlag('c') || CLI.hasLongFlag('cache');
+    if (!isValidFlag) return false;
+    if (CLI.hasArgs() || this.hasInvalidFlags(1)) {
+      Logger.error('Invalid Syntax');
+      Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
+      process.exit(1);
+    }
+    return true;
+  }
+
+  static tryHelpFlag() {
+    const isValidFlag = CLI.hasShortFlag('h') || CLI.hasLongFlag('help');
     if (!isValidFlag) return false;
     if (CLI.hasArgs() || this.hasInvalidFlags(1)) {
       Logger.error('Invalid Syntax');

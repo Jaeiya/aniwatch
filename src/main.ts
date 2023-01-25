@@ -7,6 +7,12 @@ import { watchAnime } from './lib/watch.js';
 import * as rss from './lib/rss.js';
 
 console.log('');
+if (isDev()) {
+  const smp = await import('source-map-support');
+  smp.default.install();
+  Logger.info('TypeScript source map support installed');
+}
+
 process.removeAllListeners('warning');
 const _cc = Logger.consoleColors;
 

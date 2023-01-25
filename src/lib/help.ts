@@ -130,6 +130,10 @@ function getRSSFeedHelp() {
     '',
     `${_cc.bma}Details:`,
     `${_ind1}${_cc.bcn}name    ${_cc.x}Name of any anime`,
+    '',
+    `${_cc.bma}Examples:`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.bcn}-rss ${_cc.yw}"boku no hero"`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.bcn}--rss-feed ${_cc.yw}berserk`,
   ];
 }
 

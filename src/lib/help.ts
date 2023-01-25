@@ -66,6 +66,12 @@ function getSimpleFlagHelp() {
     `${_ind2}   you update your "currently watching" list on Kitsu`,
     '',
     `${_ind1}${_cc.bcn}-c${_cc.x}    Displays all cached information`,
+    '',
+    `${_cc.bma}Examples:`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.bcn}-p`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.bcn}--profile`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.bcn}--rc`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.bcn}--rebuild-cache`,
   ];
 }
 

@@ -101,10 +101,14 @@ function getFindAnimeHelp() {
     `${_ind1}to rebuild the cache with ${_cc.bcn}-rc ${_cc.x} or ${_cc.bcn}--rebuild-cache`,
     '',
     `${_cc.bma}Syntax:`,
-    `${_ind1}${_cc.byw}aniwatch ${_cc.x}[${_cc.bcn}-f ${_cc.x}| ${_cc.bcn}--find-anime${_cc.x}] ${_cc.bcn}<name>`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.x}[${_cc.bcn}-f ${_cc.x}| ${_cc.bcn}--find-anime${_cc.x}] ${_cc.yw}<name>`,
     '',
     `${_cc.bma}Details:`,
-    `${_ind1}${_cc.bcn}name    ${_cc.x}Name of an anime in your "currently watching" list`,
+    `${_ind1}${_cc.yw}name    ${_cc.x}Name of an anime in your "currently watching" list`,
+    '',
+    `${_cc.bma}Examples:`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.bcn}-f ${_cc.yw}"boku no hero"`,
+    `${_ind1}${_cc.byw}aniwatch ${_cc.bcn}--find-anime ${_cc.yw}berserk`,
   ];
 }
 

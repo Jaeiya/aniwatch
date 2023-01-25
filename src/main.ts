@@ -18,7 +18,7 @@ if (CLI.tryFlag('rebuild-cache')) {
   k.rebuildCache();
 } else if (CLI.tryFlag('profile')) {
   k.displayUserProfile();
-} else if (CLI.tryFlag('display-cache')) {
+} else if (CLI.tryFlag('cache')) {
   k.displayCacheInfo();
 } else if (CLI.tryFlag('find-anime')) {
   findAnime();

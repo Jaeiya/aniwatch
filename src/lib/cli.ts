@@ -7,7 +7,7 @@ const _validShortFlags = <const>['rc', 'p', 'c', 'f', 'rss'];
 const _validLongFlags = <const>[
   'rebuild-cache',
   'profile',
-  'display-cache',
+  'cache',
   'find-anime',
   'rss-feed',
 ];
@@ -41,9 +41,9 @@ export class CLI {
   }
 
   static tryCacheFlag() {
-    const isValidFlag = this.hasShortFlag('c') || this.hasLongFlag('display-cache');
+    const isValidFlag = this.hasShortFlag('c') || this.hasLongFlag('cache');
     if (!isValidFlag) return false;
-    this.testSingleFlagConfig('display-cache');
+    this.testSingleFlagConfig('cache');
     return true;
   }
 
@@ -87,7 +87,7 @@ export class CLI {
 
   static tryFlag(flag: ValidLongFlags) {
     switch (flag) {
-      case 'display-cache':
+      case 'cache':
         return this.tryCacheFlag();
       case 'rebuild-cache':
         return this.tryRebuildCacheFlag();

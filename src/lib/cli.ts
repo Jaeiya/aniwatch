@@ -1,4 +1,5 @@
 import { Logger } from './logger.js';
+import help from './help.js';
 
 type ValidShortFlags = typeof _validShortFlags[number];
 type ValidLongFlags = typeof _validLongFlags[number];
@@ -22,64 +23,65 @@ export class CLI {
   static allArgs = process.argv.slice(2);
 
   static get flagArgs() {
-    const flags = [...this.getAllFlags()];
-    return this.allArgs.filter((arg) => !flags.includes(arg));
+    const flags = [...CLI.getAllFlags()];
+    return CLI.allArgs.filter((arg) => !flags.includes(arg));
   }
 
   static tryRebuildCacheFlag() {
-    const isValidFlag = this.hasShortFlag('rc') || this.hasLongFlag('rebuild-cache');
+    const isValidFlag = CLI.hasShortFlag('rc') || CLI.hasLongFlag('rebuild-cache');
     if (!isValidFlag) return false;
-    this.testSingleFlagConfig('rebuild-cache');
+    if (!CLI.hasArgs()) {
+      Logger.error('Invalid Flag Syntax');
+      Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
+      process.exit(1);
+    }
     return true;
   }
 
   static tryProfileFlag() {
-    const isValidFlag = this.hasShortFlag('p') || this.hasLongFlag('profile');
+    const isValidFlag = CLI.hasShortFlag('p') || CLI.hasLongFlag('profile');
     if (!isValidFlag) return false;
-    this.testSingleFlagConfig('profile');
+    if (CLI.hasArgs() || this.hasInvalidFlags(1)) {
+      Logger.error('Invalid Flag Syntax');
+      Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
+      process.exit(1);
+    }
+    CLI.hasArgs();
     return true;
   }
 
   static tryCacheFlag() {
-    const isValidFlag = this.hasShortFlag('c') || this.hasLongFlag('cache');
+    const isValidFlag = CLI.hasShortFlag('c') || CLI.hasLongFlag('cache');
     if (!isValidFlag) return false;
-    this.testSingleFlagConfig('cache');
+    if (CLI.hasArgs() || this.hasInvalidFlags(1)) {
+      Logger.error('Invalid Syntax');
+      Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
+      process.exit(1);
+    }
     return true;
   }
 
   static tryFindAnimeFlag() {
-    const isValidFlag = this.hasShortFlag('f') || this.hasLongFlag('find-anime');
+    const isValidFlag = CLI.hasShortFlag('f') || CLI.hasLongFlag('find-anime');
     if (!isValidFlag) return false;
-    this.validateNumberOfFlags(1, 'f');
-    if (this.allArgs.length > 2) {
-      this.displayInvalidFlagInfo(
-        `Only ${_cc.byw}1${_cc.x} argument allowed for ${_cc.byw}-f`
-      );
-      process.exit(1);
-    }
-    if (this.allArgs.length == 1) {
-      this.displayInvalidFlagInfo(
-        `${_cc.byw}-f${_cc.x} requires ${_cc.byw}1${_cc.x} argument`
-      );
+    const hasInvalidSyntax =
+      CLI.allArgs.length > 2 || CLI.allArgs.length == 1 || CLI.hasInvalidFlags(1);
+    if (hasInvalidSyntax) {
+      Logger.error('Invalid Syntax');
+      Logger.chainInfo(['', ...help.getFindAnimeHelp()]);
       process.exit(1);
     }
     return true;
   }
 
   static tryRSSFlag() {
-    const isValidFlag = this.hasShortFlag('rss') || this.hasLongFlag('rss-feed');
+    const isValidFlag = CLI.hasShortFlag('rss') || CLI.hasLongFlag('rss-feed');
     if (!isValidFlag) return false;
-    this.validateNumberOfFlags(1, 'rss-feed');
-    if (this.allArgs.length > 2) {
-      this.displayInvalidFlagInfo(
-        `Only ${_cc.byw}1${_cc.x} argument allowed for ${_cc.byw}-rss`
-      );
-      process.exit(1);
-    }
-    if (this.allArgs.length == 1) {
-      this.displayInvalidFlagInfo(
-        `${_cc.byw}-rss${_cc.x} requires ${_cc.byw}1${_cc.x} argument`
-      );
+    const hasInvalidSyntax =
+      CLI.allArgs.length > 2 || CLI.allArgs.length == 1 || CLI.hasInvalidFlags(1);
+    if (hasInvalidSyntax) {
+      Logger.error('Invalid Syntax');
+      Logger.chainInfo(['', ...help.getRSSFeedHelp()]);
       process.exit(1);
     }
     return true;
@@ -88,31 +90,31 @@ export class CLI {
   static tryFlag(flag: ValidLongFlags) {
     switch (flag) {
       case 'cache':
-        return this.tryCacheFlag();
+        return CLI.tryCacheFlag();
       case 'rebuild-cache':
-        return this.tryRebuildCacheFlag();
+        return CLI.tryRebuildCacheFlag();
       case 'find-anime':
-        return this.tryFindAnimeFlag();
+        return CLI.tryFindAnimeFlag();
       case 'profile':
-        return this.tryProfileFlag();
+        return CLI.tryProfileFlag();
       case 'rss-feed':
-        return this.tryRSSFlag();
+        return CLI.tryRSSFlag();
     }
   }
 
   static getAllFlags = () => {
     const hasSingleOrDoubleDash = (arg: string) => arg.indexOf('-') == 0 && arg[2] != '-';
-    return this.allArgs.filter(hasSingleOrDoubleDash);
+    return CLI.allArgs.filter(hasSingleOrDoubleDash);
   };
 
   static getShortFlags = () => {
     const hasSingleDash = (arg: string) => arg.indexOf('-') == 0 && arg[1] != '-';
-    return this.allArgs.filter(hasSingleDash);
+    return CLI.allArgs.filter(hasSingleDash);
   };
 
   static getLongFlags = () => {
     const hasDoubleDash = (arg: string) => arg.indexOf('--') == 0 && arg[2] != '-';
-    return this.allArgs.filter(hasDoubleDash);
+    return CLI.allArgs.filter(hasDoubleDash);
   };
 
   static hasShortFlag(flag: ValidShortFlags) {
@@ -128,25 +130,11 @@ export class CLI {
     Logger.error(msg);
   }
 
-  static validateNumberOfFlags(num: number, flag: ValidShortFlags | ValidLongFlags) {
-    if (this.getAllFlags().length > num) {
-      this.displayInvalidFlagInfo(
-        `${_cc.byw}-${flag}${_cc.x} can only be used with ${_cc.byw}${num - 1}${
-          _cc.x
-        } other flags`
-      );
-      process.exit(1);
-    }
+  static hasInvalidFlags(num: number) {
+    return CLI.getAllFlags().length > num;
   }
 
-  static testSingleFlagConfig(flag: ValidLongFlags) {
-    this.validateNumberOfFlags(1, flag);
-
-    if (this.allArgs.length > 1) {
-      this.displayInvalidFlagInfo(
-        `${_cc.byw}-${flag}${_cc.x} does not require any arguments`
-      );
-      process.exit(1);
-    }
+  static hasArgs() {
+    return this.allArgs.length > 1;
   }
 }

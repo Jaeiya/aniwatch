@@ -138,7 +138,7 @@ function getRSSFeedHelp() {
 }
 
 export default {
-  getFullHelp: displayFullHelp,
+  displayFullHelp,
   getDefaultHelp,
   getSimpleFlagHelp,
   getComplexFlagHelp,

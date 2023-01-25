@@ -5,6 +5,7 @@ import { Logger } from './lib/logger.js';
 import { isDev, pathResolve } from './lib/utils.js';
 import { watchAnime } from './lib/watch.js';
 import * as rss from './lib/rss.js';
+import help from './lib/help.js';
 
 console.log('');
 if (isDev()) {
@@ -59,10 +60,8 @@ function execWatchAnime() {
     return;
   }
   if (CLI.flagArgs.length < 2 || CLI.flagArgs.length > 3) {
-    Logger.error('Please provide an anime name and episode number to watch.');
-    Logger.error(
-      `Example: ${_cc.byw}aniwatch${_cc.x} ${_cc.bcn}<name> <episode_num> <forced_ep_num>`
-    );
+    Logger.error('Invalid Syntax');
+    Logger.chainInfo(['', ...help.getDefaultHelp()]);
     process.exit(1);
   }
   watchAnime(CLI.flagArgs[0], [CLI.flagArgs[1], CLI.flagArgs[2] || ''], _workingDir, k);

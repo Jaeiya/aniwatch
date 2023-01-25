@@ -48,7 +48,7 @@ export class Logger {
   static chainInfo(msgs: string[]) {
     msgs.forEach((msg) => {
       if (msg) {
-        this.info(msg);
+        Logger.info(msg);
       } else {
         console.log('');
       }
@@ -62,7 +62,7 @@ export class Logger {
   static chainError(msgs: string[]) {
     msgs.forEach((msg) => {
       if (msg) {
-        this.error(msg);
+        Logger.error(msg);
       } else {
         console.log('');
       }

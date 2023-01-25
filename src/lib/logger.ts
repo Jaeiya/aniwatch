@@ -3,6 +3,10 @@ import readline from 'readline';
 const _maxTagLength = 10;
 
 const _consoleColors = {
+  /** Black */
+  bk: '\u001B[30m',
+  /** Bright Black */
+  bbk: '\u001B[90m',
   /** Red */
   rd: '\u001B[31m',
   /** Bright Red */

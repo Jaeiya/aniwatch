@@ -19,6 +19,17 @@ const _fl = _cc.bcn;
 /** ANSI Arguments Color */
 const _arg = _cc.yw;
 
+export default {
+  displayFullHelp,
+  displayFlagHelp,
+  displayComplexFlagHelp,
+  getDefaultHelp,
+  getSimpleFlagHelp,
+  getComplexFlagHelp,
+  getFindAnimeHelp,
+  getRSSFeedHelp,
+};
+
 function displayFullHelp() {
   _chainInfo([
     ...getDefaultHelp(),
@@ -26,12 +37,17 @@ function displayFullHelp() {
     '',
     ...getSimpleFlagHelp(),
     '',
+    '',
     ...getComplexFlagHelp(),
   ]);
 }
 
 function displayFlagHelp() {
-  Logger.chainInfo([...getSimpleFlagHelp(), '', ...getComplexFlagHelp()]);
+  Logger.chainInfo(['', '', ...getSimpleFlagHelp(), '', '', ...getComplexFlagHelp()]);
+}
+
+function displayComplexFlagHelp() {
+  Logger.chainInfo(getComplexFlagHelp());
 }
 
 function getDefaultHelp() {
@@ -102,7 +118,7 @@ function getSimpleFlagHelp() {
 }
 
 function getComplexFlagHelp() {
-  return ['', ...getFindAnimeHelp(), '', '', ...getRSSFeedHelp()];
+  return [...getFindAnimeHelp(), '', '', ...getRSSFeedHelp()];
 }
 
 function getFindAnimeHelp() {
@@ -115,7 +131,7 @@ function getFindAnimeHelp() {
     `${_nl}${_cc.ma}NOTE:${_blk} If the anime is not found, either it was typed`,
     `${_nl}incorrectly or it needs to be added to your watch`,
     `${_nl}list. If you add it to your watch list, you'll need`,
-    `${_nl}to rebuild the cache with ${_fl}-rc ${_x} or ${_fl}--rebuild-cache`,
+    `${_nl}to rebuild the cache with ${_fl}-rc ${_blk}or ${_fl}--rebuild-cache`,
     '',
     `${_shd}Syntax:`,
     `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-f ${_x}| ${_fl}--find-anime${_x}] ${_arg}<name>`,
@@ -153,13 +169,3 @@ function getRSSFeedHelp() {
     `${_ind1}${_cc.byw}aniwatch ${_fl}--rss-feed ${_arg}berserk`,
   ];
 }
-
-export default {
-  displayFullHelp,
-  displayFlagHelp,
-  getDefaultHelp,
-  getSimpleFlagHelp,
-  getComplexFlagHelp,
-  getFindAnimeHelp,
-  getRSSFeedHelp,
-};

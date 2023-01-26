@@ -40,7 +40,6 @@ export const ConfigFile = z.object({
   }),
   about: z.string(),
   username: z.string(),
-  password: z.string(),
   access_token: z.string(),
   refresh_token: z.string(),
 });

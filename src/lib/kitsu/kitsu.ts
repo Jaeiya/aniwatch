@@ -194,7 +194,7 @@ export class KitsuAPI {
   }
 
   async #populateCurrentAnimeCache(): Promise<CachedAnime> {
-    const resp = await HTTP.get(this.#activeAnimeFilterURL, this.#config.access_token);
+    const resp = await HTTP.get(this.#activeAnimeFilterURL);
     const zodResp = LibraryInfo.safeParse(await resp.json());
     if (!zodResp.success) {
       displayZodErrors(zodResp.error, 'Library Parse Failed');
@@ -310,14 +310,14 @@ export class KitsuAPI {
     const user = await this.#promptUser();
     const password = await this.#promptPassword();
     const tokens = await this.#getAuthTokens(user.attributes.name, password);
-    const configFile = this.#serializeConfigData(user, password, tokens);
+    const configFile = this.#serializeConfigData(user, tokens);
     this.#saveConfig(configFile);
     Logger.chainInfo(['', `${_cc.bcn}Config File:${_cc.x} ${_cc.byw}Created`]);
     this.#firstSetup = true;
     return configFile;
   }
 
-  #serializeConfigData(user: UserData, password: string, tokens: AuthTokens) {
+  #serializeConfigData(user: UserData, tokens: AuthTokens) {
     if (!user.stats.time || !user.stats.completed) {
       Logger.chainError([
         'Failed to Serialize Config Data',
@@ -337,7 +337,6 @@ export class KitsuAPI {
       },
       about: user.attributes.about,
       username: user.attributes.name,
-      password,
       ...tokens,
     };
     return configFile;

@@ -30,6 +30,10 @@ function displayFullHelp() {
   ]);
 }
 
+function displayFlagHelp() {
+  Logger.chainInfo([...getSimpleFlagHelp(), '', ...getComplexFlagHelp()]);
+}
+
 function getDefaultHelp() {
   return [
     `${_hd}Default Usage`,
@@ -152,6 +156,7 @@ function getRSSFeedHelp() {
 
 export default {
   displayFullHelp,
+  displayFlagHelp,
   getDefaultHelp,
   getSimpleFlagHelp,
   getComplexFlagHelp,

@@ -15,114 +15,80 @@ const _validLongFlags = <const>[
 ];
 
 const _cc = Logger.consoleColors;
+const rawArgs = process.argv;
+const execPath = process.argv[0];
+const sourcePath = process.argv[1];
+const workingDir = process.cwd();
+const userArgs = process.argv.slice(2);
+const flagArgs = userArgs.filter((arg: string) => arg.indexOf('-') == 0 && arg[2] != '-');
+const nonFlagArgs = userArgs.filter((arg) => !flagArgs.includes(arg));
+const _simpleFlagHelp = help.getSimpleFlagHelp();
 
-export class CLI {
-  static args = process.argv;
-  static execPath = process.argv[0];
-  static sourcePath = process.argv[1];
-  static workingDir = process.cwd();
-  static allArgs = process.argv.slice(2);
+export default {
+  execPath,
+  sourcePath,
+  workingDir,
+  rawArgs,
+  userArgs,
+  flagArgs,
+  nonFlagArgs,
+  tryRebuildCacheFlag,
+  tryProfileFlag,
+  tryHelpFlag,
+  tryCacheFlag,
+  tryFindAnimeFlag,
+  tryRSSFlag,
+};
 
-  static get flagArgs() {
-    const flags = this.getFlags();
-    return CLI.allArgs.filter((arg) => !flags.includes(arg));
+function tryProfileFlag() {
+  return isValidSingleFlag('p', 'profile');
+}
+
+function tryCacheFlag() {
+  return isValidSingleFlag('c', 'cache');
+}
+
+function tryRebuildCacheFlag() {
+  return isValidSingleFlag('rc', 'rebuild-cache');
+}
+
+function tryHelpFlag() {
+  return isValidSingleFlag('h', 'help');
+}
+
+function tryFindAnimeFlag() {
+  return isValidSingleFlag('f', 'find-anime', Infinity, help.getFindAnimeHelp());
+}
+
+function tryRSSFlag() {
+  return isValidSingleFlag('rss', 'rss-feed', Infinity, help.getRSSFeedHelp());
+}
+
+/**
+ * Tests for a valid flag that can only be used by itself
+ * with the specified number of arguments.
+ */
+function isValidSingleFlag(
+  shortFlag: ValidShortFlags,
+  longFlag: ValidLongFlags,
+  numOfArgs = 0,
+  help = _simpleFlagHelp
+) {
+  const isValidFlag = hasShortFlag(shortFlag) || hasLongFlag(longFlag);
+  if (!isValidFlag) return false;
+  if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
+    Logger.error(`${_cc.rd}Invalid Flag Syntax`);
+    Logger.error('Read the help below to learn the correct syntax');
+    Logger.chainInfo(['', ...help]);
+    process.exit(1);
   }
+  return true;
+}
 
-  static tryRebuildCacheFlag() {
-    const isValidFlag = CLI.hasShortFlag('rc') || CLI.hasLongFlag('rebuild-cache');
-    if (!isValidFlag) return false;
-    CLI.validateExclusiveFlag();
-    return true;
-  }
+function hasShortFlag(flag: ValidShortFlags) {
+  return flagArgs.includes(`-${flag}`);
+}
 
-  static tryProfileFlag() {
-    const isValidFlag = CLI.hasShortFlag('p') || CLI.hasLongFlag('profile');
-    if (!isValidFlag) return false;
-    CLI.validateExclusiveFlag();
-    return true;
-  }
-
-  static tryCacheFlag() {
-    const isValidFlag = CLI.hasShortFlag('c') || CLI.hasLongFlag('cache');
-    if (!isValidFlag) return false;
-    CLI.validateExclusiveFlag();
-    return true;
-  }
-
-  static tryHelpFlag() {
-    const isValidFlag = CLI.hasShortFlag('h') || CLI.hasLongFlag('help');
-    if (!isValidFlag) return false;
-    CLI.validateExclusiveFlag();
-    return true;
-  }
-
-  static validateExclusiveFlag() {
-    if (CLI.hasArgs() || this.hasInvalidFlags(1)) {
-      Logger.error('Invalid Flag Use');
-      Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
-      process.exit(1);
-    }
-  }
-
-  static tryFindAnimeFlag() {
-    const isValidFlag = CLI.hasShortFlag('f') || CLI.hasLongFlag('find-anime');
-    if (!isValidFlag) return false;
-    const hasInvalidSyntax =
-      CLI.allArgs.length > 2 || CLI.allArgs.length == 1 || CLI.hasInvalidFlags(1);
-    if (hasInvalidSyntax) {
-      Logger.error('Invalid Syntax');
-      Logger.chainInfo(['', ...help.getFindAnimeHelp()]);
-      process.exit(1);
-    }
-    return true;
-  }
-
-  static tryRSSFlag() {
-    const isValidFlag = CLI.hasShortFlag('rss') || CLI.hasLongFlag('rss-feed');
-    if (!isValidFlag) return false;
-    const hasInvalidSyntax =
-      CLI.allArgs.length > 2 || CLI.allArgs.length == 1 || CLI.hasInvalidFlags(1);
-    if (hasInvalidSyntax) {
-      Logger.error('Invalid Syntax');
-      Logger.chainInfo(['', ...help.getRSSFeedHelp()]);
-      process.exit(1);
-    }
-    return true;
-  }
-
-  static getFlags = () => {
-    const hasSingleOrDoubleDash = (arg: string) => arg.indexOf('-') == 0 && arg[2] != '-';
-    return CLI.allArgs.filter(hasSingleOrDoubleDash);
-  };
-
-  static getShortFlags = () => {
-    const hasSingleDash = (arg: string) => arg.indexOf('-') == 0 && arg[1] != '-';
-    return CLI.allArgs.filter(hasSingleDash);
-  };
-
-  static getLongFlags = () => {
-    const hasDoubleDash = (arg: string) => arg.indexOf('--') == 0 && arg[2] != '-';
-    return CLI.allArgs.filter(hasDoubleDash);
-  };
-
-  static hasShortFlag(flag: ValidShortFlags) {
-    return this.allArgs.includes(`-${flag}`);
-  }
-
-  static hasLongFlag(flag: ValidLongFlags) {
-    return this.allArgs.includes(`--${flag}`);
-  }
-
-  static displayInvalidFlagInfo(msg: string) {
-    Logger.error(`${_cc.rd}Invalid Flag Configuration`);
-    Logger.error(msg);
-  }
-
-  static hasInvalidFlags(num: number) {
-    return CLI.getFlags().length > num;
-  }
-
-  static hasArgs() {
-    return this.allArgs.length > 1;
-  }
+function hasLongFlag(flag: ValidLongFlags) {
+  return flagArgs.includes(`--${flag}`);
 }

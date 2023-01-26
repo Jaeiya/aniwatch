@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { CLI } from './lib/cli.js';
+import CLI from './lib/cli.js';
 import { KitsuAPI } from './lib/kitsu/kitsu.js';
 import { Logger } from './lib/logger.js';
 import { isDev, pathResolve } from './lib/utils.js';
@@ -34,15 +34,21 @@ if (CLI.tryRebuildCacheFlag()) {
 } else if (CLI.tryRSSFlag()) {
   await getRSSFeedInfo();
 } else {
-  if (CLI.getFlags().length) {
-    help.displayFlagHelp();
+  if (CLI.flagArgs.length) {
+    Logger.error(`${_cc.rd}Flag Not Found`);
+    Logger.error(`Check the Help below for valid flag usage!`);
+    if (CLI.nonFlagArgs.length > 0) {
+      help.displayComplexFlagHelp();
+    } else {
+      help.displayFlagHelp();
+    }
   } else {
     execWatchAnime();
   }
 }
 
 function findAnime() {
-  const animeList = k.findAnime(CLI.flagArgs[0]);
+  const animeList = k.findAnime(CLI.nonFlagArgs.join(' '));
   animeList.forEach((anime) => {
     Logger.chainInfo([
       `${_cc.bcn}title_jp: ${_cc.x}${anime[0]}`,
@@ -53,7 +59,7 @@ function findAnime() {
 }
 
 async function getRSSFeedInfo() {
-  const result = await rss.getFansubRSS(CLI.flagArgs[0]);
+  const result = await rss.getFansubRSS(CLI.nonFlagArgs.join(' '));
   Logger.chainInfo([
     `${_cc.bcn}Entry Count: ${_cc.gn}${result.entryCount}`,
     `${_cc.bcn}Latest: ${_cc.yw}${result.latestTitle}`,
@@ -62,13 +68,14 @@ async function getRSSFeedInfo() {
 }
 
 function execWatchAnime() {
-  if (!CLI.allArgs.length && k.isFirstSetup) {
+  const flagArgs = CLI.nonFlagArgs;
+  if (!CLI.userArgs.length && k.isFirstSetup) {
     return;
   }
-  if (CLI.flagArgs.length < 2 || CLI.flagArgs.length > 3) {
+  if (flagArgs.length < 2 || flagArgs.length > 3) {
     Logger.error('Invalid Syntax');
     Logger.chainInfo(['', ...help.getDefaultHelp()]);
     process.exit(1);
   }
-  watchAnime(CLI.flagArgs[0], [CLI.flagArgs[1], CLI.flagArgs[2] || ''], _workingDir, k);
+  watchAnime(flagArgs[0], [flagArgs[1], flagArgs[2] || ''], _workingDir, k);
 }

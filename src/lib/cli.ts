@@ -24,53 +24,44 @@ export class CLI {
   static allArgs = process.argv.slice(2);
 
   static get flagArgs() {
-    const flags = [...CLI.getAllFlags()];
+    const flags = this.getFlags();
     return CLI.allArgs.filter((arg) => !flags.includes(arg));
   }
 
   static tryRebuildCacheFlag() {
     const isValidFlag = CLI.hasShortFlag('rc') || CLI.hasLongFlag('rebuild-cache');
     if (!isValidFlag) return false;
-    if (!CLI.hasArgs()) {
-      Logger.error('Invalid Flag Syntax');
-      Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
-      process.exit(1);
-    }
+    CLI.validateExclusiveFlag();
     return true;
   }
 
   static tryProfileFlag() {
     const isValidFlag = CLI.hasShortFlag('p') || CLI.hasLongFlag('profile');
     if (!isValidFlag) return false;
-    if (CLI.hasArgs() || this.hasInvalidFlags(1)) {
-      Logger.error('Invalid Flag Syntax');
-      Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
-      process.exit(1);
-    }
-    CLI.hasArgs();
+    CLI.validateExclusiveFlag();
     return true;
   }
 
   static tryCacheFlag() {
     const isValidFlag = CLI.hasShortFlag('c') || CLI.hasLongFlag('cache');
     if (!isValidFlag) return false;
-    if (CLI.hasArgs() || this.hasInvalidFlags(1)) {
-      Logger.error('Invalid Syntax');
-      Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
-      process.exit(1);
-    }
+    CLI.validateExclusiveFlag();
     return true;
   }
 
   static tryHelpFlag() {
     const isValidFlag = CLI.hasShortFlag('h') || CLI.hasLongFlag('help');
     if (!isValidFlag) return false;
+    CLI.validateExclusiveFlag();
+    return true;
+  }
+
+  static validateExclusiveFlag() {
     if (CLI.hasArgs() || this.hasInvalidFlags(1)) {
-      Logger.error('Invalid Syntax');
+      Logger.error('Invalid Flag Use');
       Logger.chainInfo(['', ...help.getSimpleFlagHelp()]);
       process.exit(1);
     }
-    return true;
   }
 
   static tryFindAnimeFlag() {
@@ -99,22 +90,7 @@ export class CLI {
     return true;
   }
 
-  static tryFlag(flag: ValidLongFlags) {
-    switch (flag) {
-      case 'cache':
-        return CLI.tryCacheFlag();
-      case 'rebuild-cache':
-        return CLI.tryRebuildCacheFlag();
-      case 'find-anime':
-        return CLI.tryFindAnimeFlag();
-      case 'profile':
-        return CLI.tryProfileFlag();
-      case 'rss-feed':
-        return CLI.tryRSSFlag();
-    }
-  }
-
-  static getAllFlags = () => {
+  static getFlags = () => {
     const hasSingleOrDoubleDash = (arg: string) => arg.indexOf('-') == 0 && arg[2] != '-';
     return CLI.allArgs.filter(hasSingleOrDoubleDash);
   };
@@ -143,7 +119,7 @@ export class CLI {
   }
 
   static hasInvalidFlags(num: number) {
-    return CLI.getAllFlags().length > num;
+    return CLI.getFlags().length > num;
   }
 
   static hasArgs() {

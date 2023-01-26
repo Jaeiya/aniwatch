@@ -21,20 +21,24 @@ const _workingDir = isDev() ? pathResolve('E:/downloads/anime') : process.cwd();
 const k = new KitsuAPI();
 await k.init();
 
-if (CLI.tryFlag('rebuild-cache')) {
+if (CLI.tryRebuildCacheFlag()) {
   k.rebuildCache();
-} else if (CLI.tryFlag('profile')) {
+} else if (CLI.tryProfileFlag()) {
   k.displayUserProfile();
-} else if (CLI.tryFlag('cache')) {
+} else if (CLI.tryCacheFlag()) {
   k.displayCacheInfo();
-} else if (CLI.tryFlag('find-anime')) {
+} else if (CLI.tryFindAnimeFlag()) {
   findAnime();
 } else if (CLI.tryHelpFlag()) {
   help.displayFullHelp();
-} else if (CLI.tryFlag('rss-feed')) {
+} else if (CLI.tryRSSFlag()) {
   await getRSSFeedInfo();
-} else if (!CLI.getAllFlags().length) {
-  execWatchAnime();
+} else {
+  if (CLI.getFlags().length) {
+    help.displayFlagHelp();
+  } else {
+    execWatchAnime();
+  }
 }
 
 function findAnime() {

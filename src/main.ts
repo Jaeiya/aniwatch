@@ -49,6 +49,14 @@ if (CLI.tryRebuildCacheFlag()) {
 
 async function findAnime() {
   const animeList = await k.findAnime(CLI.nonFlagArgs.join(' '));
+  if (!animeList.length) {
+    Logger.chainInfo([
+      `${_cc.byw}No Entries Found`,
+      'The anime is either not in your cache or your search',
+      'terms were incorrectly spelled.',
+    ]);
+    process.exit(0);
+  }
   animeList.forEach((anime) => {
     const totalEps = anime.totalEpisodes ? anime.totalEpisodes : `${_cc.rd}unknown`;
     Logger.chainInfo([
@@ -57,6 +65,7 @@ async function findAnime() {
       `${_cc.bcn}Progress: ${_cc.gn}${anime.progress}${_cc.byw} / ${_cc.ma}${totalEps}`,
       `${_cc.bcn}My Rating: ${_cc.gn}${anime.rating ? anime.rating : 'Not Rated'}`,
       `${_cc.bcn}Avg. Rating: ${_cc.gn}${anime.avgRating}`,
+      '',
     ]);
   });
 }

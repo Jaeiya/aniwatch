@@ -28,7 +28,7 @@ if (CLI.tryRebuildCacheFlag()) {
 } else if (CLI.tryCacheFlag()) {
   k.displayCacheInfo();
 } else if (CLI.tryFindAnimeFlag()) {
-  findAnime();
+  await findAnime();
 } else if (CLI.tryHelpFlag()) {
   help.displayFullHelp();
 } else if (CLI.tryRSSFlag()) {
@@ -47,13 +47,16 @@ if (CLI.tryRebuildCacheFlag()) {
   }
 }
 
-function findAnime() {
-  const animeList = k.findAnime(CLI.nonFlagArgs.join(' '));
+async function findAnime() {
+  const animeList = await k.findAnime(CLI.nonFlagArgs.join(' '));
   animeList.forEach((anime) => {
+    const totalEps = anime.totalEpisodes ? anime.totalEpisodes : `${_cc.rd}unknown`;
     Logger.chainInfo([
-      `${_cc.bcn}title_jp: ${_cc.x}${anime[0]}`,
-      `${_cc.bcn}title_en: ${_cc.x}${anime[1]}`,
-      '',
+      `${_cc.bcn}Title JP: ${_cc.x}${anime.title_jp}`,
+      `${_cc.bcn}Title EN: ${_cc.x}${anime.title_en}`,
+      `${_cc.bcn}Progress: ${_cc.gn}${anime.progress}${_cc.byw} / ${_cc.ma}${totalEps}`,
+      `${_cc.bcn}My Rating: ${_cc.gn}${anime.rating ? anime.rating : 'Not Rated'}`,
+      `${_cc.bcn}Avg. Rating: ${_cc.gn}${anime.avgRating}`,
     ]);
   });
 }

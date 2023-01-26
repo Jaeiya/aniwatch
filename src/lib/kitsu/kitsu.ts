@@ -6,6 +6,7 @@ import { existsSync, writeFileSync } from 'fs';
 import {
   AnimeCache,
   ConfigFile,
+  LibraryEntriesSchema,
   LibraryInfo,
   LibraryPatchRespData,
   UserData,
@@ -121,16 +122,47 @@ export class KitsuAPI {
     );
   }
 
-  findAnime(name: string) {
+  async findAnime(name: string) {
     const animeList: string[][] = [];
     this.#animeCache.forEach((anime) => {
       const hasCanonTitle = anime[1].toLowerCase().includes(name.toLowerCase());
       const hasEnglishTitle = anime[2].toLowerCase().includes(name.toLowerCase());
       if (hasCanonTitle || hasEnglishTitle) {
-        animeList.push([anime[1], anime[2]]);
+        animeList.push([...anime]);
       }
     });
-    return animeList;
+    const libraryURL = new URL('https://kitsu.io/api/edge/library-entries');
+    libraryURL.searchParams.append(
+      'filter[id]',
+      animeList.reduce((pv, cv) => {
+        return pv ? `${pv},${cv[0]}` : cv[0];
+      }, '')
+    );
+    libraryURL.searchParams.append('include', 'anime');
+    libraryURL.searchParams.append(
+      'fields[anime]',
+      'episodeCount,averageRating,endDate,startDate'
+    );
+    const resp = await HTTP.get(libraryURL);
+    const zodResp = LibraryEntriesSchema.safeParse(await resp.json());
+    if (!zodResp.success) {
+      displayZodErrors(zodResp.error, 'Failed To Parse Library Entries');
+      process.exit(1);
+    }
+    return animeList.map((anime, i) => {
+      const rating = zodResp.data.data[i].attributes.ratingTwenty;
+      const avgRating = zodResp.data.included[i].attributes.averageRating;
+      return {
+        title_jp: anime[1],
+        title_en: anime[2],
+        progress: zodResp.data.data[i].attributes.progress,
+        rating: rating ? `${(rating / 20) * 10}` : rating,
+        totalEpisodes: zodResp.data.included[i].attributes.episodeCount,
+        avgRating: avgRating
+          ? `${(Number(avgRating) / 10).toFixed(2)}`
+          : 'Not Calculated Yet',
+      };
+    });
   }
 
   async rebuildCache() {

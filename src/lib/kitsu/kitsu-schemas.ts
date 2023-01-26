@@ -48,6 +48,30 @@ export const ConfigFile = z.object({
 export type AnimeCache = z.infer<typeof AnimeCache>;
 export const AnimeCache = z.array(z.tuple([z.string(), z.string(), z.string()]));
 
+export type LibraryEntries = z.infer<typeof LibraryEntriesSchema>;
+export const LibraryEntriesSchema = z.object({
+  data: z.array(
+    z.object({
+      id: z.string(),
+      attributes: z.object({
+        progress: z.number(),
+        ratingTwenty: z.number().nullable(),
+      }),
+    })
+  ),
+  included: z.array(
+    z.object({
+      id: z.string(),
+      attributes: z.object({
+        episodeCount: z.number().nullable(),
+        averageRating: z.string().nullable(),
+        endDate: z.string().nullable(),
+        startDate: z.string(),
+      }),
+    })
+  ),
+});
+
 export const LibraryInfo = z.object({
   data: z.array(
     z.object({

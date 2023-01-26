@@ -26,6 +26,7 @@ export async function getFansubRSS(animeName: string) {
 async function getLatestAnimeEntry(html: string) {
   Logger.info(`${_cc.byw}Importing JSDOM Library...`);
   const JSDOM = (await import('jsdom')).JSDOM;
+  Logger.info(`${_cc.byw}Parsing DOM...`);
   const dom = new JSDOM(html);
   const els = dom.window.document.querySelectorAll<HTMLTableRowElement>('.success');
   if (!els[0]) {

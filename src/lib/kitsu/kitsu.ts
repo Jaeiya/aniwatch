@@ -131,6 +131,7 @@ export class KitsuAPI {
         animeList.push([...anime]);
       }
     });
+    if (!animeList.length) return [];
     const libraryURL = new URL('https://kitsu.io/api/edge/library-entries');
     libraryURL.searchParams.append(
       'filter[id]',

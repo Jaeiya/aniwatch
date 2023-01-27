@@ -8,7 +8,7 @@ export function isDev() {
   return process.env.NODE_ENV == 'development';
 }
 
-export function toEpisodeNum(epNum: number) {
+export function toEpisodeNumberStr(epNum: number) {
   if (epNum < 10) {
     return `0${epNum}`;
   }

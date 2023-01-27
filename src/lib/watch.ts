@@ -1,7 +1,12 @@
 import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import K from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
-import { fitString, pathJoin, titleFromAnimeFileName, toEpisodeNum } from './utils.js';
+import {
+  fitString,
+  pathJoin,
+  titleFromAnimeFileName,
+  toEpisodeNumberStr,
+} from './utils.js';
 import help from './help.js';
 
 const _cc = Logger.consoleColors;
@@ -13,13 +18,13 @@ export async function watchAnime(
 ) {
   validateParams([epName, epNums, workingDir]);
   Logger.info(`Working directory: ${_cc.bgn}${workingDir}`);
-  const [lookupNum, progressNum] = epNums;
+  const [rawEpNum, progressNum] = epNums;
 
   tryCreateWatchedDir(workingDir);
-  const saneEpNum = toEpisodeNum(Number(lookupNum));
-  const fansubFileNames = filterFansubs(workingDir, epName, `- ${saneEpNum}`);
+  const epNumStr = toEpisodeNumberStr(Number(rawEpNum));
+  const fansubFileNames = filterFansubs(workingDir, epName, `- ${epNumStr}`);
 
-  validateFileNames(fansubFileNames, epName, saneEpNum);
+  validateFileNames(fansubFileNames, epName, epNumStr);
   const cachedAnime = K.animeCache.filter(
     (anime) =>
       anime[1].toLowerCase().includes(epName) || anime[2].toLowerCase().includes(epName)
@@ -30,7 +35,7 @@ export async function watchAnime(
     Logger.error(
       `${_cc.bcn}Missing:${_cc.x} ${_cc.gn}${titleFromAnimeFileName(
         fansubFileNames[0],
-        saneEpNum
+        epNumStr
       )}`
     );
     process.exit(1);
@@ -50,7 +55,7 @@ export async function watchAnime(
       id: cachedID,
       type: 'library-entries',
       attributes: {
-        progress: Number(progressNum || lookupNum),
+        progress: Number(progressNum || rawEpNum),
       },
     },
   });
@@ -103,26 +108,29 @@ function filterFansubs(workingDir: string, epName: string, epNumSyntax: string) 
     );
 }
 
-function validateFileNames(fileNames: string[], epName: string, saneEpNum: string) {
-  if (fileNames.length > 1) {
-    Logger.error(`${_cc.brd}More than one file name found`);
-    fileNames.forEach((ep) => {
-      const trimmedFileName = fitString(ep.split('- ' + saneEpNum)[0].trimEnd(), 60);
-      const coloredFileName = trimmedFileName.replace(
-        epName,
-        `${_cc.byw}${epName}${_cc.x}`
-      );
-      Logger.error(`${_cc.bwt}${coloredFileName} - ${saneEpNum}`);
-    });
-    process.exit(1);
-  }
-
-  if (fileNames.length == 0) {
+function validateFileNames(fileNames: string[], epName: string, epNumStr: string) {
+  if (!fileNames.length) {
     Logger.error(
-      `${_cc.byw}${epName}${_cc.x} episode ${_cc.byw}${saneEpNum}${_cc.x}${_cc.brd} does not exist`
+      `${_cc.byw}${epName}${_cc.x} episode ${_cc.byw}${epNumStr}${_cc.x} does NOT exist`
     );
     process.exit(1);
   }
+  if (fileNames.length == 1) return;
+  displayErrorTooManyFiles(fileNames, epName, epNumStr);
+  process.exit(1);
+}
+
+function displayErrorTooManyFiles(fileNames: string[], epName: string, epNumStr: string) {
+  const errorChain = ['', `${_cc.brd}More than one file name found`];
+  for (const fileName of fileNames) {
+    const trimmedFileName = fitString(fileName.split('- ' + epNumStr)[0].trimEnd(), 60);
+    const coloredFileName = trimmedFileName.replace(
+      epName,
+      `${_cc.byw}${epName}${_cc.x}`
+    );
+    errorChain.push(`${_cc.bwt}${coloredFileName} - ${epNumStr}`);
+  }
+  Logger.chainError(errorChain);
 }
 
 function moveFileToWatchedDir(fileName: string, workingDir: string) {

@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import K from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
 import { fitString, pathJoin, titleFromAnimeFileName, toEpisodeNum } from './utils.js';
+import help from './help.js';
 
 const _cc = Logger.consoleColors;
 
@@ -65,20 +66,17 @@ function validateParams(params: [string, string[], string]) {
     process.exit(1);
   }
 
-  if (!epName) {
-    Logger.error('Missing episode name argument');
-    process.exit(1);
-  }
-
-  if (!epNumbers.length) {
-    Logger.error('Missing episode number argument');
-    process.exit(1);
-  }
-
-  if (isNaN(Number(epNumbers[0])) || isNaN(Number(epNumbers[1]))) {
-    Logger.error(
-      `You passed an invalid episode number: ${_cc.byw}${epNumbers.join(', ')}`
-    );
+  if (
+    !epName ||
+    !epNumbers.length ||
+    isNaN(Number(epNumbers[0])) ||
+    isNaN(Number(epNumbers[1]))
+  ) {
+    Logger.chainError([
+      'Incorrect Argument Syntax',
+      `${_cc.byw}Read the syntax below and try again`,
+    ]);
+    help.displayDefaultHelp();
     process.exit(1);
   }
 }

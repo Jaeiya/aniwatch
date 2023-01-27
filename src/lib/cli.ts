@@ -22,7 +22,6 @@ const workingDir = process.cwd();
 const userArgs = process.argv.slice(2);
 const flagArgs = userArgs.filter((arg: string) => arg.indexOf('-') == 0 && arg[2] != '-');
 const nonFlagArgs = userArgs.filter((arg) => !flagArgs.includes(arg));
-const _simpleFlagHelp = help.getSimpleFlagHelp();
 
 export default {
   execPath,
@@ -72,14 +71,18 @@ function isValidSingleFlag(
   shortFlag: ValidShortFlags,
   longFlag: ValidLongFlags,
   numOfArgs = 0,
-  help = _simpleFlagHelp
+  helpArray?: string[]
 ) {
   const isValidFlag = hasShortFlag(shortFlag) || hasLongFlag(longFlag);
   if (!isValidFlag) return false;
   if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
     Logger.error(`${_cc.rd}Invalid Flag Syntax`);
     Logger.error('Read the help below to learn the correct syntax');
-    Logger.chainInfo(['', ...help]);
+    if (helpArray) {
+      Logger.chainInfo(['', ...helpArray]);
+    } else {
+      help.displaySimpleFlagHelp();
+    }
     process.exit(1);
   }
   return true;

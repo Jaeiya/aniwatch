@@ -85,7 +85,7 @@ function execWatchAnime() {
   }
   if (flagArgs.length < 2 || flagArgs.length > 3) {
     Logger.error('Invalid Syntax');
-    Logger.chainInfo(['', ...help.getDefaultHelp()]);
+    help.displayDefaultHelp();
     process.exit(1);
   }
   watchAnime(flagArgs[0], [flagArgs[1], flagArgs[2] || ''], _workingDir);

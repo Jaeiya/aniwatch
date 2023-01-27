@@ -1,11 +1,15 @@
 import z from 'zod';
 
+export type UserDataResp = z.infer<typeof UserDataRespSchema>;
 export type UserData = UserDataResp['data'][0] & {
   stats: UserDataResp['included'][0]['attributes']['statsData'];
 };
-
-export type UserDataResp = z.infer<typeof UserDataResp>;
-export const UserDataResp = z.object({
+export type UserDataRequired = Required<
+  UserData & {
+    stats: Required<UserData['stats']>;
+  }
+>;
+export const UserDataRespSchema = z.object({
   data: z.array(
     z.object({
       id: z.string(),
@@ -27,8 +31,8 @@ export const UserDataResp = z.object({
   ),
 });
 
-export type ConfigFile = z.infer<typeof ConfigFile>;
-export const ConfigFile = z.object({
+export type ConfigFile = z.infer<typeof ConfigFileSchema>;
+export const ConfigFileSchema = z.object({
   id: z.string(),
   urls: z.object({
     profile: z.string(),
@@ -44,8 +48,8 @@ export const ConfigFile = z.object({
   refresh_token: z.string(),
 });
 
-export type AnimeCache = z.infer<typeof AnimeCache>;
-export const AnimeCache = z.array(z.tuple([z.string(), z.string(), z.string()]));
+export type AnimeCache = z.infer<typeof AnimeCacheSchema>;
+export const AnimeCacheSchema = z.array(z.tuple([z.string(), z.string(), z.string()]));
 
 export type LibraryEntries = z.infer<typeof LibraryEntriesSchema>;
 export const LibraryEntriesSchema = z.object({
@@ -71,7 +75,7 @@ export const LibraryEntriesSchema = z.object({
   ),
 });
 
-export const LibraryInfo = z.object({
+export const LibraryInfoSchema = z.object({
   data: z.array(
     z.object({
       id: z.string(),
@@ -91,7 +95,7 @@ export const LibraryInfo = z.object({
   ),
 });
 
-export const LibraryPatchRespData = z.object({
+export const LibraryPatchRespSchema = z.object({
   data: z.object({
     id: z.string(),
     attributes: z.object({

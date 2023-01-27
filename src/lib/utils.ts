@@ -1,5 +1,5 @@
 import { resolve, join } from 'path';
-import { ZodError } from 'zod';
+import { z, ZodError, ZodObject, ZodSchema } from 'zod';
 import { Logger } from './logger.js';
 
 const _cc = Logger.consoleColors;
@@ -15,19 +15,24 @@ export function toEpisodeNum(epNum: number) {
   return `${epNum}`;
 }
 
-export function fitString(str: string, maxLength: number) {
-  if (str.length > maxLength) {
-    return `${str.substring(0, maxLength)}...`;
+export function parseWithZod<T extends ZodSchema>(
+  schema: T,
+  data: unknown,
+  failedSchema: string
+) {
+  const zodResp = schema.safeParse(data);
+  if (!zodResp.success) {
+    Logger.chainError([
+      `${_cc.rd}Failed To Parse ${_cc.byw}${failedSchema} ${_cc.rd}Schema`,
+      ...zodResp.error.issues.map((issue) => {
+        return `${_cc.yw}${issue.path}${_cc.x}: ${
+          issue.message == 'Required' ? 'Missing or Undefined' : issue.message
+        }`;
+      }),
+    ]);
+    process.exit(1);
   }
-  return str;
-}
-
-export function displayZodErrors(zodError: ZodError, msg: string) {
-  console.log('');
-  Logger.error(`${_cc.rd}${msg}`);
-  zodError.issues.forEach((issue) => {
-    Logger.error(`${_cc.yw}${issue.path}${_cc.x}: ${issue.message}`);
-  });
+  return zodResp.data as z.infer<T>;
 }
 
 export async function tryCatchAsync<T>(p: Promise<T>): Promise<T | Error> {
@@ -39,6 +44,13 @@ export async function tryCatchAsync<T>(p: Promise<T>): Promise<T | Error> {
   }
 }
 
+export function fitString(str: string, maxLength: number) {
+  if (str.length > maxLength) {
+    return `${str.substring(0, maxLength)}...`;
+  }
+  return str;
+}
+
 export function truncateStr(str: string, length: number) {
   const substr = str.substring(0, length);
   return substr.length < str.length ? `${substr}...` : str;
@@ -46,6 +58,17 @@ export function truncateStr(str: string, length: number) {
 
 export function titleFromAnimeFileName(name: string, ep: string) {
   return name.replace(`[subsplease]`, '').split(`- ${ep}`)[0].trim();
+}
+
+export function getTimeWatchedStr(seconds: number) {
+  const hoursWatchingAnime = seconds / 60 / 60;
+  const daysWatchingAnime = hoursWatchingAnime / 24;
+  const monthsWatchingAnime = daysWatchingAnime / 30;
+  return monthsWatchingAnime >= 1
+    ? monthsWatchingAnime.toFixed(1) + ' Months'
+    : daysWatchingAnime >= 1
+    ? daysWatchingAnime.toFixed(1) + ' Days'
+    : hoursWatchingAnime.toFixed(1) + ' Hours';
 }
 
 export const pathResolve = resolve;

@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
-import { KitsuAPI } from './kitsu/kitsu.js';
+import K from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
 import { fitString, pathJoin, titleFromAnimeFileName, toEpisodeNum } from './utils.js';
 
@@ -8,8 +8,7 @@ const _cc = Logger.consoleColors;
 export async function watchAnime(
   epName: string,
   epNums: [string, string],
-  workingDir: string,
-  kitsu: KitsuAPI
+  workingDir: string
 ) {
   validateParams([epName, epNums, workingDir]);
   Logger.info(`Working directory: ${_cc.bgn}${workingDir}`);
@@ -20,7 +19,7 @@ export async function watchAnime(
   const fansubFileNames = filterFansubs(workingDir, epName, `- ${saneEpNum}`);
 
   validateFileNames(fansubFileNames, epName, saneEpNum);
-  const cachedAnime = kitsu.animeCache.filter(
+  const cachedAnime = K.animeCache.filter(
     (anime) =>
       anime[1].toLowerCase().includes(epName) || anime[2].toLowerCase().includes(epName)
   );
@@ -45,18 +44,15 @@ export async function watchAnime(
   const cachedID = cachedAnime[0][0];
   Logger.info(`${_cc.bcn}Jap Title:${_cc.x} ${_cc.gn}${cachedAnime[0][1]}`);
   Logger.info(`${_cc.bcn}Eng Title:${_cc.x} ${_cc.gn}${cachedAnime[0][2]}`);
-  await kitsu.updateAnime(
-    `https://kitsu.io/api/edge/library-entries/${cachedAnime[0][0]}`,
-    {
-      data: {
-        id: cachedID,
-        type: 'library-entries',
-        attributes: {
-          progress: Number(progressNum || lookupNum),
-        },
+  await K.updateAnime(`https://kitsu.io/api/edge/library-entries/${cachedID}`, {
+    data: {
+      id: cachedID,
+      type: 'library-entries',
+      attributes: {
+        progress: Number(progressNum || lookupNum),
       },
-    }
-  );
+    },
+  });
   moveFileToWatchedDir(fansubFileNames[0], workingDir);
   Logger.info(`${_cc.bcn}Moved To:${_cc.x} ${_cc.byw}${pathJoin(workingDir, 'watched')}`);
 }

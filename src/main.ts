@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import CLI from './lib/cli.js';
-import { KitsuAPI } from './lib/kitsu/kitsu.js';
+import K from './lib/kitsu/kitsu.js';
 import { Logger } from './lib/logger.js';
 import { isDev, pathResolve } from './lib/utils.js';
 import { watchAnime } from './lib/watch.js';
@@ -18,15 +18,14 @@ process.removeAllListeners('warning');
 const _cc = Logger.consoleColors;
 
 const _workingDir = isDev() ? pathResolve('E:/downloads/anime') : process.cwd();
-const k = new KitsuAPI();
-await k.init();
+await K.init();
 
 if (CLI.tryRebuildCacheFlag()) {
-  k.rebuildCache();
+  K.rebuildCache();
 } else if (CLI.tryProfileFlag()) {
-  k.displayUserProfile();
+  K.displayUserProfile();
 } else if (CLI.tryCacheFlag()) {
-  k.displayCacheInfo();
+  K.displayCacheInfo();
 } else if (CLI.tryFindAnimeFlag()) {
   await findAnime();
 } else if (CLI.tryHelpFlag()) {
@@ -48,7 +47,7 @@ if (CLI.tryRebuildCacheFlag()) {
 }
 
 async function findAnime() {
-  const animeList = await k.findAnime(CLI.nonFlagArgs.join(' '));
+  const animeList = await K.findAnime(CLI.nonFlagArgs.join(' '));
   if (!animeList.length) {
     Logger.chainInfo([
       `${_cc.byw}No Entries Found`,
@@ -81,7 +80,7 @@ async function getRSSFeedInfo() {
 
 function execWatchAnime() {
   const flagArgs = CLI.nonFlagArgs;
-  if (!CLI.userArgs.length && k.isFirstSetup) {
+  if (!CLI.userArgs.length && K.isFirstSetup) {
     return;
   }
   if (flagArgs.length < 2 || flagArgs.length > 3) {
@@ -89,5 +88,5 @@ function execWatchAnime() {
     Logger.chainInfo(['', ...help.getDefaultHelp()]);
     process.exit(1);
   }
-  watchAnime(flagArgs[0], [flagArgs[1], flagArgs[2] || ''], _workingDir, k);
+  watchAnime(flagArgs[0], [flagArgs[1], flagArgs[2] || ''], _workingDir);
 }

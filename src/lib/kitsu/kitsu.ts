@@ -38,7 +38,7 @@ type LibraryPatchData = {
   };
 };
 
-type CachedAnime = [libID: string, cannonTitle: string, englishTitle: string][];
+export type CachedAnime = [libID: string, cannonTitle: string, englishTitle: string][];
 
 const _workingDir = process.cwd();
 const _cc = Logger.consoleColors;

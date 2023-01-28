@@ -91,7 +91,7 @@ async function tryLoadConfig() {
 
 async function trySetupConfig() {
   Logger.info(`Missing Config -- ${_cc.bgn}Setup Activated${_cc.x}`);
-  tryGetSetupConsent();
+  await tryGetSetupConsent();
   const user = await promptUser();
   if (!areStatsDefined(user)) {
     Logger.chainError([

@@ -29,7 +29,7 @@ export async function watchAnime(
 
   tryCreateWatchedDir(workingDir);
   const epNumStr = toEpisodeNumberStr(Number(fileEpNumStr));
-  const fansubFileNames = filterFansubs(workingDir, epName, `- ${epNumStr}`);
+  const fansubFileNames = filterSubsPleaseFiles(workingDir, epName, `- ${epNumStr}`);
 
   const cachedAnime = getCachedAnimeFromFiles(fansubFileNames, epName, epNumStr);
   validateCachedAnime(cachedAnime, fansubFileNames, epNumStr);
@@ -78,7 +78,7 @@ function tryCreateWatchedDir(workingDir: string) {
   }
 }
 
-function filterFansubs(workingDir: string, epName: string, epNumSyntax: string) {
+function filterSubsPleaseFiles(workingDir: string, epName: string, epNumSyntax: string) {
   return readdirSync(workingDir, { withFileTypes: true })
     .filter((file) => file.isFile())
     .map((file) => file.name.toLowerCase())

@@ -26,6 +26,8 @@ if (CLI.tryRebuildCacheFlag()) {
   K.displayUserProfile();
 } else if (CLI.tryCacheFlag()) {
   K.displayCacheInfo();
+} else if (CLI.tryRebuildProfileFlag()) {
+  await K.rebuildProfile();
 } else if (CLI.tryFindAnimeFlag()) {
   await findAnime();
 } else if (CLI.tryHelpFlag()) {

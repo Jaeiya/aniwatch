@@ -59,6 +59,7 @@ export default {
   },
   init,
   updateAnime,
+  rebuildProfile,
   findAnime,
   rebuildCache,
   displayCacheInfo,
@@ -134,6 +135,18 @@ async function promptUser(): Promise<UserData> {
     return await promptUser();
   }
   return user;
+}
+
+async function rebuildProfile() {
+  const userData = await getUserData(_config.username);
+  const { time, completed } = userData.stats;
+  const { secondsSpentWatching, completedSeries } = _config.stats;
+
+  _config.stats.secondsSpentWatching = time ?? secondsSpentWatching;
+  _config.stats.completedSeries = completed ?? completedSeries;
+  _config.about = userData.attributes.about;
+  saveConfig(_config);
+  Logger.chainInfo(['', `${_cc.bcn}Profile: ${_cc.byw}Updated!`]);
 }
 
 async function getUserData(userName: string) {

@@ -25,8 +25,8 @@ CLI.registerFlag('p', 'profile', K.displayUserProfile, 'simple');
 CLI.registerFlag('rp', 'rebuild-profile', K.rebuildProfile, 'simple');
 CLI.registerFlag('c', 'cache', K.displayCacheInfo, 'simple');
 CLI.registerFlag('rc', 'rebuild-cache', K.rebuildCache, 'simple');
-CLI.registerFlag('f', '', findAnime, 'multiArg');
-CLI.registerFlag('rss', 'help', getRSSFeedInfo, 'multiArg');
+CLI.registerFlag('f', 'find-anime', findAnime, 'multiArg');
+CLI.registerFlag('rss', 'rss-feed', getRSSFeedInfo, 'multiArg');
 
 if (!(await CLI.tryExecFlags())) {
   execWatchAnime();

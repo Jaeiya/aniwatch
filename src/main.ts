@@ -20,34 +20,16 @@ const _cc = Logger.consoleColors;
 const _workingDir = isDev() ? pathResolve('E:/downloads/anime') : process.cwd();
 await K.init();
 
-if (CLI.tryRebuildCacheFlag()) {
-  K.rebuildCache();
-} else if (CLI.tryProfileFlag()) {
-  K.displayUserProfile();
-} else if (CLI.tryCacheFlag()) {
-  K.displayCacheInfo();
-} else if (CLI.tryRebuildProfileFlag()) {
-  await K.rebuildProfile();
-} else if (CLI.tryFindAnimeFlag()) {
-  await findAnime();
-} else if (CLI.tryHelpFlag()) {
-  help.displayFullHelp();
-} else if (CLI.tryRSSFlag()) {
-  await getRSSFeedInfo();
-} else if (CLI.tryRefreshTokenFlag()) {
-  await K.refreshToken();
-} else {
-  if (CLI.flagArgs.length) {
-    Logger.error(`${_cc.rd}Flag Not Found`);
-    Logger.error(`Check the Help below for valid flag usage!`);
-    if (CLI.nonFlagArgs.length > 0) {
-      help.displayComplexFlagHelp();
-    } else {
-      help.displayFlagHelp();
-    }
-  } else {
-    execWatchAnime();
-  }
+CLI.registerFlag('h', 'help', help.displayFullHelp, 'simple');
+CLI.registerFlag('p', 'profile', K.displayUserProfile, 'simple');
+CLI.registerFlag('rp', 'rebuild-profile', K.rebuildProfile, 'simple');
+CLI.registerFlag('c', 'cache', K.displayCacheInfo, 'simple');
+CLI.registerFlag('rc', 'rebuild-cache', K.rebuildCache, 'simple');
+CLI.registerFlag('f', '', findAnime, 'multiArg');
+CLI.registerFlag('rss', 'help', getRSSFeedInfo, 'multiArg');
+
+if (!(await CLI.tryExecFlags())) {
+  execWatchAnime();
 }
 
 async function findAnime() {

@@ -1,20 +1,14 @@
 import { Logger } from './logger.js';
 import help from './help.js';
 
-type ValidShortFlags = typeof _validShortFlags[number];
-type ValidLongFlags = typeof _validLongFlags[number];
-
-const _validShortFlags = <const>['rc', 'p', 'rp', 'c', 'rt', 'f', 'rss', 'h'];
-const _validLongFlags = <const>[
-  'rebuild-cache',
-  'profile',
-  'rebuild-profile',
-  'cache',
-  'refresh-token',
-  'find-anime',
-  'rss-feed',
-  'help',
+type RegisteredFlag = [
+  short: string,
+  long: string,
+  func: () => void | Promise<void>,
+  type: 'multiArg' | 'simple'
 ];
+
+const _registeredFlags: RegisteredFlag[] = [];
 
 const _cc = Logger.consoleColors;
 const rawArgs = process.argv;
@@ -24,6 +18,7 @@ const workingDir = process.cwd();
 const userArgs = process.argv.slice(2);
 const flagArgs = userArgs.filter((arg: string) => arg.indexOf('-') == 0 && arg[2] != '-');
 const nonFlagArgs = userArgs.filter((arg) => !flagArgs.includes(arg));
+const cleanFlagArgs = flagArgs.map(removeLeadingDash);
 
 export default {
   execPath,
@@ -33,60 +28,58 @@ export default {
   userArgs,
   flagArgs,
   nonFlagArgs,
-  tryRebuildCacheFlag,
-  tryProfileFlag,
-  tryRebuildProfileFlag,
-  tryRefreshTokenFlag,
-  tryHelpFlag,
-  tryCacheFlag,
+  registerFlag,
+  tryExecFlags,
   tryFindAnimeFlag,
   tryRSSFlag,
 };
 
-function tryProfileFlag() {
-  return isValidSingleFlag('p', 'profile');
+async function tryExecFlags() {
+  const regFlag = _registeredFlags.find((rf) => rf.includes(cleanFlagArgs[0]));
+  if (!regFlag && cleanFlagArgs[0]) {
+    Logger.chainError([
+      '',
+      `${_cc.rd}Flag Error`,
+      `${_cc.bcn}Unknown Flag: ${_cc.byw}${flagArgs[0]}`,
+    ]);
+    process.exit(1);
+  }
+  if (!regFlag) return false;
+  const [, , func, type] = regFlag;
+  type == 'simple'
+    ? isValidSingleFlag(0)
+    : isValidSingleFlag(Infinity, help.getFindAnimeHelp());
+
+  if (func instanceof Promise) {
+    await func();
+  } else {
+    func();
+  }
+  return true;
 }
 
-function tryCacheFlag() {
-  return isValidSingleFlag('c', 'cache');
-}
-
-function tryRebuildCacheFlag() {
-  return isValidSingleFlag('rc', 'rebuild-cache');
-}
-
-function tryHelpFlag() {
-  return isValidSingleFlag('h', 'help');
-}
-
-function tryRebuildProfileFlag() {
-  return isValidSingleFlag('rp', 'rebuild-profile');
-}
-
-function tryRefreshTokenFlag() {
-  return isValidSingleFlag('rt', 'refresh-token');
+function registerFlag(
+  shortFlag: string,
+  longFlag: string,
+  func: () => void | Promise<void>,
+  type: 'multiArg' | 'simple'
+) {
+  _registeredFlags.push([shortFlag, longFlag, func, type]);
 }
 
 function tryFindAnimeFlag() {
-  return isValidSingleFlag('f', 'find-anime', Infinity, help.getFindAnimeHelp());
+  return isValidSingleFlag(Infinity, help.getFindAnimeHelp());
 }
 
 function tryRSSFlag() {
-  return isValidSingleFlag('rss', 'rss-feed', Infinity, help.getRSSFeedHelp());
+  return isValidSingleFlag(Infinity, help.getRSSFeedHelp());
 }
 
 /**
  * Tests for a valid flag that can only be used by itself
  * with the specified number of arguments.
  */
-function isValidSingleFlag(
-  shortFlag: ValidShortFlags,
-  longFlag: ValidLongFlags,
-  numOfArgs = 0,
-  helpArray?: string[]
-) {
-  const isValidFlag = hasShortFlag(shortFlag) || hasLongFlag(longFlag);
-  if (!isValidFlag) return false;
+function isValidSingleFlag(numOfArgs: number, helpArray?: string[]) {
   if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
     Logger.error(`${_cc.rd}Invalid Flag Syntax`);
     Logger.error('Read the help below to learn the correct syntax');
@@ -100,10 +93,9 @@ function isValidSingleFlag(
   return true;
 }
 
-function hasShortFlag(flag: ValidShortFlags) {
-  return flagArgs.includes(`-${flag}`);
-}
-
-function hasLongFlag(flag: ValidLongFlags) {
-  return flagArgs.includes(`--${flag}`);
+function removeLeadingDash(str: string): string {
+  if (str[0] == '-') {
+    return removeLeadingDash(str.substring(1));
+  }
+  return str;
 }

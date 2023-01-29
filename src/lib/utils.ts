@@ -60,15 +60,28 @@ export function titleFromAnimeFileName(name: string, ep: string) {
   return name.replace(`[subsplease]`, '').split(`- ${ep}`)[0].trim();
 }
 
-export function getTimeWatchedStr(seconds: number) {
+export function getColoredTimeWatchedStr(seconds: number) {
   const hoursWatchingAnime = seconds / 60 / 60;
+  const leftOverMinutes = (hoursWatchingAnime % 1) * 60;
   const daysWatchingAnime = hoursWatchingAnime / 24;
   const monthsWatchingAnime = daysWatchingAnime / 30;
-  return monthsWatchingAnime >= 1
-    ? monthsWatchingAnime.toFixed(1) + ' Months'
-    : daysWatchingAnime >= 1
-    ? daysWatchingAnime.toFixed(1) + ' Days'
-    : hoursWatchingAnime.toFixed(1) + ' Hours';
+
+  const coloredMinutesLeft = `${_cc.byw}${leftOverMinutes.toFixed(0)}${_cc.gn} Minutes`;
+  const coloredHours = `${_cc.byw}${Math.floor(hoursWatchingAnime)}${_cc.gn} Hours`;
+  const coloredDays = `${_cc.byw}${daysWatchingAnime.toFixed(1)}${_cc.gn} Days`;
+  const coloredMonths = `${_cc.byw}${monthsWatchingAnime.toFixed(1)}${_cc.gn} Months`;
+
+  const allTimeStr =
+    monthsWatchingAnime >= 1
+      ? coloredMonths
+      : daysWatchingAnime >= 1
+      ? coloredDays
+      : coloredHours;
+
+  return {
+    allTimeStr,
+    hoursAndMinutesLeft: `${coloredHours}${_cc.gn}, ${coloredMinutesLeft}`,
+  };
 }
 
 export const pathResolve = resolve;

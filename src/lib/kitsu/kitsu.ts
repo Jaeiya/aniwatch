@@ -1,6 +1,11 @@
 import { readFile } from 'fs/promises';
 import { Logger } from '../logger.js';
-import { getTimeWatchedStr, parseWithZod, pathJoin, tryCatchAsync } from '../utils.js';
+import {
+  getColoredTimeWatchedStr,
+  parseWithZod,
+  pathJoin,
+  tryCatchAsync,
+} from '../utils.js';
 import { HTTP } from '../http.js';
 import { existsSync, writeFileSync } from 'fs';
 import {
@@ -375,14 +380,15 @@ function displayCacheInfo() {
 }
 
 function displayUserProfile() {
+  const { allTimeStr, hoursAndMinutesLeft } = getColoredTimeWatchedStr(
+    _config.stats.secondsSpentWatching
+  );
   Logger.chainInfo([
     `${_cc.byw}Current User Profile`,
     `${_cc.bcn}Name:${_cc.x}${_cc.gn} ${_config.username}`,
     `${_cc.bcn}About:${_cc.x} ${_config.about}`,
     `${_cc.bcn}Link:${_cc.x}${_cc.gn} ${_config.urls.profile}`,
-    `${_cc.bcn}Watch Time:${_cc.x}${_cc.gn} ${getTimeWatchedStr(
-      _config.stats.secondsSpentWatching
-    )}`,
+    `${_cc.bcn}Watch Time:${_cc.x}${_cc.gn} ${allTimeStr} or ${hoursAndMinutesLeft}`,
     `${_cc.bcn}Series Completed:${_cc.x}${_cc.gn} ${_config.stats.completedSeries}`,
   ]);
 }

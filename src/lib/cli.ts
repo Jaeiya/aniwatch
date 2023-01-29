@@ -50,11 +50,7 @@ async function tryExecFlags() {
     ? isValidSingleFlag(0)
     : isValidSingleFlag(Infinity, help.getFindAnimeHelp());
 
-  if (func instanceof Promise) {
-    await func();
-  } else {
-    func();
-  }
+  func instanceof Promise ? await func() : func();
   return true;
 }
 

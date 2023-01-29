@@ -1,5 +1,5 @@
 import { resolve, join } from 'path';
-import { z, ZodError, ZodObject, ZodSchema } from 'zod';
+import { z, ZodSchema } from 'zod';
 import { Logger } from './logger.js';
 
 const _cc = Logger.consoleColors;

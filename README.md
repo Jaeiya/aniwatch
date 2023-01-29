@@ -6,6 +6,8 @@ Aniwatch is designed to find a single anime episode on your hard drive from Subs
 
 ### Install
 
+Clone this repository and then run the following command in the directory where you cloned it. _I will not be publishing this to NPM._
+
 `npm i`
 
 **Important!!**

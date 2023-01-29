@@ -67,6 +67,7 @@ export default {
   rebuildProfile,
   findAnime,
   rebuildCache,
+  refreshToken,
   displayCacheInfo,
   displayUserProfile,
 };
@@ -351,8 +352,8 @@ async function refreshToken() {
   _config.refresh_token = data.refresh_token;
   saveConfig(_config);
   Logger.chainInfo([
-    `${_cc.bcn}Config File: ${_cc.byw}Saved`,
-    `Refreshed Access Token: ${data.access_token}`,
+    `${_cc.bcn}Config File: ${_cc.gn}Saved`,
+    `${_cc.bcn}New Token: ${_cc.gn}${data.access_token}`,
   ]);
 }
 

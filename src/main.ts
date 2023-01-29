@@ -34,6 +34,8 @@ if (CLI.tryRebuildCacheFlag()) {
   help.displayFullHelp();
 } else if (CLI.tryRSSFlag()) {
   await getRSSFeedInfo();
+} else if (CLI.tryRefreshTokenFlag()) {
+  await K.refreshToken();
 } else {
   if (CLI.flagArgs.length) {
     Logger.error(`${_cc.rd}Flag Not Found`);

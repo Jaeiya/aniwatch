@@ -4,12 +4,13 @@ import help from './help.js';
 type ValidShortFlags = typeof _validShortFlags[number];
 type ValidLongFlags = typeof _validLongFlags[number];
 
-const _validShortFlags = <const>['rc', 'p', 'rp', 'c', 'f', 'rss', 'h'];
+const _validShortFlags = <const>['rc', 'p', 'rp', 'c', 'rt', 'f', 'rss', 'h'];
 const _validLongFlags = <const>[
   'rebuild-cache',
   'profile',
   'rebuild-profile',
   'cache',
+  'refresh-token',
   'find-anime',
   'rss-feed',
   'help',
@@ -35,6 +36,7 @@ export default {
   tryRebuildCacheFlag,
   tryProfileFlag,
   tryRebuildProfileFlag,
+  tryRefreshTokenFlag,
   tryHelpFlag,
   tryCacheFlag,
   tryFindAnimeFlag,
@@ -59,6 +61,10 @@ function tryHelpFlag() {
 
 function tryRebuildProfileFlag() {
   return isValidSingleFlag('rp', 'rebuild-profile');
+}
+
+function tryRefreshTokenFlag() {
+  return isValidSingleFlag('rt', 'refresh-token');
 }
 
 function tryFindAnimeFlag() {

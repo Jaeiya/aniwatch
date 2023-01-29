@@ -1,6 +1,6 @@
 # Read Me
 
-Aniwatch is designed to find a single anime episode on your hard drive from SubsPlease and move it to a watched folder. I'm too lazy to do this manually, so I wrote this very simple script.
+Aniwatch is a CLI application designed to find a user-specified anime episode, at the working directory, filtered by SubsPlease Fansub group. If found, it will update your Kitsu watch list and move the file to a "watched" folder.
 
 ## Getting Started
 
@@ -31,3 +31,10 @@ VSCODE users can simply execute the `Run Build Task` command (or by using the co
 ### Run using global command
 
 `aniwatch <args>`
+
+## Need Help?
+
+There is built-in help in the form of a help flag. This will give you a full detailed rundown of how to use every feature of the program.
+
+`aniwatch -h`
+`aniwatch --help`

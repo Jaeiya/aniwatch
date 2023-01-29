@@ -36,5 +36,4 @@ VSCODE users can simply execute the `Run Build Task` command (or by using the co
 
 There is built-in help in the form of a help flag. This will give you a full detailed rundown of how to use every feature of the program.
 
-`aniwatch -h`
-`aniwatch --help`
+`aniwatch -h` or `aniwatch --help`

@@ -21,10 +21,11 @@ const _arg = _cc.yw;
 
 export default {
   displayFullHelp,
+  displayDefaultHelp,
   displaySimpleFlagHelp,
   displayFlagHelp,
   displayComplexFlagHelp,
-  displayDefaultHelp,
+  displayFindAnimeHelp,
   getFindAnimeHelp,
   getRSSFeedHelp,
 };
@@ -41,6 +42,10 @@ function displayFullHelp() {
   ]);
 }
 
+function displayDefaultHelp() {
+  Logger.chainInfo([...getDefaultHelp()]);
+}
+
 function displaySimpleFlagHelp() {
   Logger.chainInfo(['', ...getSimpleFlagHelp()]);
 }
@@ -53,8 +58,8 @@ function displayComplexFlagHelp() {
   Logger.chainInfo(getComplexFlagHelp());
 }
 
-function displayDefaultHelp() {
-  Logger.chainInfo([...getDefaultHelp()]);
+function displayFindAnimeHelp() {
+  Logger.chainInfo(['', ...getFindAnimeHelp()]);
 }
 
 function getDefaultHelp() {

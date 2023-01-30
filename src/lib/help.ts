@@ -135,7 +135,7 @@ function getSimpleFlagHelp() {
     `${_shd}Examples:`,
     `${_ind1}${_cc.byw}aniwatch ${_fl}-p`,
     `${_ind1}${_cc.byw}aniwatch ${_fl}--profile`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}--rc`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-rc`,
     `${_ind1}${_cc.byw}aniwatch ${_fl}--rebuild-cache`,
   ];
 }
@@ -182,10 +182,10 @@ function getRSSFeedHelp() {
     `${_nl}need to refine your search.`,
     '',
     `${_shd}Syntax:`,
-    `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-rss ${_x}| ${_fl}--rss-feed${_x}] ${_fl}<name>`,
+    `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-rss ${_x}| ${_fl}--rss-feed${_x}] ${_arg}<name>`,
     '',
     `${_shd}Details:`,
-    `${_ind1}${_fl}name    ${_x}Name of any anime`,
+    `${_ind1}${_arg}name    ${_x}Name of any anime`,
     '',
     `${_shd}Examples:`,
     `${_ind1}${_cc.byw}aniwatch ${_fl}-rss ${_arg}"boku no hero"`,

@@ -311,6 +311,7 @@ function buildLibraryAnimeURL(libraryIds: string[]) {
     'fields[anime]',
     'episodeCount,averageRating,endDate,startDate'
   );
+  url.searchParams.append('page[limit]', '200');
   return url;
 }
 

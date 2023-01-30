@@ -22,10 +22,14 @@ const _arg = _cc.yw;
 export default {
   displayFullHelp,
   displayDefaultHelp,
+  displayDefaultSyntax,
   displaySimpleFlagHelp,
+  displaySimpleFlagSyntax,
+  displayFindAnimeHelp,
+  displayFindAnimeSyntax,
+  displayRSSFeedSyntax,
   displayFlagHelp,
   displayComplexFlagHelp,
-  displayFindAnimeHelp,
   getFindAnimeHelp,
   getRSSFeedHelp,
 };
@@ -46,8 +50,16 @@ function displayDefaultHelp() {
   Logger.chainInfo([...getDefaultHelp()]);
 }
 
+function displayDefaultSyntax() {
+  Logger.chainInfo([...getDefaultSyntax()]);
+}
+
 function displaySimpleFlagHelp() {
   Logger.chainInfo(['', ...getSimpleFlagHelp()]);
+}
+
+function displaySimpleFlagSyntax() {
+  Logger.chainInfo(['', ...getSimpleFlagSyntax()]);
 }
 
 function displayFlagHelp() {
@@ -60,6 +72,14 @@ function displayComplexFlagHelp() {
 
 function displayFindAnimeHelp() {
   Logger.chainInfo(['', ...getFindAnimeHelp()]);
+}
+
+function displayFindAnimeSyntax() {
+  Logger.chainInfo(['', ...getFindAnimeSyntax()]);
+}
+
+function displayRSSFeedSyntax() {
+  Logger.chainInfo(['', ...getRSSFeedSyntax()]);
 }
 
 function getDefaultHelp() {
@@ -80,6 +100,12 @@ function getDefaultHelp() {
     `${_nl}This allows you to try again with a more specific`,
     `${_nl}${_arg}<name>${_blk}.`,
     '',
+    ...getDefaultSyntax(),
+  ];
+}
+
+function getDefaultSyntax() {
+  return [
     `${_shd}Default Syntax:`,
     `${_ind1}${_cc.byw}aniwatch ${_arg}<name> <ep> <fep>`,
     '',
@@ -105,6 +131,12 @@ function getSimpleFlagHelp() {
     `${_nl}without arguments. If an attempt is made to use them`,
     `${_nl}with other flags or arguments, an error will occur`,
     '',
+    ...getSimpleFlagSyntax(),
+  ];
+}
+
+function getSimpleFlagSyntax() {
+  return [
     `${_shd}Syntax:`,
     `${_ind1}${_cc.byw}aniwatch ${_x}[ ${_fl}-h  ${_x}| ${_fl}--help${_x}            ]`,
     `${_ind2}${_ind2}[ ${_fl}-p  ${_x}| ${_fl}--profile${_x}         ]`,
@@ -156,6 +188,12 @@ function getFindAnimeHelp() {
     `${_nl}list. If you add it to your watch list, you'll need`,
     `${_nl}to rebuild the cache with ${_fl}-rc ${_blk}or ${_fl}--rebuild-cache`,
     '',
+    ...getFindAnimeSyntax(),
+  ];
+}
+
+function getFindAnimeSyntax() {
+  return [
     `${_shd}Syntax:`,
     `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-f ${_x}| ${_fl}--find-anime${_x}] ${_arg}<name>`,
     '',
@@ -181,6 +219,12 @@ function getRSSFeedHelp() {
     `${_nl}of entries should clue you in on whether or not you`,
     `${_nl}need to refine your search.`,
     '',
+    ...getRSSFeedSyntax(),
+  ];
+}
+
+function getRSSFeedSyntax() {
+  return [
     `${_shd}Syntax:`,
     `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-rss ${_x}| ${_fl}--rss-feed${_x}] ${_arg}<name>`,
     '',

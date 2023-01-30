@@ -30,8 +30,6 @@ export default {
   nonFlagArgs,
   registerFlag,
   tryExecFlags,
-  tryFindAnimeFlag,
-  tryRSSFlag,
 };
 
 async function tryExecFlags() {
@@ -46,6 +44,7 @@ async function tryExecFlags() {
   }
   if (!regFlag) return false;
   const [, , func, type] = regFlag;
+
   type == 'simple'
     ? isValidSingleFlag(0)
     : isValidSingleFlag(Infinity, help.getFindAnimeHelp());
@@ -61,14 +60,6 @@ function registerFlag(
   type: 'multiArg' | 'simple'
 ) {
   _registeredFlags.push([shortFlag, longFlag, func, type]);
-}
-
-function tryFindAnimeFlag() {
-  return isValidSingleFlag(Infinity, help.getFindAnimeHelp());
-}
-
-function tryRSSFlag() {
-  return isValidSingleFlag(Infinity, help.getRSSFeedHelp());
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "aniwatch",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Default project description",
   "type": "module",
   "main": "bin/main.js",

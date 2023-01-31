@@ -5,7 +5,8 @@ type RegisteredFlag = [
   short: string,
   long: string,
   func: () => void | Promise<void>,
-  type: 'multiArg' | 'simple'
+  type: 'multiArg' | 'simple',
+  helpFunc?: () => void
 ];
 
 const _registeredFlags: RegisteredFlag[] = [];
@@ -17,7 +18,9 @@ const sourcePath = process.argv[1];
 const workingDir = process.cwd();
 const userArgs = process.argv.slice(2);
 const flagArgs = userArgs.filter((arg: string) => arg.indexOf('-') == 0 && arg[2] != '-');
-const nonFlagArgs = userArgs.filter((arg) => !flagArgs.includes(arg));
+const nonFlagArgs = userArgs
+  .filter((arg) => !flagArgs.includes(arg))
+  .map((arg) => arg.trim());
 const cleanFlagArgs = flagArgs.map(removeLeadingDash);
 
 export default {
@@ -33,8 +36,10 @@ export default {
 };
 
 async function tryExecFlags() {
+  if (!cleanFlagArgs[0]) return false;
   const regFlag = _registeredFlags.find((rf) => rf.includes(cleanFlagArgs[0]));
-  if (!regFlag && cleanFlagArgs[0]) {
+
+  if (!regFlag) {
     Logger.chainError([
       '',
       `${_cc.rd}Flag Error`,
@@ -42,12 +47,11 @@ async function tryExecFlags() {
     ]);
     process.exit(1);
   }
-  if (!regFlag) return false;
-  const [, , func, type] = regFlag;
 
+  const [, , func, type, helpFunc] = regFlag;
   type == 'simple'
-    ? isValidSingleFlag(0)
-    : isValidSingleFlag(Infinity, help.getFindAnimeHelp());
+    ? isValidSingleFlag(0, helpFunc)
+    : isValidSingleFlag(Infinity, helpFunc) && isMultiArg(helpFunc);
 
   func instanceof Promise ? await func() : func();
   return true;
@@ -57,24 +61,38 @@ function registerFlag(
   shortFlag: string,
   longFlag: string,
   func: () => void | Promise<void>,
-  type: 'multiArg' | 'simple'
+  type: 'multiArg' | 'simple',
+  helpFunc?: () => void
 ) {
-  _registeredFlags.push([shortFlag, longFlag, func, type]);
+  _registeredFlags.push([shortFlag, longFlag, func, type, helpFunc]);
 }
 
 /**
  * Tests for a valid flag that can only be used by itself
  * with the specified number of arguments.
  */
-function isValidSingleFlag(numOfArgs: number, helpArray?: string[]) {
+function isValidSingleFlag(numOfArgs: number, helpFunc?: () => void) {
   if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
-    Logger.error(`${_cc.rd}Invalid Flag Syntax`);
-    Logger.error('Read the help below to learn the correct syntax');
-    if (helpArray) {
-      Logger.chainInfo(['', ...helpArray]);
-    } else {
-      help.displaySimpleFlagHelp();
-    }
+    Logger.chainError([
+      `${_cc.rd}Invalid Flag Syntax`,
+      'Read the help below to learn the correct syntax',
+    ]);
+    helpFunc ? helpFunc() : help.displaySimpleFlagHelp();
+    process.exit(1);
+  }
+  return true;
+}
+
+function isMultiArg(helpFunc?: () => void) {
+  if (!nonFlagArgs.length) {
+    Logger.chainError([
+      `${_cc.rd}Missing Argument`,
+      'Read the help below to learn the correct syntax:',
+    ]);
+    helpFunc
+      ? helpFunc()
+      : Logger.error(`${_cc.bcn}Missing Syntax Help for ${_cc.byw}${flagArgs[0]}`);
+
     process.exit(1);
   }
   return true;

@@ -25,8 +25,8 @@ CLI.registerFlag('p', 'profile', K.displayUserProfile, 'simple');
 CLI.registerFlag('rp', 'rebuild-profile', K.rebuildProfile, 'simple');
 CLI.registerFlag('c', 'cache', K.displayCacheInfo, 'simple');
 CLI.registerFlag('rc', 'rebuild-cache', K.rebuildCache, 'simple');
-CLI.registerFlag('f', 'find-anime', findAnime, 'multiArg');
-CLI.registerFlag('rss', 'rss-feed', getRSSFeedInfo, 'multiArg');
+CLI.registerFlag('f', 'find-anime', findAnime, 'multiArg', help.displayFindAnimeSyntax);
+CLI.registerFlag('rss', 'rss-feed', getRSSFeedInfo, 'multiArg', help.displayRSSSyntax);
 
 if (!(await CLI.tryExecFlags())) {
   execWatchAnime();
@@ -70,8 +70,12 @@ function execWatchAnime() {
     return;
   }
   if (flagArgs.length < 2 || flagArgs.length > 3) {
-    Logger.chainError(['Invalid Syntax', '']);
-    help.displayDefaultHelp();
+    Logger.chainError([
+      `${_cc.rd}Invalid Syntax`,
+      'Read the help below to learn the correct syntax:',
+      '',
+    ]);
+    help.displayDefaultSyntax();
     process.exit(1);
   }
   watchAnime(flagArgs[0], [flagArgs[1], flagArgs[2] || ''], _workingDir);

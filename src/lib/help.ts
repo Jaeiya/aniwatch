@@ -27,7 +27,7 @@ export default {
   displaySimpleFlagSyntax,
   displayFindAnimeHelp,
   displayFindAnimeSyntax,
-  displayRSSFeedSyntax,
+  displayRSSSyntax,
   displayFlagHelp,
   displayComplexFlagHelp,
   getFindAnimeHelp,
@@ -78,7 +78,7 @@ function displayFindAnimeSyntax() {
   Logger.chainInfo(['', ...getFindAnimeSyntax()]);
 }
 
-function displayRSSFeedSyntax() {
+function displayRSSSyntax() {
   Logger.chainInfo(['', ...getRSSFeedSyntax()]);
 }
 

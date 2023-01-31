@@ -20,7 +20,7 @@ const _cc = Logger.consoleColors;
 const _workingDir = isDev() ? pathResolve('E:/downloads/anime') : process.cwd();
 await K.init();
 
-CLI.registerFlag('h', 'help', help.displayFullHelp, 'simple');
+CLI.registerFlag('h', 'help', getHelp, 'multiArg', help.displayHelpAboutHelp);
 CLI.registerFlag('p', 'profile', K.displayUserProfile, 'simple');
 CLI.registerFlag('rp', 'rebuild-profile', K.rebuildProfile, 'simple');
 CLI.registerFlag('c', 'cache', K.displayCacheInfo, 'simple');
@@ -30,6 +30,10 @@ CLI.registerFlag('rss', 'rss-feed', getRSSFeedInfo, 'multiArg', help.displayRSSS
 
 if (!(await CLI.tryExecFlags())) {
   execWatchAnime();
+}
+
+function getHelp() {
+  return help.getHelpFromFlag(CLI.nonFlagArgs.join(' '));
 }
 
 async function findAnime() {

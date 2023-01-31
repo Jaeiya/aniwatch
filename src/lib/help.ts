@@ -20,6 +20,7 @@ const _fl = _cc.bcn;
 const _arg = _cc.yw;
 
 export default {
+  displayHelpAboutHelp,
   displayFullHelp,
   displayDefaultHelp,
   displayDefaultSyntax,
@@ -27,12 +28,86 @@ export default {
   displaySimpleFlagSyntax,
   displayFindAnimeHelp,
   displayFindAnimeSyntax,
+  displayRefreshTokenHelp,
+  displayRSSHelp,
   displayRSSSyntax,
   displayFlagHelp,
   displayComplexFlagHelp,
+  getHelpFromFlag,
   getFindAnimeHelp,
   getRSSFeedHelp,
 };
+
+function displayHelpAboutHelp() {
+  Logger.chainInfo(['', ...getHelpAboutHelp()]);
+}
+
+function getHelpFromFlag(flag: string) {
+  switch (flag) {
+    case 'all':
+    case 'full':
+    case 'get help':
+    case 'get all help':
+    case 'default':
+      return displayFullHelp();
+
+    case 'f':
+    case 'find-anime':
+    case 'find anime':
+    case 'get anime':
+    case 'search anime':
+      return displayFindAnimeHelp();
+
+    case 'rss':
+    case 'rss-feed':
+    case 'rss feed':
+    case 'feed':
+    case 'get rss':
+    case 'find rss':
+    case 'search rss':
+      return displayRSSHelp();
+
+    case 'p':
+    case 'profile':
+    case 'display profile':
+    case 'show profile':
+    case 'get profile':
+      return displayProfileHelp();
+
+    case 'rb':
+    case 'rebuild-profile':
+    case 'rebuild profile':
+    case 'reload profile':
+    case 'load profile':
+      return displayRebuildProfileHelp();
+
+    case 'c':
+    case 'cache':
+    case 'display cache':
+    case 'show cache':
+    case 'get cache':
+      return displayCacheHelp();
+
+    case 'rc':
+    case 'rebuild-cache':
+    case 'rebuild cache':
+    case 'reload cache':
+    case 'load cache':
+      return displayRebuildCacheHelp();
+
+    case 'rt':
+    case 'refresh-token':
+    case 'refresh token':
+    case 'get token':
+    case 'renew token':
+    case 'token':
+      return displayRefreshTokenHelp();
+
+    default:
+      Logger.error(`Missing ${_cc.byw}${flag}${_cc.x} help`);
+      break;
+  }
+}
 
 function displayFullHelp() {
   _chainInfo([
@@ -78,8 +153,105 @@ function displayFindAnimeSyntax() {
   Logger.chainInfo(['', ...getFindAnimeSyntax()]);
 }
 
+function displayRSSHelp() {
+  Logger.chainInfo(['', ...getRSSFeedHelp()]);
+}
+
 function displayRSSSyntax() {
   Logger.chainInfo(['', ...getRSSFeedSyntax()]);
+}
+
+function getHelpAboutHelp() {
+  return [
+    `${_hd}Help`,
+    `${_nl}Allows you to discover all functionality about`,
+    `${_nl}this application.`,
+    '',
+    `${_shd}Syntax:`,
+    `${_nl}${_cc.byw}aniwatch ${_x}[${_fl}-h ${_x}| ${_fl}--help${_x}] ${_arg}<flag|all>`,
+    '',
+    `${_shd}Details:`,
+    `${_ind1}${_arg}flag${_x}   The name of an existing flag that you want more`,
+    `${_ind2}    help with.`,
+    '',
+    `${_ind1}${_arg}all${_x}    Display default help for all flags and arguments.`,
+    '',
+    `${_shd}Examples:`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}f     ${_blk}(Displays all find-anime help)`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}all   ${_blk}(Displays all default help)`,
+  ];
+}
+
+function displayProfileHelp() {
+  Logger.chainInfo([
+    `${_hd}Display Profile:`,
+    `${_nl}This flag allows you to display your currently logged`,
+    `${_nl}in user profile. The displays your Username, About,`,
+    `${_nl}Profile Link, Watch Time, and Completed Series count.`,
+    '',
+    ...getNoArgSyntax(['p', 'profile']),
+  ]);
+}
+
+function displayCacheHelp() {
+  Logger.chainInfo([
+    `${_hd}Display Cache:`,
+    `${_nl}This flag allows you to display the currently saved`,
+    `${_nl}cache information.`,
+    '',
+    ...getNoArgSyntax(['c', 'cache']),
+  ]);
+}
+
+function displayRebuildProfileHelp() {
+  Logger.chainInfo([
+    '',
+    `${_hd}Rebuild Profile:`,
+    `${_nl}Rebuilds your profile data from Kitsu. This is`,
+    `${_nl}useful if you want up-to-date watch time info`,
+    `${_nl}after you've watched an episode.`,
+    '',
+    ...getNoArgSyntax(['rb', 'rebuild-profile']),
+  ]);
+}
+
+function displayRebuildCacheHelp() {
+  Logger.chainInfo([
+    '',
+    `${_hd}Rebuild Cache:`,
+    `${_nl}Rebuilds your cache data from Kitsu. This is`,
+    `${_nl}${_cc.ma}necessary ${_blk}whenever you update your Kitsu watch`,
+    `${_nl}list, using the https://kitsu.io website.`,
+    '',
+    ...getNoArgSyntax(['rc', 'rebuild-cache']),
+  ]);
+}
+
+function displayRefreshTokenHelp() {
+  Logger.chainInfo([
+    '',
+    `${_hd}Refresh Access Token:`,
+    `${_nl}Refreshes your current access token. This will`,
+    `${_nl}only be ${_cc.ma}necessary ${_blk}if your current token`,
+    `${_nl}expires.`,
+    '',
+    `${_nl}Tokens tend to be valid for a long time, so this`,
+    `${_nl}isn't a flag you'll be using very often.`,
+    '',
+    ...getNoArgSyntax(['rt', 'refresh-token']),
+  ]);
+}
+
+function getNoArgSyntax(flags: [string, string]) {
+  const [short, long] = flags;
+  return [
+    `${_shd}Default Syntax:`,
+    `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-${short} ${_x}| ${_fl}--${long}${_x}]`,
+    '',
+    `${_shd}Examples:`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-${short}`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}--${long}`,
+  ];
 }
 
 function getDefaultHelp() {
@@ -209,10 +381,10 @@ function getFindAnimeSyntax() {
 function getRSSFeedHelp() {
   return [
     `${_hd}RSS Feed:`,
-    `${_nl}This flag allows you to search ${_x}nyaa.si${_blk} for an anime`,
-    `${_nl}name filtered by ${_x}SubsPlease ${_blk}and ${_x}1080p${_blk}. This results`,
-    `${_nl}in the number of torrents found, file-name of latest`,
-    `${_nl}torrent and an RSS Feed link.`,
+    `${_nl}Searches ${_x}nyaa.si${_blk} for an anime name filtered by`,
+    `${_nl}${_x}SubsPlease ${_blk}and ${_x}1080p${_blk}. This results in the number`,
+    `${_nl}of torrents found, file-name of latest torrent`,
+    `${_nl}and an RSS Feed link.`,
     '',
     `${_nl}${_cc.ma}NOTE:${_blk} This allows you to quickly set up RSS for your`,
     `${_nl}torrents to be downloaded automatically. The number`,

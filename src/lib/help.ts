@@ -68,6 +68,7 @@ function getHelpFromFlag(flag: string) {
     case 'get rss':
     case 'find rss':
     case 'search rss':
+    case 'lookup rss':
       return displayRSSHelp();
 
     case 'p':
@@ -75,6 +76,7 @@ function getHelpFromFlag(flag: string) {
     case 'display profile':
     case 'show profile':
     case 'get profile':
+    case 'lookup profile':
       return displayProfileHelp();
 
     case 'rb':
@@ -89,6 +91,8 @@ function getHelpFromFlag(flag: string) {
     case 'display cache':
     case 'show cache':
     case 'get cache':
+    case 'lookup cache':
+    case 'list cache':
       return displayCacheHelp();
 
     case 'rc':
@@ -104,6 +108,8 @@ function getHelpFromFlag(flag: string) {
     case 'get token':
     case 'renew token':
     case 'token':
+    case 'access token':
+    case 'get access token':
       return displayRefreshTokenHelp();
 
     default:

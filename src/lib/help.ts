@@ -18,6 +18,8 @@ const _shd = _cc.bma;
 const _fl = _cc.bcn;
 /** ANSI Arguments Color */
 const _arg = _cc.yw;
+/** ANSI White Color */
+const _wht = _cc.bwt;
 
 export default {
   displayHelpAboutHelp,
@@ -169,17 +171,33 @@ function getHelpAboutHelp() {
     `${_nl}this application.`,
     '',
     `${_shd}Syntax:`,
-    `${_nl}${_cc.byw}aniwatch ${_x}[${_fl}-h ${_x}| ${_fl}--help${_x}] ${_arg}<flag|all>`,
+    `${_nl}${_cc.byw}aniwatch ${_x}[${_fl}-h ${_x}| ${_fl}--help${_x}] ${_arg}<all|flag|desc>`,
     '',
     `${_shd}Details:`,
+    `${_ind1}${_arg}all${_x}    Display default help for all flags and arguments.`,
+    '',
     `${_ind1}${_arg}flag${_x}   The name of an existing flag that you want more`,
     `${_ind2}    help with.`,
     '',
-    `${_ind1}${_arg}all${_x}    Display default help for all flags and arguments.`,
+    `${_ind1}${_arg}desc${_x}   Description of the action you want help for.`,
     '',
     `${_shd}Examples:`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}f     ${_blk}(Displays all find-anime help)`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}all   ${_blk}(Displays all default help)`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}all           ${_blk}(Displays all default help)`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}f             ${_blk}(Displays --find-anime help)`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}c             ${_blk}(Displays --cache help)`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}show profile  ${_blk}(Displays --profile help)`,
+    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}reload cache  ${_blk}(Displays --rebuild-cache help)`,
+    '',
+    `${_shd}Broad Explanation:`,
+    `${_nl}When using the ${_arg}desc ${_blk}argument, think of the event`,
+    `${_nl}you're trying to get help with. If you want to know how`,
+    `${_nl}to lookup an existing anime, you could type something`,
+    `${_nl}like ${_wht}search anime ${_blk}or ${_wht}lookup anime ${_blk}as a ${_arg}desc ${_blk}argument.`,
+    '',
+    `${_nl}There's still a possibility that you type in an unknown`,
+    `${_nl}description, but if you think about it long enough, you`,
+    `${_nl}should be able to figure out a known description for`,
+    `${_nl}the functionality you're looking for.`,
   ];
 }
 

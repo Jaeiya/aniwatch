@@ -55,6 +55,7 @@ function getHelpFromFlag(flag: string) {
     case 'find-anime':
     case 'find anime':
     case 'get anime':
+    case 'lookup anime':
     case 'search anime':
       return displayFindAnimeHelp();
 

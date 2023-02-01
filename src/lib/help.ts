@@ -53,6 +53,10 @@ function getHelpFromFlag(flag: string) {
     case 'default':
       return displayFullHelp();
 
+    case 'h':
+    case 'help':
+      return displayHelpAboutHelp();
+
     case 'f':
     case 'find-anime':
     case 'find anime':
@@ -123,7 +127,13 @@ function displayFullHelp() {
     ...getDefaultHelp(),
     '',
     '',
+    '',
+    ...getHelpAboutHelp(),
+    '',
+    '',
+    '',
     ...getSimpleFlagHelp(),
+    '',
     '',
     '',
     ...getComplexFlagHelp(),

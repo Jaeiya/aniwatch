@@ -34,6 +34,6 @@ VSCODE users can simply execute the `Run Build Task` command (or by using the co
 
 ## Need Help?
 
-There is built-in help in the form of a help flag. This will give you a full detailed rundown of how to use every feature of the program.
+There is built-in help in the form of a help flag. This will give you a full detailed rundown of how to use every feature of the program. The command below will render like an error, but that's only because there is no logic for a flag that can be used **with** and **without** an argument.
 
 `aniwatch -h` or `aniwatch --help`

@@ -79,7 +79,7 @@ function getHelpFromFlag(flag: string) {
     case 'lookup profile':
       return displayProfileHelp();
 
-    case 'rb':
+    case 'rp':
     case 'rebuild-profile':
     case 'rebuild profile':
     case 'reload profile':

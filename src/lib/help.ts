@@ -190,19 +190,19 @@ function getHelpAboutHelp() {
     `${_nl}${_cc.byw}aniwatch ${_x}[${_fl}-h ${_x}| ${_fl}--help${_x}] ${_arg}<all|flag|desc>`,
     '',
     `${_shd}Details:`,
-    `${_ind1}${_arg}all${_x}    Display default help for all flags and arguments.`,
+    `${_nl}${_arg}all${_x}    Display default help for all flags and arguments.`,
     '',
-    `${_ind1}${_arg}flag${_x}   The name of an existing flag that you want more`,
+    `${_nl}${_arg}flag${_x}   The name of an existing flag that you want more`,
     `${_ind2}    help with.`,
     '',
-    `${_ind1}${_arg}desc${_x}   Description of the action you want help for.`,
+    `${_nl}${_arg}desc${_x}   Description of the action you want help for.`,
     '',
     `${_shd}Examples:`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}all           ${_blk}(Displays all default help)`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}f             ${_blk}(Displays --find-anime help)`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}c             ${_blk}(Displays --cache help)`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}show profile  ${_blk}(Displays --profile help)`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-h ${_arg}reload cache  ${_blk}(Displays --rebuild-cache help)`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-h ${_arg}all           ${_blk}(Displays all default help)`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-h ${_arg}f             ${_blk}(Displays --find-anime help)`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-h ${_arg}c             ${_blk}(Displays --cache help)`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-h ${_arg}show profile  ${_blk}(Displays --profile help)`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-h ${_arg}reload cache  ${_blk}(Displays --rebuild-cache help)`,
     '',
     `${_shd}Broad Explanation:`,
     `${_nl}When using the ${_arg}desc ${_blk}argument, think of the event`,
@@ -281,11 +281,11 @@ function getNoArgSyntax(flags: [string, string]) {
   const [short, long] = flags;
   return [
     `${_shd}Default Syntax:`,
-    `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-${short} ${_x}| ${_fl}--${long}${_x}]`,
+    `${_nl}${_cc.byw}aniwatch ${_x}[${_fl}-${short} ${_x}| ${_fl}--${long}${_x}]`,
     '',
     `${_shd}Examples:`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-${short}`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}--${long}`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-${short}`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}--${long}`,
   ];
 }
 
@@ -314,20 +314,20 @@ function getDefaultHelp() {
 function getDefaultSyntax() {
   return [
     `${_shd}Default Syntax:`,
-    `${_ind1}${_cc.byw}aniwatch ${_arg}<name> <ep> <fep>`,
+    `${_nl}${_cc.byw}aniwatch ${_arg}<name> <ep> <fep>`,
     '',
-    `${_shd}Details:${_ind1}`,
-    `${_ind1}${_arg}name${_x}   Full or partial name of an existing anime on disk`,
+    `${_shd}Details:${_nl}`,
+    `${_nl}${_arg}name${_x}   Full or partial name of an existing anime on disk`,
     ' ',
-    `${_ind1}${_arg}ep${_x}     Episode number of anime ${_arg}<name>${_x} on disk`,
+    `${_nl}${_arg}ep${_x}     Episode number of anime ${_arg}<name>${_x} on disk`,
     ' ',
-    `${_ind1}${_arg}fep${_x}    ${_cc.ma}(Optional)${_x} Update Kitsu progress with ${_arg}<fep>`,
+    `${_nl}${_arg}fep${_x}    ${_cc.ma}(Optional)${_x} Update Kitsu progress with ${_arg}<fep>`,
     `${_ind2}${_x}    instead of ${_arg}<ep>`,
     '',
     `${_shd}Examples:`,
-    `${_ind1}${_cc.byw}aniwatch ${_arg}"boku no hero" 10`,
-    `${_ind1}${_cc.byw}aniwatch ${_arg}berserk 3`,
-    `${_ind1}${_cc.byw}aniwatch ${_arg}bleach 367 1`,
+    `${_nl}${_cc.byw}aniwatch ${_arg}"boku no hero" 10`,
+    `${_nl}${_cc.byw}aniwatch ${_arg}berserk 3`,
+    `${_nl}${_cc.byw}aniwatch ${_arg}bleach 367 1`,
   ];
 }
 
@@ -345,7 +345,7 @@ function getSimpleFlagHelp() {
 function getSimpleFlagSyntax() {
   return [
     `${_shd}Syntax:`,
-    `${_ind1}${_cc.byw}aniwatch ${_x}[ ${_fl}-h  ${_x}| ${_fl}--help${_x}            ]`,
+    `${_nl}${_cc.byw}aniwatch ${_x}[ ${_fl}-h  ${_x}| ${_fl}--help${_x}            ]`,
     `${_ind2}${_ind2}[ ${_fl}-p  ${_x}| ${_fl}--profile${_x}         ]`,
     `${_ind2}${_ind2}[ ${_fl}-rp ${_x}| ${_fl}--rebuild-profile${_x} ]`,
     `${_ind2}${_ind2}[ ${_fl}-c  ${_x}| ${_fl}--cache${_x}           ]`,
@@ -353,29 +353,29 @@ function getSimpleFlagSyntax() {
     `${_ind2}${_ind2}[ ${_fl}-rt ${_x}| ${_fl}--refresh-token${_x}   ]`,
     '',
     `${_shd}Details:`,
-    `${_ind1}${_fl}-p${_x}    Displays the currently logged in profile`,
+    `${_nl}${_fl}-p${_x}    Displays the currently logged in profile`,
     '',
-    `${_ind1}${_fl}-rp${_x}   Rebuilds currently saved profile information`,
+    `${_nl}${_fl}-rp${_x}   Rebuilds currently saved profile information`,
     `${_ind2}   using latest Kitsu data. ${_blk}This is necessary`,
     `${_ind2}   ${_blk}if you want up-to-date months/hours watched`,
     `${_ind2}   ${_blk}info.`,
     '',
-    `${_ind1}${_fl}-c${_x}    Displays all cached information`,
+    `${_nl}${_fl}-c${_x}    Displays all cached information`,
     '',
-    `${_ind1}${_fl}-rc${_x}   Rebuilds currently saved cache using latest`,
+    `${_nl}${_fl}-rc${_x}   Rebuilds currently saved cache using latest`,
     `${_ind2}   Kitsu data. ${_blk}This is necessary when you update`,
     `${_ind2}   ${_blk}your "currently watching" list on Kitsu.`,
     '',
-    `${_ind1}${_fl}-rt${_x}   Refresh access token. ${_blk}Only necessary if the`,
+    `${_nl}${_fl}-rt${_x}   Refresh access token. ${_blk}Only necessary if the`,
     `${_ind2}   ${_blk}current Access Token expires.`,
     '',
-    `${_ind1}${_fl}-h${_x}    Displays all help info including this one`,
+    `${_nl}${_fl}-h${_x}    Displays all help info including this one`,
     '',
     `${_shd}Examples:`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-p`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}--profile`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-rc`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}--rebuild-cache`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-p`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}--profile`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-rc`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}--rebuild-cache`,
   ];
 }
 
@@ -402,14 +402,14 @@ function getFindAnimeHelp() {
 function getFindAnimeSyntax() {
   return [
     `${_shd}Syntax:`,
-    `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-f ${_x}| ${_fl}--find-anime${_x}] ${_arg}<name>`,
+    `${_nl}${_cc.byw}aniwatch ${_x}[${_fl}-f ${_x}| ${_fl}--find-anime${_x}] ${_arg}<name>`,
     '',
     `${_shd}Details:`,
-    `${_ind1}${_arg}name    ${_x}Name of an anime in your "currently watching" list`,
+    `${_nl}${_arg}name    ${_x}Name of an anime in your "currently watching" list`,
     '',
     `${_shd}Examples:`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-f ${_arg}"boku no hero"`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}--find-anime ${_arg}berserk`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-f ${_arg}"boku no hero"`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}--find-anime ${_arg}berserk`,
   ];
 }
 
@@ -433,13 +433,13 @@ function getRSSFeedHelp() {
 function getRSSFeedSyntax() {
   return [
     `${_shd}Syntax:`,
-    `${_ind1}${_cc.byw}aniwatch ${_x}[${_fl}-rss ${_x}| ${_fl}--rss-feed${_x}] ${_arg}<name>`,
+    `${_nl}${_cc.byw}aniwatch ${_x}[${_fl}-rss ${_x}| ${_fl}--rss-feed${_x}] ${_arg}<name>`,
     '',
     `${_shd}Details:`,
-    `${_ind1}${_arg}name    ${_x}Name of any anime`,
+    `${_nl}${_arg}name    ${_x}Name of any anime`,
     '',
     `${_shd}Examples:`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}-rss ${_arg}"boku no hero"`,
-    `${_ind1}${_cc.byw}aniwatch ${_fl}--rss-feed ${_arg}berserk`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}-rss ${_arg}"boku no hero"`,
+    `${_nl}${_cc.byw}aniwatch ${_fl}--rss-feed ${_arg}berserk`,
   ];
 }

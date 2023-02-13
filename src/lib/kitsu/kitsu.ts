@@ -43,6 +43,15 @@ type LibraryPatchData = {
   };
 };
 
+export type SerializedAnime = {
+  title_jp: string;
+  title_en: string;
+  progress: number;
+  rating: string | number | null;
+  totalEpisodes: number | null;
+  avgRating: string;
+};
+
 export type CachedAnime = [libID: string, cannonTitle: string, englishTitle: string][];
 
 const _workingDir = process.cwd();
@@ -315,7 +324,10 @@ function buildLibraryAnimeURL(libraryIds: string[]) {
   return url;
 }
 
-function serializeAnimeInfo(cacheList: CachedAnime, entries: LibraryEntries) {
+function serializeAnimeInfo(
+  cacheList: CachedAnime,
+  entries: LibraryEntries
+): SerializedAnime[] {
   return cacheList.map((cache, i) => {
     const rating = entries.data[i].attributes.ratingTwenty;
     const avgRating = entries.included[i].attributes.averageRating;

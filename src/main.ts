@@ -4,8 +4,15 @@ import K from './lib/kitsu/kitsu.js';
 import { Logger } from './lib/logger.js';
 import { isDev, pathResolve } from './lib/utils.js';
 import { watchAnime } from './lib/watch.js';
-import * as rss from './lib/rss.js';
 import help from './lib/help.js';
+import { ProfileFlag } from './lib/cli/flag-profile.js';
+import { HelpFlag } from './lib/cli/flag-help.js';
+import { RebuildProfileFlag } from './lib/cli/flag-rebuild-profile.js';
+import { CacheFlag } from './lib/cli/flag-cache.js';
+import { RebuildCacheFlag } from './lib/cli/flag-rebuild-cache.js';
+import { FindAnimeFlag } from './lib/cli/flag-find-anime.js';
+import { RSSFeedFlag } from './lib/cli/flag-rss-feed.js';
+import { RefreshTokenFlag } from './lib/cli/flag-refresh-token.js';
 
 console.log('');
 if (isDev()) {
@@ -20,52 +27,17 @@ const _cc = Logger.consoleColors;
 const _workingDir = isDev() ? pathResolve('E:/downloads/anime') : process.cwd();
 await K.init();
 
-CLI.registerFlag('h', 'help', getHelp, 'multiArg', help.displayHelpAboutHelp);
-CLI.registerFlag('p', 'profile', K.displayUserProfile, 'simple');
-CLI.registerFlag('rp', 'rebuild-profile', K.rebuildProfile, 'simple');
-CLI.registerFlag('c', 'cache', K.displayCacheInfo, 'simple');
-CLI.registerFlag('rc', 'rebuild-cache', K.rebuildCache, 'simple');
-CLI.registerFlag('f', 'find-anime', findAnime, 'multiArg', help.displayFindAnimeSyntax);
-CLI.registerFlag('rss', 'rss-feed', getRSSFeedInfo, 'multiArg', help.displayRSSSyntax);
+CLI.addFlag(new ProfileFlag());
+CLI.addFlag(new HelpFlag());
+CLI.addFlag(new RebuildProfileFlag());
+CLI.addFlag(new CacheFlag());
+CLI.addFlag(new RebuildCacheFlag());
+CLI.addFlag(new FindAnimeFlag());
+CLI.addFlag(new RSSFeedFlag());
+CLI.addFlag(new RefreshTokenFlag());
 
 if (!(await CLI.tryExecFlags())) {
   execWatchAnime();
-}
-
-function getHelp() {
-  return help.getHelpFromFlag(CLI.nonFlagArgs.join(' '));
-}
-
-async function findAnime() {
-  const animeList = await K.findAnime(CLI.nonFlagArgs.join(' '));
-  if (!animeList.length) {
-    Logger.chainInfo([
-      `${_cc.byw}No Entries Found`,
-      'The anime is either not in your cache or your search',
-      'terms were incorrectly spelled.',
-    ]);
-    process.exit(0);
-  }
-  animeList.forEach((anime) => {
-    const totalEps = anime.totalEpisodes ? anime.totalEpisodes : `${_cc.rd}unknown`;
-    Logger.chainInfo([
-      `${_cc.bcn}Title JP: ${_cc.x}${anime.title_jp}`,
-      `${_cc.bcn}Title EN: ${_cc.x}${anime.title_en}`,
-      `${_cc.bcn}Progress: ${_cc.gn}${anime.progress}${_cc.byw} / ${_cc.ma}${totalEps}`,
-      `${_cc.bcn}My Rating: ${_cc.gn}${anime.rating ? anime.rating : 'Not Rated'}`,
-      `${_cc.bcn}Avg. Rating: ${_cc.gn}${anime.avgRating}`,
-      '',
-    ]);
-  });
-}
-
-async function getRSSFeedInfo() {
-  const result = await rss.getFansubRSS(CLI.nonFlagArgs.join(' '));
-  Logger.chainInfo([
-    `${_cc.bcn}Entry Count: ${_cc.gn}${result.entryCount}`,
-    `${_cc.bcn}Latest: ${_cc.yw}${result.latestTitle}`,
-    `${_cc.bcn}RSS: ${_cc.x}${result.rss}`,
-  ]);
 }
 
 function execWatchAnime() {

@@ -1,15 +1,21 @@
 import { Logger } from './logger.js';
-import help from './help.js';
+import { Help } from './help.js';
 
-type RegisteredFlag = [
-  short: string,
-  long: string,
-  func: () => void | Promise<void>,
-  type: 'multiArg' | 'simple',
-  helpFunc?: () => void
-];
+export type CLIFlagType = 'multiArg' | 'simple';
+export type CLIFlagName = [short: string, long: string];
 
-const _registeredFlags: RegisteredFlag[] = [];
+export interface CLIFlag {
+  /** Short and Long Flag Names */
+  name: CLIFlagName;
+  type: CLIFlagType;
+  helpAliases: string[];
+  helpDisplay: string[];
+  helpSyntax?: string[];
+  /** Execute flag function */
+  exec: () => void | Promise<void>;
+}
+
+const _flags: CLIFlag[] = [];
 
 const _cc = Logger.consoleColors;
 const rawArgs = process.argv;
@@ -31,15 +37,15 @@ export default {
   userArgs,
   flagArgs,
   nonFlagArgs,
-  registerFlag,
+  addFlag,
   tryExecFlags,
 };
 
 async function tryExecFlags() {
   if (!cleanFlagArgs[0]) return false;
-  const regFlag = _registeredFlags.find((rf) => rf.includes(cleanFlagArgs[0]));
+  const flag = _flags.find((rf) => rf.name.includes(cleanFlagArgs[0]));
 
-  if (!regFlag) {
+  if (!flag) {
     Logger.chainError([
       '',
       `${_cc.rd}Flag Error`,
@@ -48,54 +54,61 @@ async function tryExecFlags() {
     process.exit(1);
   }
 
-  const [, , func, type, helpFunc] = regFlag;
+  const { type, exec } = flag;
   type == 'simple'
-    ? isValidSingleFlag(0, helpFunc)
-    : isValidSingleFlag(Infinity, helpFunc) && isMultiArg(helpFunc);
+    ? isValidSingleFlag(0, flag)
+    : isValidSingleFlag(Infinity, flag) && isMultiArg(flag);
 
-  func instanceof Promise ? await func() : func();
+  exec instanceof Promise ? await exec() : exec();
   return true;
 }
 
-function registerFlag(
-  shortFlag: string,
-  longFlag: string,
-  func: () => void | Promise<void>,
-  type: 'multiArg' | 'simple',
-  helpFunc?: () => void
-) {
-  _registeredFlags.push([shortFlag, longFlag, func, type, helpFunc]);
+function addFlag(flag: CLIFlag) {
+  flag.type == 'simple'
+    ? Help.addSimple(flag.helpAliases, flag.name, flag.helpDisplay)
+    : Help.addComplex(flag.helpAliases, flag.helpDisplay);
+
+  _flags.push(flag);
 }
 
 /**
  * Tests for a valid flag that can only be used by itself
  * with the specified number of arguments.
  */
-function isValidSingleFlag(numOfArgs: number, helpFunc?: () => void) {
+function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
   if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
     Logger.chainError([
       `${_cc.rd}Invalid Flag Syntax`,
       'Read the help below to learn the correct syntax',
+      '',
     ]);
-    helpFunc ? helpFunc() : help.displaySimpleFlagHelp();
+    displayFlagHelp(flag);
     process.exit(1);
   }
   return true;
 }
 
-function isMultiArg(helpFunc?: () => void) {
+function isMultiArg(flag: CLIFlag) {
   if (!nonFlagArgs.length) {
     Logger.chainError([
       `${_cc.rd}Missing Argument`,
       'Read the help below to learn the correct syntax:',
+      '',
     ]);
-    helpFunc
-      ? helpFunc()
-      : Logger.error(`${_cc.bcn}Missing Syntax Help for ${_cc.byw}${flagArgs[0]}`);
-
+    displayFlagHelp(flag);
     process.exit(1);
   }
   return true;
+}
+
+function displayFlagHelp(flag: CLIFlag) {
+  if (flag.type == 'multiArg' && flag.helpSyntax) {
+    Help.displayHelp(flag.helpSyntax);
+    return;
+  }
+  const flagHelp = Help.findHelp(flag.helpAliases[0]);
+  if (!flagHelp) throw Error(`missing "${flag.name[1]}" flag help`);
+  Help.displayHelp(flagHelp);
 }
 
 function removeLeadingDash(str: string): string {

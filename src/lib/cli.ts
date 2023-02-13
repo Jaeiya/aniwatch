@@ -8,6 +8,7 @@ export interface CLIFlag {
   /** Short and Long Flag Names */
   name: CLIFlagName;
   type: CLIFlagType;
+  isDefault?: boolean;
   helpAliases: string[];
   helpDisplay: string[];
   helpSyntax?: string[];
@@ -37,38 +38,41 @@ export class CLI {
   static userArgs = userArgs;
   static flagArgs = flagArgs;
   static nonFlagArgs = nonFlagArgs;
-  static addFlag = addFlag;
-  static tryExecFlags = tryExecFlags;
-}
 
-async function tryExecFlags() {
-  if (!cleanFlagArgs[0]) return false;
-  const flag = _flags.find((rf) => rf.name.includes(cleanFlagArgs[0]));
+  static addFlag(flag: CLIFlag) {
+    flag.type == 'simple'
+      ? Help.addSimple(flag.helpAliases, flag.name, flag.helpDisplay)
+      : Help.addComplex(flag.helpAliases, flag.helpDisplay);
 
-  if (!flag) {
-    Logger.chainError([
-      '',
-      `${_cc.rd}Flag Error`,
-      `${_cc.bcn}Unknown Flag: ${_cc.byw}${flagArgs[0]}`,
-    ]);
-    process.exit(1);
+    _flags.push(flag);
   }
 
-  const { type, exec } = flag;
-  type == 'simple'
-    ? isValidSingleFlag(0, flag)
-    : isValidSingleFlag(Infinity, flag) && isMultiArg(flag);
+  static async tryExecFlags() {
+    if (!cleanFlagArgs[0]) {
+      const defaultFlag = _flags.find((rf) => rf.isDefault);
+      if (!defaultFlag) throw Error('missing default flag');
+      defaultFlag.exec(CLI);
+      return true;
+    }
+    const flag = _flags.find((rf) => rf.name.includes(cleanFlagArgs[0]));
 
-  exec instanceof Promise ? await exec(CLI) : exec(CLI);
-  return true;
-}
+    if (!flag) {
+      Logger.chainError([
+        '',
+        `${_cc.rd}Flag Error`,
+        `${_cc.bcn}Unknown Flag: ${_cc.byw}${flagArgs[0]}`,
+      ]);
+      process.exit(1);
+    }
 
-function addFlag(flag: CLIFlag) {
-  flag.type == 'simple'
-    ? Help.addSimple(flag.helpAliases, flag.name, flag.helpDisplay)
-    : Help.addComplex(flag.helpAliases, flag.helpDisplay);
+    const { type, exec } = flag;
+    type == 'simple'
+      ? isValidSingleFlag(0, flag)
+      : isValidSingleFlag(Infinity, flag) && isMultiArg(flag);
 
-  _flags.push(flag);
+    exec instanceof Promise ? await exec(CLI) : exec(CLI);
+    return true;
+  }
 }
 
 /**

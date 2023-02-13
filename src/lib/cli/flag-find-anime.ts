@@ -1,5 +1,5 @@
 import { Help } from '../help.js';
-import CLI, { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
+import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import K, { SerializedAnime } from '../kitsu/kitsu.js';
 import { Logger } from '../logger.js';
 
@@ -44,14 +44,14 @@ export class FindAnimeFlag implements CLIFlag {
     ...this.helpSyntax,
   ];
 
-  async exec() {
-    const animeList = await getAnimeList();
+  async exec(cli: typeof CLI) {
+    const animeList = await getAnimeList(cli);
     displayAnimeList(animeList);
   }
 }
 
-async function getAnimeList() {
-  const animeList = await K.findAnime(CLI.nonFlagArgs.join(' '));
+async function getAnimeList(cli: typeof CLI) {
+  const animeList = await K.findAnime(cli.nonFlagArgs.join(' '));
   if (!animeList.length) {
     Logger.chainInfo([
       `${ex}No Entries Found`,

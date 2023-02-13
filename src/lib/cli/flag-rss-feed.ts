@@ -1,5 +1,5 @@
 import { Help } from '../help.js';
-import CLI, { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
+import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Logger } from '../logger.js';
 import * as rss from '../rss.js';
 
@@ -45,8 +45,8 @@ export class RSSFeedFlag implements CLIFlag {
     ...this.helpSyntax,
   ];
 
-  async exec() {
-    const result = await rss.getFansubRSS(CLI.nonFlagArgs.join(' '));
+  async exec(cli: typeof CLI) {
+    const result = await rss.getFansubRSS(cli.nonFlagArgs.join(' '));
     Logger.chainInfo([
       `${_cc.bcn}Entry Count: ${_cc.gn}${result.entryCount}`,
       `${_cc.bcn}Latest: ${_cc.yw}${result.latestTitle}`,

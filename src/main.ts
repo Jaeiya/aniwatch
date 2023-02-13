@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import CLI from './lib/cli.js';
+import { CLI } from './lib/cli.js';
 import K from './lib/kitsu/kitsu.js';
 import { Logger } from './lib/logger.js';
 import { isDev, pathResolve } from './lib/utils.js';

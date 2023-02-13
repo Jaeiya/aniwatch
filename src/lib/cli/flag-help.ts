@@ -1,5 +1,5 @@
 import { Help } from '../help.js';
-import CLI, { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
+import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Logger } from '../logger.js';
 
 const { h1, h2, f, arg, x, d, ex } = Help.colors;
@@ -44,8 +44,8 @@ export class HelpFlag implements CLIFlag {
     `${nl}the functionality you're looking for.`,
   ];
 
-  exec() {
-    const helpArg = CLI.nonFlagArgs.join(' ');
+  exec(cli: typeof CLI) {
+    const helpArg = cli.nonFlagArgs.join(' ');
     const helpStrings = Help.findHelp(helpArg);
     if (!helpStrings) {
       Logger.error(`Could not find help using: ${ex}${helpArg}`);

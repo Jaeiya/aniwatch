@@ -12,7 +12,7 @@ export interface CLIFlag {
   helpDisplay: string[];
   helpSyntax?: string[];
   /** Execute flag function */
-  exec: () => void | Promise<void>;
+  exec: (cli: typeof CLI) => void | Promise<void>;
 }
 
 const _flags: CLIFlag[] = [];
@@ -29,17 +29,17 @@ const nonFlagArgs = userArgs
   .map((arg) => arg.trim());
 const cleanFlagArgs = flagArgs.map(removeLeadingDash);
 
-export default {
-  execPath,
-  sourcePath,
-  workingDir,
-  rawArgs,
-  userArgs,
-  flagArgs,
-  nonFlagArgs,
-  addFlag,
-  tryExecFlags,
-};
+export class CLI {
+  static execPath = execPath;
+  static sourcePath = sourcePath;
+  static workingDir = workingDir;
+  static rawArgs = rawArgs;
+  static userArgs = userArgs;
+  static flagArgs = flagArgs;
+  static nonFlagArgs = nonFlagArgs;
+  static addFlag = addFlag;
+  static tryExecFlags = tryExecFlags;
+}
 
 async function tryExecFlags() {
   if (!cleanFlagArgs[0]) return false;
@@ -59,7 +59,7 @@ async function tryExecFlags() {
     ? isValidSingleFlag(0, flag)
     : isValidSingleFlag(Infinity, flag) && isMultiArg(flag);
 
-  exec instanceof Promise ? await exec() : exec();
+  exec instanceof Promise ? await exec(CLI) : exec(CLI);
   return true;
 }
 

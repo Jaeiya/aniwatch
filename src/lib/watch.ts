@@ -85,7 +85,7 @@ function filterSubsPleaseFiles(workingDir: string, epName: string, epNumSyntax: 
     .map((file) => file.name.toLowerCase())
     .filter(
       (name) =>
-        !!~name.indexOf('[subsplease]') &&
+        name.includes('[subsplease]') &&
         name.includes(epName) &&
         name.includes(epNumSyntax)
     );

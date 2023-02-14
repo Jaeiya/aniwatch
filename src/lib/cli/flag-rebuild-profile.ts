@@ -14,6 +14,7 @@ export class RebuildProfileFlag implements CLIFlag {
     'reload profile',
     'load profile',
   ];
+  shortHelpDisplay = 'Rebuilds your profile data from Kitsu';
   helpDisplay: string[] = [
     `${h1}Rebuild Profile:`,
     `${nl}Rebuilds your profile data from Kitsu. This is`,

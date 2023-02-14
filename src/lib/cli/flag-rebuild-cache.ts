@@ -9,6 +9,7 @@ export class RebuildCacheFlag implements CLIFlag {
   name: CLIFlagName = ['rc', 'rebuild-cache'];
   type: CLIFlagType = 'simple';
   helpAliases: string[] = [...this.name, 'rebuild cache', 'reload cache', 'load cache'];
+  shortHelpDisplay = 'Rebuilds your cache data from Kitsu';
   helpDisplay: string[] = [
     `${h1}Rebuild Cache:`,
     `${nl}Rebuilds your cache data from Kitsu. This is`,

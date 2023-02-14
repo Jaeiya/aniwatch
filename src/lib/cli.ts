@@ -10,6 +10,7 @@ export interface CLIFlag {
   type: CLIFlagType;
   isDefault?: boolean;
   helpAliases: string[];
+  shortHelpDisplay?: string;
   helpDisplay: string[];
   helpSyntax?: string[];
   /** Execute flag function */
@@ -40,9 +41,16 @@ export class CLI {
   static nonFlagArgs = nonFlagArgs;
 
   static addFlag(flag: CLIFlag) {
+    if (flag.type == 'simple' && flag.shortHelpDisplay == undefined) {
+      throw Error(`"--${flag.name[1]}" flag must have a "shortHelpDisplay"`);
+    }
+
     flag.type == 'simple'
-      ? Help.addSimple(flag.helpAliases, flag.name, flag.helpDisplay)
-      : Help.addComplex(flag.helpAliases, flag.helpDisplay);
+      ? Help.addSimpleHelp(flag.helpAliases, flag.name, [
+          flag.shortHelpDisplay ?? '',
+          flag.helpDisplay,
+        ])
+      : Help.addAdvancedFlagHelp(flag.helpAliases, flag.helpDisplay);
 
     _flags.push(flag);
   }

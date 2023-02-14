@@ -7,7 +7,7 @@ import {
   toEpisodeNumberStr,
   truncateStr,
 } from './utils.js';
-import help from './help.js';
+import { Help } from './help.js';
 
 type WatchConfig = {
   forcedEpNumber: number;
@@ -63,7 +63,8 @@ function validateParams(params: [string, string[], string]) {
       `${_cc.byw}Read the syntax below and try again`,
       '',
     ]);
-    help.displayDefaultHelp();
+    const defaultHelp = Help.findHelp('default');
+    if (defaultHelp) Help.displayHelp(defaultHelp);
     process.exit(1);
   }
 }

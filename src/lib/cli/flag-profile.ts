@@ -15,7 +15,7 @@ export class ProfileFlag implements CLIFlag {
     'get profile',
     'lookup profile',
   ];
-  shortHelpDisplay = 'Displays the currently logged in Kitsu profile';
+  shortHelpDisplay = 'Displays the currently logged in Kitsu profile.';
   helpDisplay: string[] = [
     `${h1}Display Profile:`,
     `${nl}This flag allows you to display your currently logged`,

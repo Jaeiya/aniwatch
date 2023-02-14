@@ -63,7 +63,7 @@ export class Help {
       `${_hd}Simple Flag Usage`,
       `${_nl}These are flags that can only be used by themselves`,
       `${_nl}without arguments. If an attempt is made to use them`,
-      `${_nl}with other flags or arguments, an error will occur`,
+      `${_nl}with other flags or arguments, an error will occur.`,
       '',
       ..._simpleFlagSyntax,
       '',

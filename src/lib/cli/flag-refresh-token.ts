@@ -18,7 +18,7 @@ export class RefreshTokenFlag implements CLIFlag {
     'access token',
     'get access token',
   ];
-  shortHelpDisplay = 'Retrieves a new access token';
+  shortHelpDisplay = `Retrieves a new access token ${em}(rarely needed)${d}.`;
   helpDisplay: string[] = [
     `${h1}Refresh Access Token:`,
     `${nl}Refreshes your current access token. This will`,

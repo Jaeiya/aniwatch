@@ -23,7 +23,7 @@ export class FindAnimeFlag implements CLIFlag {
     `${nl}${ex}aniwatch ${x}[${f}-f ${x}| ${f}--find-anime${x}] ${arg}<name>`,
     '',
     `${h2}Details:`,
-    `${nl}${arg}name    ${x}Name of an anime in your "currently watching" list`,
+    `${nl}${arg}name    ${x}Anime name in your "currently watching" list on Kitsu.`,
     '',
     `${h2}Examples:`,
     `${nl}${ex}aniwatch ${f}-f ${arg}"boku no hero"`,
@@ -39,7 +39,7 @@ export class FindAnimeFlag implements CLIFlag {
     `${nl}${em}NOTE:${d} If the anime is not found, either it was typed`,
     `${nl}incorrectly or it needs to be added to your watch`,
     `${nl}list. If you add it to your watch list, you'll need`,
-    `${nl}to rebuild the cache with ${f}-rc ${d}or ${f}--rebuild-cache`,
+    `${nl}to rebuild the cache with ${f}-rc ${d}or ${f}--rebuild-cache${d}.`,
     '',
     ...this.helpSyntax,
   ];

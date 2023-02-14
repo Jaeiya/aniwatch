@@ -16,7 +16,7 @@ export class CacheFlag implements CLIFlag {
     'lookup cache',
     'list cache',
   ];
-  shortHelpDisplay = 'Displays all currently Cached information';
+  shortHelpDisplay = 'Displays all currently Cached information.';
   helpDisplay: string[] = [
     `${h1}Display Cache:`,
     `${nl}This flag allows you to display the currently saved`,

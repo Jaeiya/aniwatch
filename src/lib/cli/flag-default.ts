@@ -14,6 +14,10 @@ export class DefaultFlag implements CLIFlag {
   isDefault = true;
   helpAliases: string[] = [
     ...this.name,
+    'normal',
+    'normal usage',
+    'basic',
+    'basic usage',
     'how to use',
     'how to use program',
     'how do I use program',

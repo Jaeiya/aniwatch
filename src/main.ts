@@ -2,7 +2,7 @@
 import { CLI } from './lib/cli.js';
 import K from './lib/kitsu/kitsu.js';
 import { Logger } from './lib/logger.js';
-import { isDev, pathResolve } from './lib/utils.js';
+import { isDev } from './lib/utils.js';
 import { ProfileFlag } from './lib/cli/flag-profile.js';
 import { HelpFlag } from './lib/cli/flag-help.js';
 import { RebuildProfileFlag } from './lib/cli/flag-rebuild-profile.js';
@@ -26,11 +26,11 @@ await K.init();
 
 CLI.addFlag(new DefaultFlag());
 CLI.addFlag(new ProfileFlag());
-CLI.addFlag(new HelpFlag());
 CLI.addFlag(new RebuildProfileFlag());
 CLI.addFlag(new CacheFlag());
 CLI.addFlag(new RebuildCacheFlag());
 CLI.addFlag(new RefreshTokenFlag());
+CLI.addFlag(new HelpFlag());
 CLI.addFlag(new FindAnimeFlag());
 CLI.addFlag(new RSSFeedFlag());
 

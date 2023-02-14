@@ -64,23 +64,29 @@ export class CLI {
     }
     const flag = _flags.find((rf) => rf.name.includes(cleanFlagArgs[0]));
 
-    if (!flag) {
-      Logger.chainError([
-        '',
-        `${_cc.rd}Flag Error`,
-        `${_cc.bcn}Unknown Flag: ${_cc.byw}${flagArgs[0]}`,
-      ]);
+    if (!validateFlag(flag)) {
       process.exit(1);
     }
 
-    const { type, exec } = flag;
-    type == 'simple'
-      ? isValidSingleFlag(0, flag)
-      : isValidSingleFlag(Infinity, flag) && isMultiArg(flag);
-
-    exec instanceof Promise ? await exec(CLI) : exec(CLI);
+    flag.exec instanceof Promise ? await flag.exec(CLI) : flag.exec(CLI);
     return true;
   }
+}
+
+function validateFlag(flag?: CLIFlag): flag is CLIFlag {
+  if (!flag) {
+    Logger.chainError([
+      '',
+      `${_cc.rd}Flag Error`,
+      `${_cc.bcn}Unknown Flag: ${_cc.byw}${flagArgs[0]}`,
+    ]);
+    return false;
+  }
+
+  const { type } = flag;
+  return type == 'simple'
+    ? isValidSingleFlag(0, flag)
+    : isValidSingleFlag(Infinity, flag) && isMultiArg(flag);
 }
 
 /**
@@ -95,7 +101,7 @@ function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
       '',
     ]);
     displayFlagHelp(flag);
-    process.exit(1);
+    return false;
   }
   return true;
 }
@@ -108,7 +114,7 @@ function isMultiArg(flag: CLIFlag) {
       '',
     ]);
     displayFlagHelp(flag);
-    process.exit(1);
+    return false;
   }
   return true;
 }

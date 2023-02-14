@@ -2,7 +2,6 @@ import { HTTP } from './http.js';
 import { Logger } from './logger.js';
 
 const _nyaaURLStr = 'https://nyaa.si';
-const _cc = Logger.consoleColors;
 
 export async function getFansubRSS(animeName: string) {
   const url = new URL(_nyaaURLStr);
@@ -14,28 +13,25 @@ export async function getFansubRSS(animeName: string) {
     console.log(await resp.text());
     process.exit(1);
   }
-  const [entryCount, title] = await getLatestAnimeEntry(await resp.text());
+  const [entryCount, latestTitle] = await getLatestAnimeEntry(await resp.text());
   url.searchParams.append('page', 'rss');
   return {
     entryCount,
-    latestTitle: title,
+    latestTitle,
     rss: url.toString(),
   };
 }
 
 async function getLatestAnimeEntry(html: string) {
-  Logger.info(`${_cc.byw}Importing JSDOM Library...`);
-  const JSDOM = (await import('jsdom')).JSDOM;
-  Logger.info(`${_cc.byw}Parsing DOM...`);
-  const dom = new JSDOM(html);
-  const els = dom.window.document.querySelectorAll<HTMLTableRowElement>('.success');
-  if (!els[0]) {
+  const cheerio = await import('cheerio');
+  const $ = cheerio.load(html);
+  const els = $('.success td + td');
+  const numOfResults = $('.success').length;
+  const latestTitle =
+    els.children('a.comments + a').eq(0).text().trim() || els.children('a').eq(0).text();
+  if (!els.length) {
     Logger.error('Anime Not Found');
     process.exit(1);
   }
-  const anchorEl = els[0].children[1].children[0];
-  if (anchorEl.classList.contains('comments')) {
-    return [els.length, els[0].children[1].children[1].textContent];
-  }
-  return [els.length, els[0].children[1].children[0].textContent];
+  return [numOfResults, latestTitle];
 }

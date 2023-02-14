@@ -1,4 +1,4 @@
-import { CLIFlagName } from './cli.js';
+import { CLIFlagName } from './cli/cli.js';
 import { Logger } from './logger.js';
 import { fitStringEnd } from './utils.js';
 

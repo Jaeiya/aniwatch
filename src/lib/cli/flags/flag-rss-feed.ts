@@ -1,7 +1,7 @@
-import { Help } from '../help.js';
+import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import { Logger } from '../logger.js';
-import * as rss from '../rss.js';
+import { Logger } from '../../logger.js';
+import * as rss from '../../rss.js';
 
 const { h1, h2, d, f, arg, x, ex } = Help.colors;
 const _cc = Logger.consoleColors;

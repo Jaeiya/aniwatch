@@ -1,5 +1,5 @@
-import { Logger } from './logger.js';
-import { Help } from './help.js';
+import { Logger } from '../logger.js';
+import { Help } from '../help.js';
 
 export type CLIFlagType = 'multiArg' | 'simple';
 export type CLIFlagName = [short: string, long: string];

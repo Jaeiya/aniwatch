@@ -1,17 +1,17 @@
 #!/usr/bin/env node
-import { CLI } from './lib/cli.js';
+import { CLI } from './lib/cli/cli.js';
 import K from './lib/kitsu/kitsu.js';
 import { Logger } from './lib/logger.js';
 import { isDev } from './lib/utils.js';
-import { ProfileFlag } from './lib/cli/flag-profile.js';
-import { HelpFlag } from './lib/cli/flag-help.js';
-import { RebuildProfileFlag } from './lib/cli/flag-rebuild-profile.js';
-import { CacheFlag } from './lib/cli/flag-cache.js';
-import { RebuildCacheFlag } from './lib/cli/flag-rebuild-cache.js';
-import { FindAnimeFlag } from './lib/cli/flag-find-anime.js';
-import { RSSFeedFlag } from './lib/cli/flag-rss-feed.js';
-import { RefreshTokenFlag } from './lib/cli/flag-refresh-token.js';
-import { DefaultFlag } from './lib/cli/flag-default.js';
+import { ProfileFlag } from './lib/cli/flags/flag-profile.js';
+import { HelpFlag } from './lib/cli/flags/flag-help.js';
+import { RebuildProfileFlag } from './lib/cli/flags/flag-rebuild-profile.js';
+import { CacheFlag } from './lib/cli/flags/flag-cache.js';
+import { RebuildCacheFlag } from './lib/cli/flags/flag-rebuild-cache.js';
+import { FindAnimeFlag } from './lib/cli/flags/flag-find-anime.js';
+import { RSSFeedFlag } from './lib/cli/flags/flag-rss-feed.js';
+import { RefreshTokenFlag } from './lib/cli/flags/flag-refresh-token.js';
+import { DefaultFlag } from './lib/cli/flags/flag-default.js';
 
 console.log('');
 if (isDev()) {

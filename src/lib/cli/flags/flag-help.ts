@@ -1,6 +1,6 @@
-import { Help } from '../help.js';
+import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import { Logger } from '../logger.js';
+import { Logger } from '../../logger.js';
 
 const { h1, h2, f, arg, x, d, ex } = Help.colors;
 const { nl, ind2 } = Help.textFlowUtils;

@@ -1,8 +1,8 @@
-import { Help } from '../help.js';
+import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import K from '../kitsu/kitsu.js';
-import { Logger } from '../logger.js';
-import { watchAnime } from '../watch.js';
+import K from '../../kitsu/kitsu.js';
+import { Logger } from '../../logger.js';
+import { watchAnime } from '../../watch.js';
 
 const { h1, h2, x, arg, em, ex, d } = Help.colors;
 const { nl, ind2 } = Help.textFlowUtils;

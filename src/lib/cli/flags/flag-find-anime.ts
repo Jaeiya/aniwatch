@@ -1,7 +1,7 @@
-import { Help } from '../help.js';
+import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import K, { SerializedAnime } from '../kitsu/kitsu.js';
-import { Logger } from '../logger.js';
+import K, { SerializedAnime } from '../../kitsu/kitsu.js';
+import { Logger } from '../../logger.js';
 
 const { h1, h2, em, d, f, arg, x, ex } = Help.colors;
 const _cc = Logger.consoleColors;

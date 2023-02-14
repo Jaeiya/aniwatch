@@ -152,18 +152,6 @@ async function promptUser(): Promise<UserData> {
   return user;
 }
 
-async function rebuildProfile() {
-  const userData = await getUserData(_config.username);
-  const { time, completed } = userData.stats;
-  const { secondsSpentWatching, completedSeries } = _config.stats;
-
-  _config.stats.secondsSpentWatching = time ?? secondsSpentWatching;
-  _config.stats.completedSeries = completed ?? completedSeries;
-  _config.about = userData.attributes.about;
-  saveConfig(_config);
-  Logger.chainInfo(['', `${_cc.bcn}Profile: ${_cc.byw}Updated!`]);
-}
-
 async function getUserData(userName: string) {
   const url = buildUserDataURL(userName);
   const resp = await HTTP.get(url);
@@ -342,6 +330,18 @@ function serializeAnimeInfo(
         : 'Not Calculated Yet',
     };
   });
+}
+
+async function rebuildProfile() {
+  const userData = await getUserData(_config.username);
+  const { time, completed } = userData.stats;
+  const { secondsSpentWatching, completedSeries } = _config.stats;
+
+  _config.stats.secondsSpentWatching = time ?? secondsSpentWatching;
+  _config.stats.completedSeries = completed ?? completedSeries;
+  _config.about = userData.attributes.about;
+  saveConfig(_config);
+  Logger.chainInfo(['', `${_cc.bcn}Profile: ${_cc.byw}Updated!`]);
 }
 
 async function rebuildCache() {

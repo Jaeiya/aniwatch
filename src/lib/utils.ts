@@ -44,11 +44,11 @@ export async function tryCatchAsync<T>(p: Promise<T>): Promise<T | Error> {
   }
 }
 
-export function fitString(str: string, maxLength: number) {
+export function fitStringEnd(str: string, maxLength: number) {
   if (str.length > maxLength) {
-    return `${str.substring(0, maxLength)}...`;
+    throw Error(`cannot fit "${str}" inside a length of ${maxLength}`);
   }
-  return str;
+  return `${str}${' '.repeat(maxLength - str.length)}`;
 }
 
 export function truncateStr(str: string, length: number) {

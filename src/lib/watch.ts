@@ -2,10 +2,10 @@ import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import K, { CachedAnime } from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
 import {
-  fitString,
   pathJoin,
   titleFromAnimeFileName,
   toEpisodeNumberStr,
+  truncateStr,
 } from './utils.js';
 import help from './help.js';
 
@@ -112,7 +112,7 @@ function displayErrorTooManyFiles(fileNames: string[], epName: string, epNumStr:
   const errorChain = ['', `${_cc.rd}More than one file name found`];
 
   for (const fileName of fileNames) {
-    const trimmedFileName = fitString(fileName.split('- ' + epNumStr)[0].trimEnd(), 60);
+    const trimmedFileName = truncateStr(fileName.split('- ' + epNumStr)[0].trimEnd(), 60);
     const coloredFileName = trimmedFileName.replace(
       epName,
       `${_cc.byw}${epName}${_cc.x}`

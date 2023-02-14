@@ -15,10 +15,12 @@ export class HelpFlag implements CLIFlag {
     `${nl}this application.`,
     '',
     `${h2}Syntax:`,
-    `${nl}${ex}aniwatch ${x}[${f}-h ${x}| ${f}--help${x}] ${arg}<all|flag|desc>`,
+    `${nl}${ex}aniwatch ${x}[${f}-h ${x}| ${f}--help${x}] ${arg}<all|simple|flag|desc>`,
     '',
     `${h2}Details:`,
-    `${nl}${arg}all${x}    Display default help for all flags and arguments.`,
+    `${nl}${arg}all${x}    Displays all available help entries (Huge List).`,
+    '',
+    `${nl}${arg}simple${x} Displays help for all basic commands.`,
     '',
     `${nl}${arg}flag${x}   The name of an existing flag that you want more`,
     `${ind2}    help with.`,
@@ -29,6 +31,7 @@ export class HelpFlag implements CLIFlag {
     `${nl}${ex}aniwatch ${f}-h ${arg}all           ${d}(Displays all default help)`,
     `${nl}${ex}aniwatch ${f}-h ${arg}f             ${d}(Displays --find-anime help)`,
     `${nl}${ex}aniwatch ${f}-h ${arg}c             ${d}(Displays --cache help)`,
+    `${nl}${ex}aniwatch ${f}-h ${arg}basic usage   ${d}(Displays how to watch anime)`,
     `${nl}${ex}aniwatch ${f}-h ${arg}show profile  ${d}(Displays --profile help)`,
     `${nl}${ex}aniwatch ${f}-h ${arg}reload cache  ${d}(Displays --rebuild-cache help)`,
     '',
@@ -46,6 +49,16 @@ export class HelpFlag implements CLIFlag {
 
   exec(cli: typeof CLI) {
     const helpArg = cli.nonFlagArgs.join(' ');
+    if (helpArg == 'simple') {
+      Help.displaySimpleHelp();
+      return;
+    }
+
+    if (helpArg == 'all') {
+      Help.displayAllHelp();
+      return;
+    }
+
     const helpStrings = Help.findHelp(helpArg);
     if (!helpStrings) {
       Logger.error(`Could not find help using: ${ex}${helpArg}`);

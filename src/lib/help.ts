@@ -97,11 +97,11 @@ export class Help {
     const longFlag = fitStringEnd(flags[1], 15);
     const flagExample = `${_fl}-${shortFlag}${_x}| ${_fl}--${longFlag}${_x}`;
 
-    if (_simpleFlagSyntax.length == 1) {
-      _simpleFlagSyntax.push(`${_nl}${_cc.byw}aniwatch ${_x}[ ${flagExample} ]`);
-    } else {
-      _simpleFlagSyntax.push(`${_ind2}${_ind2}[ ${flagExample} ]`);
-    }
+    _simpleFlagSyntax.push(
+      _simpleFlagSyntax.length == 1
+        ? `${_nl}${_cc.byw}aniwatch ${_x}[ ${flagExample} ]`
+        : `${_ind2}${_ind2}[ ${flagExample} ]`
+    );
 
     _simpleFlagDetails.push(
       `${_nl}${_fl}-${fitStringEnd(flags[0], 4)}${_x} ${shortHelp}`,

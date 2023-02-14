@@ -10,6 +10,7 @@ const { nl } = Help.textFlowUtils;
 export class FindAnimeFlag implements CLIFlag {
   name: CLIFlagName = ['f', 'find-anime'];
   type: CLIFlagType = 'multiArg';
+
   helpAliases: string[] = [
     ...this.name,
     'find anime',

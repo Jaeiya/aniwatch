@@ -8,6 +8,7 @@ const { nl } = Help.textFlowUtils;
 export class RefreshTokenFlag implements CLIFlag {
   name: CLIFlagName = ['rt', 'refresh-token'];
   type: CLIFlagType = 'simple';
+
   helpAliases: string[] = [
     ...this.name,
     'refresh token',
@@ -18,7 +19,9 @@ export class RefreshTokenFlag implements CLIFlag {
     'access token',
     'get access token',
   ];
+
   shortHelpDisplay = `Retrieves a new access token ${em}(rarely needed)${d}.`;
+
   helpDisplay: string[] = [
     `${h1}Refresh Access Token:`,
     `${nl}Refreshes your current access token. This will`,

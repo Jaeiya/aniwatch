@@ -12,6 +12,7 @@ export class DefaultFlag implements CLIFlag {
   name: CLIFlagName = ['', 'default'];
   type: CLIFlagType = 'multiArg';
   isDefault = true;
+
   helpAliases: string[] = [
     ...this.name,
     'normal',
@@ -23,6 +24,7 @@ export class DefaultFlag implements CLIFlag {
     'how do I use program',
     'how do I watch anime',
   ];
+
   helpSyntax: string[] = [
     `${h2}Default Syntax:`,
     `${nl}${ex}aniwatch ${arg}<name> <ep> <fep>`,
@@ -40,6 +42,7 @@ export class DefaultFlag implements CLIFlag {
     `${nl}${ex}aniwatch ${arg}berserk 3`,
     `${nl}${ex}aniwatch ${arg}bleach 367 1`,
   ];
+
   helpDisplay: string[] = [
     `${h1}Default Usage`,
     `${nl}Scan the current working directory for the`,
@@ -59,11 +62,14 @@ export class DefaultFlag implements CLIFlag {
     '',
     ...this.helpSyntax,
   ];
+
   exec(cli: typeof CLI) {
     const flagArgs = cli.nonFlagArgs;
+
     if (!cli.userArgs.length && K.isFirstSetup) {
       return;
     }
+
     if (flagArgs.length < 2 || flagArgs.length > 3) {
       Logger.chainError([
         `${_cc.rd}Invalid Syntax`,
@@ -73,6 +79,7 @@ export class DefaultFlag implements CLIFlag {
       Help.displayHelp(this.helpSyntax);
       process.exit(1);
     }
+
     watchAnime(flagArgs[0], [flagArgs[1], flagArgs[2] || ''], process.cwd());
   }
 }

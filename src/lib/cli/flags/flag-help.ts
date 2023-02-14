@@ -8,7 +8,9 @@ const { nl, ind2 } = Help.textFlowUtils;
 export class HelpFlag implements CLIFlag {
   name: CLIFlagName = ['h', 'help'];
   type: CLIFlagType = 'multiArg';
+
   helpAliases: string[] = [...this.name, 'need help', 'how to use help'];
+
   helpDisplay: string[] = [
     `${h1}Help`,
     `${nl}Allows you to discover all functionality about`,

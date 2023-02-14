@@ -10,6 +10,7 @@ const { nl } = Help.textFlowUtils;
 export class RSSFeedFlag implements CLIFlag {
   name: CLIFlagName = ['rss', 'rss-feed'];
   type: CLIFlagType = 'multiArg';
+
   helpAliases: string[] = [
     ...this.name,
     'rss',
@@ -19,6 +20,7 @@ export class RSSFeedFlag implements CLIFlag {
     'search rss',
     'lookup rss',
   ];
+
   helpSyntax: string[] = [
     `${h2}Syntax:`,
     `${nl}${ex}aniwatch ${x}[${f}-rss ${x}| ${f}--rss-feed${x}] ${arg}<name>`,
@@ -30,6 +32,7 @@ export class RSSFeedFlag implements CLIFlag {
     `${nl}${ex}aniwatch ${f}-rss ${arg}"boku no hero"`,
     `${nl}${ex}aniwatch ${f}--rss-feed ${arg}berserk`,
   ];
+
   helpDisplay: string[] = [
     `${h1}RSS Feed:`,
     `${nl}Searches ${x}nyaa.si${d} for an anime name filtered by`,

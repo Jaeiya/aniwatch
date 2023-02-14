@@ -18,12 +18,12 @@ export function toEpisodeNumberStr(epNum: number) {
 export function parseWithZod<T extends ZodSchema>(
   schema: T,
   data: unknown,
-  failedSchema: string
+  failedSchemaName: string
 ) {
   const zodResp = schema.safeParse(data);
   if (!zodResp.success) {
     Logger.chainError([
-      `${_cc.rd}Failed To Parse ${_cc.byw}${failedSchema} ${_cc.rd}Schema`,
+      `${_cc.rd}Failed To Parse ${_cc.byw}${failedSchemaName} ${_cc.rd}Schema`,
       ...zodResp.error.issues.map((issue) => {
         return `${_cc.yw}${issue.path}${_cc.x}: ${
           issue.message == 'Required' ? 'Missing or Undefined' : issue.message

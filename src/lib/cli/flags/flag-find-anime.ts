@@ -1,6 +1,6 @@
 import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import K, { SerializedAnime } from '../../kitsu/kitsu.js';
+import { Kitsu, SerializedAnime } from '../../kitsu/kitsu.js';
 import { Logger } from '../../logger.js';
 
 const { h1, h2, em, d, f, arg, x, ex } = Help.colors;
@@ -52,7 +52,7 @@ export class FindAnimeFlag implements CLIFlag {
 }
 
 async function getAnimeList(cli: typeof CLI) {
-  const animeList = await K.findAnime(cli.nonFlagArgs.join(' '));
+  const animeList = await Kitsu.findAnime(cli.nonFlagArgs.join(' '));
   if (!animeList.length) {
     Logger.chainInfo([
       `${ex}No Entries Found`,

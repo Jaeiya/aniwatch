@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
-import K, { CachedAnime } from './kitsu/kitsu.js';
+import { Kitsu, CachedAnime } from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
 import {
   pathJoin,
@@ -100,7 +100,7 @@ function getCachedAnimeFromFiles(fileNames: string[], epName: string, epNumStr: 
   }
 
   if (fileNames.length == 1) {
-    return K.animeCache.filter(
+    return Kitsu.animeCache.filter(
       (anime) =>
         anime[1].toLowerCase().includes(epName) || anime[2].toLowerCase().includes(epName)
     );
@@ -154,7 +154,7 @@ async function updateAnime(cachedAnime: CachedAnime, config: WatchConfig) {
   Logger.info(`${_cc.bcn}Jap Title:${_cc.x} ${_cc.gn}${cachedAnime[0][1]}`);
   Logger.info(`${_cc.bcn}Eng Title:${_cc.x} ${_cc.gn}${cachedAnime[0][2]}`);
 
-  await K.updateAnime(`https://kitsu.io/api/edge/library-entries/${cachedID}`, {
+  await Kitsu.updateAnime(`https://kitsu.io/api/edge/library-entries/${cachedID}`, {
     data: {
       id: cachedID,
       type: 'library-entries',

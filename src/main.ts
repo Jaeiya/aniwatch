@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { CLI } from './lib/cli/cli.js';
-import K from './lib/kitsu/kitsu.js';
+import { Kitsu } from './lib/kitsu/kitsu.js';
 import { Logger } from './lib/logger.js';
 import { isDev } from './lib/utils.js';
 import { ProfileFlag } from './lib/cli/flags/flag-profile.js';
@@ -22,7 +22,7 @@ if (isDev()) {
 
 process.removeAllListeners('warning');
 
-await K.init();
+await Kitsu.init();
 
 CLI.addFlag(new DefaultFlag());
 CLI.addFlag(new ProfileFlag());

@@ -1,6 +1,6 @@
 import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import K from '../../kitsu/kitsu.js';
+import { Kitsu } from '../../kitsu/kitsu.js';
 
 const { h1, em, d } = Help.colors;
 const { nl } = Help.textFlowUtils;
@@ -33,5 +33,5 @@ export class RefreshTokenFlag implements CLIFlag {
     '',
   ];
 
-  exec = K.refreshToken;
+  exec = Kitsu.refreshToken;
 }

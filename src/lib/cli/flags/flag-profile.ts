@@ -1,6 +1,6 @@
 import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import K from '../../kitsu/kitsu.js';
+import { Kitsu } from '../../kitsu/kitsu.js';
 
 const { h1 } = Help.colors;
 const { nl } = Help.textFlowUtils;
@@ -27,5 +27,5 @@ export class ProfileFlag implements CLIFlag {
     '',
   ];
 
-  exec = K.displayUserProfile;
+  exec = Kitsu.displayUserProfile;
 }

@@ -1,6 +1,6 @@
 import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import K from '../../kitsu/kitsu.js';
+import { Kitsu } from '../../kitsu/kitsu.js';
 
 const { h1 } = Help.colors;
 const { nl } = Help.textFlowUtils;
@@ -26,5 +26,5 @@ export class RebuildProfileFlag implements CLIFlag {
     '',
   ];
 
-  exec = K.rebuildProfile;
+  exec = Kitsu.rebuildProfile;
 }

@@ -64,26 +64,128 @@ let _config = {} as ConfigFile;
 let _animeCache: CachedAnime = [];
 let _firstSetup = false;
 
-export default {
-  get animeCache() {
+export class Kitsu {
+  static get animeCache() {
     return _animeCache.slice(0);
-  },
-  get isFirstSetup() {
-    return _firstSetup;
-  },
-  init,
-  updateAnime,
-  rebuildProfile,
-  findAnime,
-  rebuildCache,
-  refreshToken,
-  displayCacheInfo,
-  displayUserProfile,
-};
+  }
 
-async function init() {
-  _config = await tryLoadConfig();
-  _animeCache = await tryLoadAnimeCache();
+  static get isFirstSetup() {
+    return _firstSetup;
+  }
+
+  static async init() {
+    _config = await tryLoadConfig();
+    _animeCache = await tryLoadAnimeCache();
+  }
+
+  static async updateAnime(url: string, data: LibraryPatchData) {
+    const resp = await HTTP.patch(
+      new URL(url),
+      JSON.stringify(data),
+      _config.access_token
+    );
+    const resolvedData = await resp.json();
+    if (!resp.ok) {
+      Logger.chainError([
+        '',
+        `${_cc.rd}Kitsu API Error`,
+        resolvedData['errors'][0]['detail'],
+      ]);
+      process.exit(1);
+    }
+    const libPatchResp = parseWithZod(
+      LibraryPatchRespSchema,
+      resolvedData,
+      'LibraryPatchResponse'
+    );
+    Logger.info(
+      `${_cc.bcn}Progress Set:${_cc.x} ${_cc.byw}${libPatchResp.data.attributes.progress}`
+    );
+  }
+
+  static async rebuildProfile() {
+    const userData = await getUserData(_config.username);
+    const { time, completed } = userData.stats;
+    const { secondsSpentWatching, completedSeries } = _config.stats;
+
+    _config.stats.secondsSpentWatching = time ?? secondsSpentWatching;
+    _config.stats.completedSeries = completed ?? completedSeries;
+    _config.about = userData.attributes.about;
+    saveConfig(_config);
+    Logger.chainInfo(['', `${_cc.bcn}Profile: ${_cc.byw}Updated!`]);
+  }
+
+  static async findAnime(name: string) {
+    const filteredCache = _animeCache.filter((anime) => {
+      const hasCanonTitle = anime[1].toLowerCase().includes(name.toLowerCase());
+      const hasEnglishTitle = anime[2].toLowerCase().includes(name.toLowerCase());
+      return hasCanonTitle || hasEnglishTitle;
+    });
+    if (!filteredCache.length) return [];
+    const libraryAnimeURL = buildLibraryAnimeURL(filteredCache.map((a) => a[0]));
+    const resp = await HTTP.get(libraryAnimeURL);
+    const entries = parseWithZod(
+      LibraryEntriesSchema,
+      await resp.json(),
+      'LibraryEntries'
+    );
+    return serializeAnimeInfo(filteredCache, entries);
+  }
+
+  static async rebuildCache() {
+    if (!_config.access_token) {
+      Logger.error('KitsuAPI not initialized');
+      process.exit(1);
+    }
+    const cachedAnime = await populateCurrentAnimeCache();
+    _animeCache = cachedAnime;
+    Logger.info(`${_cc.bcn}Cache Reloaded: ${_cc.byw}${cachedAnime.length}`);
+  }
+
+  static async refreshToken() {
+    const credentials = JSON.stringify({
+      grant_type: 'refresh_token',
+      refresh_token: _config.refresh_token,
+    });
+    const resp = await HTTP.post(_tokenURL, credentials);
+    const data = await tryGetDataFromResp<AuthTokenResp>(resp);
+    _config.access_token = data.access_token;
+    _config.refresh_token = data.refresh_token;
+    saveConfig(_config);
+    Logger.chainInfo([
+      `${_cc.bcn}Config File: ${_cc.gn}Saved`,
+      `${_cc.bcn}New Token: ${_cc.gn}${data.access_token}`,
+    ]);
+  }
+
+  static displayCacheInfo() {
+    Logger.chainInfo([
+      `${_cc.byw}Anime Cache Info`,
+      `${_cc.bcn}Cached Anime: ${_cc.gn}${_animeCache.length}`,
+    ]);
+    _animeCache.forEach((c) => {
+      Logger.chainInfo([
+        '',
+        `${_cc.bcn}title_jp:${_cc.x} ${c[1]}`,
+        `${_cc.cn}title_en:${_cc.x} ${c[2]}`,
+        `${_cc.bcn}Entry:${_cc.x} ${_cc.yw}https://kitsu.io/api/edge/library-entries/${c[0]}`,
+      ]);
+    });
+  }
+
+  static displayUserProfile() {
+    const { allTimeStr, hoursAndMinutesLeft } = getColoredTimeWatchedStr(
+      _config.stats.secondsSpentWatching
+    );
+    Logger.chainInfo([
+      `${_cc.byw}Current User Profile`,
+      `${_cc.bcn}Name:${_cc.x}${_cc.gn} ${_config.username}`,
+      `${_cc.bcn}About:${_cc.x} ${_config.about}`,
+      `${_cc.bcn}Link:${_cc.x}${_cc.gn} ${_config.urls.profile}`,
+      `${_cc.bcn}Watch Time:${_cc.x}${_cc.gn} ${allTimeStr} or ${hoursAndMinutesLeft}`,
+      `${_cc.bcn}Series Completed:${_cc.x}${_cc.gn} ${_config.stats.completedSeries}`,
+    ]);
+  }
 }
 
 async function tryLoadConfig() {
@@ -263,40 +365,6 @@ function getAnimeWatchListURL() {
   return url;
 }
 
-async function updateAnime(url: string, data: LibraryPatchData) {
-  const resp = await HTTP.patch(new URL(url), JSON.stringify(data), _config.access_token);
-  const resolvedData = await resp.json();
-  if (!resp.ok) {
-    Logger.chainError([
-      '',
-      `${_cc.rd}Kitsu API Error`,
-      resolvedData['errors'][0]['detail'],
-    ]);
-    process.exit(1);
-  }
-  const libPatchResp = parseWithZod(
-    LibraryPatchRespSchema,
-    resolvedData,
-    'LibraryPatchResponse'
-  );
-  Logger.info(
-    `${_cc.bcn}Progress Set:${_cc.x} ${_cc.byw}${libPatchResp.data.attributes.progress}`
-  );
-}
-
-async function findAnime(name: string) {
-  const filteredCache = _animeCache.filter((anime) => {
-    const hasCanonTitle = anime[1].toLowerCase().includes(name.toLowerCase());
-    const hasEnglishTitle = anime[2].toLowerCase().includes(name.toLowerCase());
-    return hasCanonTitle || hasEnglishTitle;
-  });
-  if (!filteredCache.length) return [];
-  const libraryAnimeURL = buildLibraryAnimeURL(filteredCache.map((a) => a[0]));
-  const resp = await HTTP.get(libraryAnimeURL);
-  const entries = parseWithZod(LibraryEntriesSchema, await resp.json(), 'LibraryEntries');
-  return serializeAnimeInfo(filteredCache, entries);
-}
-
 function buildLibraryAnimeURL(libraryIds: string[]) {
   const url = new URL('https://kitsu.io/api/edge/library-entries');
   url.searchParams.append(
@@ -332,77 +400,10 @@ function serializeAnimeInfo(
   });
 }
 
-async function rebuildProfile() {
-  const userData = await getUserData(_config.username);
-  const { time, completed } = userData.stats;
-  const { secondsSpentWatching, completedSeries } = _config.stats;
-
-  _config.stats.secondsSpentWatching = time ?? secondsSpentWatching;
-  _config.stats.completedSeries = completed ?? completedSeries;
-  _config.about = userData.attributes.about;
-  saveConfig(_config);
-  Logger.chainInfo(['', `${_cc.bcn}Profile: ${_cc.byw}Updated!`]);
-}
-
-async function rebuildCache() {
-  if (!_config.access_token) {
-    Logger.error('KitsuAPI not initialized');
-    process.exit(1);
-  }
-  const cachedAnime = await populateCurrentAnimeCache();
-  _animeCache = cachedAnime;
-  Logger.info(`${_cc.bcn}Cache Reloaded: ${_cc.byw}${cachedAnime.length}`);
-}
-
-async function refreshToken() {
-  const credentials = JSON.stringify({
-    grant_type: 'refresh_token',
-    refresh_token: _config.refresh_token,
-  });
-  const resp = await HTTP.post(_tokenURL, credentials);
-  const data = await tryGetDataFromResp<AuthTokenResp>(resp);
-  _config.access_token = data.access_token;
-  _config.refresh_token = data.refresh_token;
-  saveConfig(_config);
-  Logger.chainInfo([
-    `${_cc.bcn}Config File: ${_cc.gn}Saved`,
-    `${_cc.bcn}New Token: ${_cc.gn}${data.access_token}`,
-  ]);
-}
-
 function saveConfig(config: ConfigFile) {
   writeFileSync(pathJoin(_workingDir, 'aniwatch.json'), JSON.stringify(config, null, 2));
 }
 
 function saveCache(cache: AnimeCache) {
   writeFileSync(pathJoin(_workingDir, '.aniwatch.cache'), JSON.stringify(cache));
-}
-
-function displayCacheInfo() {
-  Logger.chainInfo([
-    `${_cc.byw}Anime Cache Info`,
-    `${_cc.bcn}Cached Anime: ${_cc.gn}${_animeCache.length}`,
-  ]);
-  _animeCache.forEach((c) => {
-    Logger.chainInfo([
-      '',
-      `${_cc.bcn}title_jp:${_cc.x} ${c[1]}`,
-      `${_cc.cn}title_en:${_cc.x} ${c[2]}`,
-      `${_cc.bcn}Entry:${_cc.x} ${_cc.yw}https://kitsu.io/api/edge/library-entries/${c[0]}`,
-    ]);
-  });
-}
-
-function displayUserProfile() {
-  const { allTimeStr, hoursAndMinutesLeft } = getColoredTimeWatchedStr(
-    _config.stats.secondsSpentWatching
-  );
-  Logger.chainInfo([
-    `${_cc.byw}Current User Profile`,
-    `${_cc.bcn}Name:${_cc.x}${_cc.gn} ${_config.username}`,
-    `${_cc.bcn}About:${_cc.x} ${_config.about}`,
-    `${_cc.bcn}Link:${_cc.x}${_cc.gn} ${_config.urls.profile}`,
-    `${_cc.bcn}Watch Time:${_cc.x}${_cc.gn} ${allTimeStr} or ${hoursAndMinutesLeft}`,
-    `${_cc.bcn}Series Completed:${_cc.x}${_cc.gn} ${_config.stats.completedSeries}`,
-  ]);
 }

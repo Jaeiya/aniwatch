@@ -1,6 +1,6 @@
 import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import K from '../../kitsu/kitsu.js';
+import { Kitsu } from '../../kitsu/kitsu.js';
 import { Logger } from '../../logger.js';
 import { watchAnime } from '../../watch.js';
 
@@ -66,7 +66,7 @@ export class DefaultFlag implements CLIFlag {
   exec(cli: typeof CLI) {
     const flagArgs = cli.nonFlagArgs;
 
-    if (!cli.userArgs.length && K.isFirstSetup) {
+    if (!cli.userArgs.length && Kitsu.isFirstSetup) {
       return;
     }
 

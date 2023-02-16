@@ -12,7 +12,6 @@ import { Help } from './help.js';
 type WatchConfig = {
   forcedEpNumber: number;
   fileEpNumber: number;
-  fileName: string;
   workingDir: string;
 };
 
@@ -34,13 +33,12 @@ export async function watchAnime(
   const cachedAnime = getCachedAnimeFromFiles(fansubFileNames, epName, epNumStr);
   validateCachedAnime(cachedAnime, fansubFileNames, epNumStr);
 
-  await updateAnime(cachedAnime, {
+  await setAnimeProgress(cachedAnime, {
     workingDir,
-    fileName: fansubFileNames[0],
     forcedEpNumber: Number(forcedEpNumStr),
     fileEpNumber: Number(fileEpNumStr),
   });
-  Logger.info(`${_cc.bcn}Moved To:${_cc.x} ${_cc.byw}${pathJoin(workingDir, 'watched')}`);
+  moveFileToWatchedDir(fansubFileNames[0], workingDir);
 }
 
 function validateParams(params: [string, string[], string]) {
@@ -91,7 +89,11 @@ function filterSubsPleaseFiles(workingDir: string, epName: string, epNumSyntax: 
     );
 }
 
-function getCachedAnimeFromFiles(fileNames: string[], epName: string, epNumStr: string) {
+function getCachedAnimeFromFiles(
+  fileNames: string[],
+  epName: string,
+  epNumStr: string
+): CachedAnime {
   if (!fileNames.length) {
     Logger.error(
       `${_cc.byw}${epName}${_cc.x} episode ${_cc.byw}${epNumStr}${_cc.x} does NOT exist`
@@ -148,25 +150,32 @@ function validateCachedAnime(cache: CachedAnime, fileNames: string[], epNumStr: 
   }
 }
 
-async function updateAnime(cachedAnime: CachedAnime, config: WatchConfig) {
+async function setAnimeProgress(cachedAnime: CachedAnime, config: WatchConfig) {
   const cachedID = cachedAnime[0][0];
 
   Logger.info(`${_cc.bcn}Jap Title:${_cc.x} ${_cc.gn}${cachedAnime[0][1]}`);
   Logger.info(`${_cc.bcn}Eng Title:${_cc.x} ${_cc.gn}${cachedAnime[0][2]}`);
 
-  await Kitsu.updateAnime(`https://kitsu.io/api/edge/library-entries/${cachedID}`, {
-    data: {
-      id: cachedID,
-      type: 'library-entries',
-      attributes: {
-        progress: config.forcedEpNumber || config.fileEpNumber,
+  const progress = await Kitsu.updateAnime(
+    `https://kitsu.io/api/edge/library-entries/${cachedID}`,
+    {
+      data: {
+        id: cachedID,
+        type: 'library-entries',
+        attributes: {
+          progress: config.forcedEpNumber || config.fileEpNumber,
+        },
       },
-    },
-  });
-
-  moveFileToWatchedDir(config.fileName, config.workingDir);
+    }
+  );
+  Logger.info(
+    `${_cc.bcn}Progress Set:${_cc.x} ${_cc.gn}${progress} ${_cc.byw}/ ${_cc.ma}${
+      cachedAnime[0][3] || 'unknown'
+    }`
+  );
 }
 
 function moveFileToWatchedDir(fileName: string, workingDir: string) {
   renameSync(pathJoin(workingDir, fileName), pathJoin(workingDir, 'watched', fileName));
+  Logger.info(`${_cc.bcn}Moved To:${_cc.x} ${_cc.byw}${pathJoin(workingDir, 'watched')}`);
 }

@@ -46,7 +46,7 @@ export const ConfigFileSchema = z.object({
   username: z.string(),
   access_token: z.string(),
   refresh_token: z.string(),
-  cache: z.array(z.tuple([z.string(), z.string(), z.string()])),
+  cache: z.array(z.tuple([z.string(), z.string(), z.string(), z.number()])),
 });
 
 export type AnimeCache = ConfigFile['cache'];
@@ -85,6 +85,7 @@ export const LibraryInfoSchema = z.object({
     z.object({
       id: z.string(),
       attributes: z.object({
+        episodeCount: z.number().nullable(),
         titles: z.object({
           en: z.string(),
           en_jp: z.string(),

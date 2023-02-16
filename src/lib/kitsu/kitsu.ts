@@ -51,7 +51,12 @@ export type SerializedAnime = {
   avgRating: string;
 };
 
-export type CachedAnime = [libID: string, cannonTitle: string, englishTitle: string][];
+export type CachedAnime = [
+  libraryID: string,
+  cannonTitle: string,
+  englishTitle: string,
+  episodeCount: number
+][];
 
 const _workingDir = process.cwd();
 const _cc = Logger.consoleColors;
@@ -100,9 +105,7 @@ export class Kitsu {
       resolvedData,
       'LibraryPatchResponse'
     );
-    Logger.info(
-      `${_cc.bcn}Progress Set:${_cc.x} ${_cc.byw}${libPatchResp.data.attributes.progress}`
-    );
+    return libPatchResp.data.attributes.progress;
   }
 
   static async rebuildProfile() {
@@ -342,6 +345,7 @@ async function getAnimeCache(): Promise<CachedAnime> {
       library.data[i].id,
       anime.attributes.canonicalTitle.trim(),
       anime.attributes.titles.en.trim(),
+      anime.attributes.episodeCount || 0,
     ]);
   });
   return cache;

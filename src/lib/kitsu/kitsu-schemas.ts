@@ -46,10 +46,10 @@ export const ConfigFileSchema = z.object({
   username: z.string(),
   access_token: z.string(),
   refresh_token: z.string(),
+  cache: z.array(z.tuple([z.string(), z.string(), z.string()])),
 });
 
-export type AnimeCache = z.infer<typeof AnimeCacheSchema>;
-export const AnimeCacheSchema = z.array(z.tuple([z.string(), z.string(), z.string()]));
+export type AnimeCache = ConfigFile['cache'];
 
 export type LibraryEntries = z.infer<typeof LibraryEntriesSchema>;
 export const LibraryEntriesSchema = z.object({

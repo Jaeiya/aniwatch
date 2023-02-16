@@ -10,7 +10,6 @@ import { HTTP } from '../http.js';
 import { existsSync, writeFileSync } from 'fs';
 import {
   AnimeCache,
-  AnimeCacheSchema,
   ConfigFile,
   ConfigFileSchema,
   LibraryEntries,
@@ -58,15 +57,13 @@ const _workingDir = process.cwd();
 const _cc = Logger.consoleColors;
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
 const _prompt = Logger.prompt;
-const _cacheFilePath = pathJoin(_workingDir, '.aniwatch.cache');
 
 let _config = {} as ConfigFile;
-let _animeCache: CachedAnime = [];
 let _firstSetup = false;
 
 export class Kitsu {
   static get animeCache() {
-    return _animeCache.slice(0);
+    return _config.cache.slice(0);
   }
 
   static get isFirstSetup() {
@@ -75,7 +72,12 @@ export class Kitsu {
 
   static async init() {
     _config = await tryLoadConfig();
-    _animeCache = await tryLoadAnimeCache();
+    if (!_config.cache.length) {
+      const cache = await getAnimeCache();
+      Logger.info(`${_cc.bcn}Cached Anime: ${_cc.bgn}${cache.length}`);
+      _config.cache = cache;
+      saveConfig(_config);
+    }
   }
 
   static async updateAnime(url: string, data: LibraryPatchData) {
@@ -116,7 +118,7 @@ export class Kitsu {
   }
 
   static async findAnime(name: string) {
-    const filteredCache = _animeCache.filter((anime) => {
+    const filteredCache = _config.cache.filter((anime) => {
       const hasCanonTitle = anime[1].toLowerCase().includes(name.toLowerCase());
       const hasEnglishTitle = anime[2].toLowerCase().includes(name.toLowerCase());
       return hasCanonTitle || hasEnglishTitle;
@@ -137,8 +139,8 @@ export class Kitsu {
       Logger.error('KitsuAPI not initialized');
       process.exit(1);
     }
-    const cachedAnime = await populateCurrentAnimeCache();
-    _animeCache = cachedAnime;
+    const cachedAnime = await getAnimeCache();
+    _config.cache = cachedAnime;
     Logger.info(`${_cc.bcn}Cache Reloaded: ${_cc.byw}${cachedAnime.length}`);
   }
 
@@ -161,9 +163,9 @@ export class Kitsu {
   static displayCacheInfo() {
     Logger.chainInfo([
       `${_cc.byw}Anime Cache Info`,
-      `${_cc.bcn}Cached Anime: ${_cc.gn}${_animeCache.length}`,
+      `${_cc.bcn}Cached Anime: ${_cc.gn}${_config.cache.length}`,
     ]);
-    _animeCache.forEach((c) => {
+    _config.cache.forEach((c) => {
       Logger.chainInfo([
         '',
         `${_cc.bcn}title_jp:${_cc.x} ${c[1]}`,
@@ -299,8 +301,8 @@ function areStatsDefined(data: UserData): data is UserDataRequired {
   return typeof data.stats.time == 'number' && typeof data.stats.completed == 'number';
 }
 
-function serializeConfigData(user: UserDataRequired, tokens: AuthTokens) {
-  const configFile: ConfigFile = {
+function serializeConfigData(user: UserDataRequired, tokens: AuthTokens): ConfigFile {
+  return {
     id: user.id,
     urls: {
       profile: `https://kitsu.io/users/${user.attributes.name}`,
@@ -313,8 +315,8 @@ function serializeConfigData(user: UserDataRequired, tokens: AuthTokens) {
     about: user.attributes.about,
     username: user.attributes.name,
     ...tokens,
+    cache: [],
   };
-  return configFile;
 }
 
 async function tryGetDataFromResp<T = unknown>(resp: Response) {
@@ -331,18 +333,7 @@ async function tryGetDataFromResp<T = unknown>(resp: Response) {
   return data as T;
 }
 
-async function tryLoadAnimeCache() {
-  if (!existsSync(pathJoin(_workingDir, '.aniwatch.cache'))) {
-    const animeCache = await populateCurrentAnimeCache();
-    Logger.info(`${_cc.bcn}Cached Anime: ${_cc.bgn}${animeCache.length}`);
-    return animeCache;
-  }
-  const cacheFile = (await readFile(_cacheFilePath)).toString('utf-8');
-  const cache = parseWithZod(AnimeCacheSchema, JSON.parse(cacheFile), 'AnimeCache');
-  return cache;
-}
-
-async function populateCurrentAnimeCache(): Promise<CachedAnime> {
+async function getAnimeCache(): Promise<CachedAnime> {
   const resp = await HTTP.get(getAnimeWatchListURL());
   const library = parseWithZod(LibraryInfoSchema, await resp.json(), 'Library');
   const cache: AnimeCache = [];
@@ -353,7 +344,6 @@ async function populateCurrentAnimeCache(): Promise<CachedAnime> {
       anime.attributes.titles.en.trim(),
     ]);
   });
-  saveCache(cache);
   return cache;
 }
 
@@ -402,8 +392,4 @@ function serializeAnimeInfo(
 
 function saveConfig(config: ConfigFile) {
   writeFileSync(pathJoin(_workingDir, 'aniwatch.json'), JSON.stringify(config, null, 2));
-}
-
-function saveCache(cache: AnimeCache) {
-  writeFileSync(pathJoin(_workingDir, '.aniwatch.cache'), JSON.stringify(cache));
 }

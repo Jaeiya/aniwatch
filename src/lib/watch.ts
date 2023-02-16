@@ -73,7 +73,6 @@ function tryCreateWatchedDir(workingDir: string) {
   if (!existsSync(watchedDir)) {
     mkdirSync(watchedDir);
     Logger.info(`Watched directory created: ${_cc.byw}${watchedDir}`);
-    process.exit(1);
   }
 }
 

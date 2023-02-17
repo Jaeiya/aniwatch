@@ -46,8 +46,7 @@ export class FindAnimeFlag implements CLIFlag {
   ];
 
   async exec(cli: typeof CLI) {
-    const animeList = await getAnimeList(cli);
-    displayAnimeList(animeList);
+    displayAnimeList(await getAnimeList(cli));
   }
 }
 

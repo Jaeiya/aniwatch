@@ -12,6 +12,7 @@ import { FindAnimeFlag } from './lib/cli/flags/flag-find-anime.js';
 import { RSSFeedFlag } from './lib/cli/flags/flag-rss-feed.js';
 import { RefreshTokenFlag } from './lib/cli/flags/flag-refresh-token.js';
 import { DefaultFlag } from './lib/cli/flags/flag-default.js';
+import { DirInfoFlag } from './lib/cli/flags/flag-dir-size.js';
 
 console.log('');
 if (isDev()) {
@@ -33,5 +34,6 @@ CLI.addFlag(new RefreshTokenFlag());
 CLI.addFlag(new HelpFlag());
 CLI.addFlag(new FindAnimeFlag());
 CLI.addFlag(new RSSFeedFlag());
+CLI.addFlag(new DirInfoFlag());
 
 await CLI.tryExecFlags();

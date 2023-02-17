@@ -101,5 +101,9 @@ export function createReadableBytesFunc() {
   };
 }
 
+export function stripFansubInfo(name: string) {
+  return name.replace('[subsplease]', '').split(' (1080p)')[0].trim();
+}
+
 export const pathResolve = resolve;
 export const pathJoin = join;

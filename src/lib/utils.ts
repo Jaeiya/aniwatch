@@ -84,5 +84,22 @@ export function getColoredTimeWatchedStr(seconds: number) {
   };
 }
 
+export function createReadableBytesFunc() {
+  const m = new Map();
+  m.set('TB', 1_099_511_627_776);
+  m.set('GB', 1_073_741_824);
+  m.set('MB', 1_048_576);
+  m.set('KB', 1_024);
+
+  return function toMaxReadableBytes(bytes: number) {
+    for (const [strSize, byteSize] of m) {
+      if (bytes >= byteSize) {
+        return `${(bytes / byteSize).toFixed(2)} ${strSize}`;
+      }
+    }
+    throw Error(`cannot determine size of "${bytes}" bytes`);
+  };
+}
+
 export const pathResolve = resolve;
 export const pathJoin = join;

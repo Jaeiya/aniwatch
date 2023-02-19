@@ -1,3 +1,11 @@
+# [2.0.1](https://github.com/jaeiya/wakitsu/compare/v2.0.0...v2.0.1) (2/19/2023)
+
+### Changes
+
+- **chore**: update all dependencies
+- **kitsu**: save config files as `wakitsu.json` instead of `aniwatch.json`
+- all help has been updated to use new `wakitsu` name and `wak` command name
+
 # [2.0.0](https://github.com/jaeiya/wakitsu/compare/v1.3.1...v2.0.0) (2/19/2023)
 
 ### Project Rename

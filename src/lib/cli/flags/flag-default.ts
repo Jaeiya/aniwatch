@@ -27,7 +27,7 @@ export class DefaultFlag implements CLIFlag {
 
   helpSyntax: string[] = [
     `${h2}Default Syntax:`,
-    `${nl}${ex}aniwatch ${arg}<name> <ep> <fep>`,
+    `${nl}${ex}wak ${arg}<name> <ep> <fep>`,
     '',
     `${h2}Details:${nl}`,
     `${nl}${arg}name${x}   Full or partial name of an existing anime on disk.`,
@@ -38,9 +38,9 @@ export class DefaultFlag implements CLIFlag {
     `${ind2}${x}    instead of ${arg}<ep>${d}.`,
     '',
     `${h2}Examples:`,
-    `${nl}${ex}aniwatch ${arg}"boku no hero" 10`,
-    `${nl}${ex}aniwatch ${arg}berserk 3`,
-    `${nl}${ex}aniwatch ${arg}bleach 367 1`,
+    `${nl}${ex}wak ${arg}"boku no hero" 10`,
+    `${nl}${ex}wak ${arg}berserk 3`,
+    `${nl}${ex}wak ${arg}bleach 367 1`,
   ];
 
   helpDisplay: string[] = [

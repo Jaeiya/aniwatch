@@ -99,8 +99,8 @@ export class Help {
 
     _simpleFlagSyntax.push(
       _simpleFlagSyntax.length == 1
-        ? `${_nl}${_cc.byw}aniwatch ${_x}[ ${flagExample} ]`
-        : `${_ind2}${_ind2}[ ${flagExample} ]`
+        ? `${_nl}${_cc.byw}wak ${_x}[ ${flagExample} ]`
+        : `${_ind2} [ ${flagExample} ]`
     );
 
     _simpleFlagDetails.push(
@@ -110,7 +110,7 @@ export class Help {
   }
 
   static addSimpleFlagExamples(flags: [string, string]) {
-    const getExampleLine = (flag: string) => `${_nl}${_cc.byw}aniwatch ${_fl}${flag}`;
+    const getExampleLine = (flag: string) => `${_nl}${_cc.byw}wak ${_fl}${flag}`;
     if (_simpleFlagExamples.length < 5) {
       _simpleFlagExamples.push(`${getExampleLine(`-${flags[0]}`)}`);
       _simpleFlagExamples.push(`${getExampleLine(`--${flags[1]}`)}`);
@@ -137,10 +137,10 @@ function getNoArgSyntax(flags: [string, string]) {
   const [short, long] = flags;
   return [
     `${_shd}Default Syntax:`,
-    `${_nl}${_cc.byw}aniwatch ${_x}[${_fl}-${short} ${_x}| ${_fl}--${long}${_x}]`,
+    `${_nl}${_cc.byw}wak ${_x}[${_fl}-${short} ${_x}| ${_fl}--${long}${_x}]`,
     '',
     `${_shd}Examples:`,
-    `${_nl}${_cc.byw}aniwatch ${_fl}-${short}`,
-    `${_nl}${_cc.byw}aniwatch ${_fl}--${long}`,
+    `${_nl}${_cc.byw}wak ${_fl}-${short}`,
+    `${_nl}${_cc.byw}wak ${_fl}--${long}`,
   ];
 }

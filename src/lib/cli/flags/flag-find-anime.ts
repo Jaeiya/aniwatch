@@ -21,14 +21,14 @@ export class FindAnimeFlag implements CLIFlag {
 
   helpSyntax: string[] = [
     `${h2}Syntax:`,
-    `${nl}${ex}aniwatch ${x}[${f}-f ${x}| ${f}--find-anime${x}] ${arg}<name>`,
+    `${nl}${ex}wak ${x}[${f}-f ${x}| ${f}--find-anime${x}] ${arg}<name>`,
     '',
     `${h2}Details:`,
     `${nl}${arg}name    ${x}Anime name in your "currently watching" list on Kitsu.`,
     '',
     `${h2}Examples:`,
-    `${nl}${ex}aniwatch ${f}-f ${arg}"boku no hero"`,
-    `${nl}${ex}aniwatch ${f}--find-anime ${arg}berserk`,
+    `${nl}${ex}wak ${f}-f ${arg}"boku no hero"`,
+    `${nl}${ex}wak ${f}--find-anime ${arg}berserk`,
   ];
 
   helpDisplay: string[] = [

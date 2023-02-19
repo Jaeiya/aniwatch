@@ -23,14 +23,14 @@ export class RSSFeedFlag implements CLIFlag {
 
   helpSyntax: string[] = [
     `${h2}Syntax:`,
-    `${nl}${ex}aniwatch ${x}[${f}-rss ${x}| ${f}--rss-feed${x}] ${arg}<name>`,
+    `${nl}${ex}wak ${x}[${f}-rss ${x}| ${f}--rss-feed${x}] ${arg}<name>`,
     '',
     `${h2}Details:`,
     `${nl}${arg}name    ${x}Name or partial name of any anime.`,
     '',
     `${h2}Examples:`,
-    `${nl}${ex}aniwatch ${f}-rss ${arg}"boku no hero"`,
-    `${nl}${ex}aniwatch ${f}--rss-feed ${arg}berserk`,
+    `${nl}${ex}wak ${f}-rss ${arg}"boku no hero"`,
+    `${nl}${ex}wak ${f}--rss-feed ${arg}berserk`,
   ];
 
   helpDisplay: string[] = [

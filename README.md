@@ -18,7 +18,7 @@ npm i -g aniwatch
 
 Once it's installed, you can open a command prompt and begin using the program by typing `aniwatch -h`. It should walk you through a few prompts to get your data from [Kitsu] and then immediately display a help screen on how to use the application.
 
-### Development Installation
+## Development Installation
 
 Clone this repository and then run the following command in the directory where you cloned it.
 

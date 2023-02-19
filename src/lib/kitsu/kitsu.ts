@@ -7,7 +7,7 @@ import {
   tryCatchAsync,
 } from '../utils.js';
 import { HTTP } from '../http.js';
-import { existsSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import {
   AnimeCache,
   ConfigFile,
@@ -62,6 +62,7 @@ const _workingDir = process.cwd();
 const _cc = Logger.consoleColors;
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
 const _prompt = Logger.prompt;
+const _configFileName = 'wakitsu.json';
 
 let _config = {} as ConfigFile;
 let _firstSetup = false;
@@ -195,7 +196,7 @@ export class Kitsu {
 
 async function tryLoadConfig() {
   const configResp = await tryCatchAsync(
-    readFile(pathJoin(_workingDir, 'aniwatch.json'))
+    readFile(pathJoin(_workingDir, _configFileName))
   );
   if (configResp instanceof Error) {
     if (configResp.message.includes('ENOENT')) {
@@ -395,5 +396,5 @@ function serializeAnimeInfo(
 }
 
 function saveConfig(config: ConfigFile) {
-  writeFileSync(pathJoin(_workingDir, 'aniwatch.json'), JSON.stringify(config, null, 2));
+  writeFileSync(pathJoin(_workingDir, _configFileName), JSON.stringify(config, null, 2));
 }

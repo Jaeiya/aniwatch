@@ -1,6 +1,6 @@
-# Read Me
+# About
 
-Aniwatch is a CLI application designed to find an anime episode on disk, at the working directory, filtered by SubsPlease Fansub group. If found, it will update your [Kitsu] watch list and move the file to a "watched" folder.
+Wakitsu is a CLI application designed to find an anime episode on disk, at the working directory, filtered by SubsPlease Fansub group. If found, it will update your [Kitsu] watch list and move the file to a "watched" folder.
 
 > This is a Hobby project created out of a need for both relaxation and organization.
 
@@ -13,10 +13,10 @@ If you're like me and find the CLI a lot more user-friendly than going to a webs
 ### Easy Global Install
 
 ```bash
-npm i -g aniwatch
+npm i -g wakitsu
 ```
 
-Once it's installed, you can open a command prompt and begin using the program by typing `aniwatch -h`. It should walk you through a few prompts to get your data from [Kitsu] and then immediately display a help screen on how to use the application.
+Once it's installed, you can open a command prompt and begin using the program by typing `wak -h`. It should walk you through a few prompts to get your data from [Kitsu] and then immediately display a help screen on how to use the application.
 
 ## Development Installation
 
@@ -44,12 +44,12 @@ VSCODE users can simply execute the `Run Build Task` command (or by using the co
 
 ### Run using global command
 
-`aniwatch <args>`
+`wak <args>`
 
 ## Need Help?
 
 There is built-in help in the form of a help flag. This will give you a full detailed rundown of how to use every feature of the program. The command below will render like an error, but that's only because there is no logic for a flag that can be used **with** and **without** an argument.
 
-`aniwatch -h` or `aniwatch --help`
+`wak -h` or `wak --help`
 
 [kitsu]: https://kitsu.io

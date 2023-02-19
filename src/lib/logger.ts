@@ -1,7 +1,9 @@
 import readline from 'readline';
 
 const _maxTagLength = 10;
-
+//*                                R   G   B
+// TODO - Support RGB: \u001B[38;2;255;100;70m\u001B[1m<text>
+// https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 const _consoleColors = {
   /** Black */
   bk: '\u001B[30m',

@@ -22,13 +22,13 @@
     "progress"
   ],
   "bugs": {
-    "url": "https://github.com/Jaeiya/aniwatch/issues"
+    "url": "https://github.com/Jaeiya/wakitsu/issues"
   },
   "engines": {
     "node": ">= 18"
   },
-  "homepage": "https://github.com/Jaeiya/aniwatch#readme",
-  "repository": "https://github.com/Jaeiya/aniwatch",
+  "homepage": "https://github.com/Jaeiya/wakitsu#readme",
+  "repository": "https://github.com/Jaeiya/wakitsu",
   "author": "Jaeiya",
   "license": "MIT",
   "devDependencies": {

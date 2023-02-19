@@ -10,10 +10,10 @@ If you're like me and find the CLI a lot more user-friendly than going to a webs
 
 ## Getting Started
 
-### Easy Install
+### Easy Global Install
 
 ```bash
-npm i aniwatch
+npm i -g aniwatch
 ```
 
 Once it's installed, you can open a command prompt and begin using the program by typing `aniwatch -h`. It should walk you through a few prompts to get your data from [Kitsu] and then immediately display a help screen on how to use the application.

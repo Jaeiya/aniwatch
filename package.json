@@ -10,7 +10,25 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development node ./bin/main.js"
   },
-  "keywords": [],
+  "files": [
+    "/bin/**/**.js",
+    "**.md"
+  ],
+  "keywords": [
+    "anime",
+    "track",
+    "kitsu",
+    "update",
+    "progress"
+  ],
+  "bugs": {
+    "url": "https://github.com/Jaeiya/aniwatch/issues"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "homepage": "https://github.com/Jaeiya/aniwatch#readme",
+  "repository": "https://github.com/Jaeiya/aniwatch",
   "author": "Jaeiya",
   "license": "MIT",
   "devDependencies": {

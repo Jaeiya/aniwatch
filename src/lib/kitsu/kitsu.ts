@@ -195,19 +195,19 @@ export class Kitsu {
 }
 
 async function tryLoadConfig() {
-    const configResp = await tryCatchAsync(
+    const asyncRes = await tryCatchAsync(
         readFile(pathJoin(_workingDir, _configFileName))
     );
-    if (configResp instanceof Error) {
-        if (configResp.message.includes('ENOENT')) {
+    if (!asyncRes.success) {
+        if (asyncRes.error.message.includes('ENOENT')) {
             return await trySetupConfig();
         }
-        Logger.error(configResp.message);
+        Logger.error(asyncRes.error.message);
         process.exit(1);
     }
     const config = parseWithZod(
         ConfigFileSchema,
-        JSON.parse(configResp.toString('utf-8')),
+        JSON.parse(asyncRes.data.toString('utf-8')),
         'Config'
     );
     return config;

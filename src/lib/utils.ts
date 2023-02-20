@@ -35,12 +35,35 @@ export function parseWithZod<T extends ZodSchema>(
     return zodResp.data as z.infer<T>;
 }
 
-export async function tryCatchAsync<T>(p: Promise<T>): Promise<T | Error> {
+type AsyncError = {
+    success: false;
+    error: Error;
+};
+type AsyncSuccess<T> = {
+    success: true;
+    data: T;
+};
+
+type AsyncResponse<T> = Promise<AsyncError | AsyncSuccess<T>>;
+
+export async function tryCatchAsync<T>(p: Promise<T>): AsyncResponse<T> {
     try {
         const data = await p;
-        return data;
+        return {
+            success: true,
+            data,
+        };
     } catch (e) {
-        return Error((e as Error).message);
+        if (e instanceof Error) {
+            return {
+                success: false,
+                error: e,
+            };
+        }
+        return {
+            success: false,
+            error: Error('unknown error', { cause: e }),
+        };
     }
 }
 

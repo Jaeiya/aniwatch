@@ -5,7 +5,7 @@ const _cc = Logger.consoleColors;
 
 export class HTTP {
     static async post(url: string, body: string) {
-        const resp = await tryCatchAsync(
+        const asyncRes = await tryCatchAsync(
             fetch(url, {
                 method: 'POST',
                 body,
@@ -14,27 +14,27 @@ export class HTTP {
                 },
             })
         );
-        if (resp instanceof Error) {
-            execError(resp, 'POST', url.toString());
+        if (!asyncRes.success) {
+            execError(asyncRes.error, 'POST', url.toString());
             process.exit(1);
         }
-        return resp;
+        return asyncRes.data;
     }
 
     static async get(url: URL, token?: string) {
         const headers = token ? { Authorization: `Bearer ${token}` } : null;
-        const resp = await tryCatchAsync(
+        const asyncResp = await tryCatchAsync(
             fetch(url, headers ? { method: 'GET', headers } : { method: 'GET' })
         );
-        if (resp instanceof Error) {
-            execError(resp, 'GET', url.toString());
+        if (!asyncResp.success) {
+            execError(asyncResp.error, 'GET', url.toString());
             process.exit(1);
         }
-        return resp;
+        return asyncResp.data;
     }
 
     static async patch(url: URL, body: string, token: string) {
-        const resp = await tryCatchAsync(
+        const asyncRes = await tryCatchAsync(
             fetch(url, {
                 method: 'PATCH',
                 body,
@@ -44,16 +44,14 @@ export class HTTP {
                 },
             })
         );
-        if (resp instanceof Error) {
-            execError(resp, 'PATCH', url.toString());
+        if (!asyncRes.success) {
+            execError(asyncRes.error, 'PATCH', url.toString());
             process.exit(1);
         }
-        return resp;
+        return asyncRes.data;
     }
 }
 
 function execError(resp: Error, method: string, url: string) {
-    if (resp instanceof Error) {
-        Logger.chainError(['', `${_cc.rd}Failed ${method}ing ${url}`, resp.message]);
-    }
+    Logger.chainError(['', `${_cc.rd}Failed ${method}ing ${url}`, resp.message]);
 }

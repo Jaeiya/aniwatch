@@ -1,22 +1,23 @@
 {
-  "files.exclude": {
-    "bin": true,
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true
-  },
-  "cSpell.words": [
-    "aniwatch",
-    "wakitsu",
-    "fansub",
-    "Fansubs",
-    "fepisode",
-    "Kitsu",
-    "nyaa",
-    "subsplease",
-    "wakitsu"
-  ]
+    "files.exclude": {
+        "bin": true,
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    },
+    "cSpell.words": [
+        "aniwatch",
+        "fansub",
+        "Fansubs",
+        "fepisode",
+        "isode",
+        "Kitsu",
+        "nyaa",
+        "orced",
+        "subsplease",
+        "wakitsu"
+    ]
 }

@@ -324,7 +324,7 @@ function serializeConfigData(user: UserDataRequired, tokens: AuthTokens): Config
     };
 }
 
-async function tryGetDataFromResp<T = unknown>(resp: Response) {
+async function tryGetDataFromResp<T = unknown>(resp: Response): Promise<T> {
     const data = await resp.json();
     if (!resp.ok) {
         const errorType = data['error'];
@@ -335,7 +335,7 @@ async function tryGetDataFromResp<T = unknown>(resp: Response) {
         Logger.error(`${data['error_description']}`);
         process.exit(1);
     }
-    return data as T;
+    return data;
 }
 
 async function getAnimeCache(): Promise<CachedAnime> {

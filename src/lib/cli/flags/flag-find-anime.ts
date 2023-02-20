@@ -5,7 +5,7 @@ import { Logger } from '../../logger.js';
 
 const { h1, h2, em, d, f, arg, x, ex } = Help.colors;
 const _cc = Logger.consoleColors;
-const { nl } = Help.textFlowUtils;
+const { nl, ind2 } = Help.textFlowUtils;
 
 export class FindAnimeFlag implements CLIFlag {
     name: CLIFlagName = ['f', 'find-anime'];
@@ -24,7 +24,8 @@ export class FindAnimeFlag implements CLIFlag {
         `${nl}${ex}wak ${x}[${f}-f ${x}| ${f}--find-anime${x}] ${arg}<name>`,
         '',
         `${h2}Details:`,
-        `${nl}${arg}name    ${x}Anime name in your "currently watching" list on Kitsu.`,
+        `${nl}${arg}name   ${x}The name of any anime in your "currently watching"`,
+        `${ind2}    list on Kitsu.`,
         '',
         `${h2}Examples:`,
         `${nl}${ex}wak ${f}-f ${arg}"boku no hero"`,

@@ -26,7 +26,7 @@ export class RSSFeedFlag implements CLIFlag {
         `${nl}${ex}wak ${x}[${f}-rss ${x}| ${f}--rss-feed${x}] ${arg}<name>`,
         '',
         `${h2}Details:`,
-        `${nl}${arg}name    ${x}Name or partial name of any anime.`,
+        `${nl}${arg}name    ${x}The exact name or partial name of any anime.`,
         '',
         `${h2}Examples:`,
         `${nl}${ex}wak ${f}-rss ${arg}"boku no hero"`,

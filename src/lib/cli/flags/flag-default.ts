@@ -23,6 +23,7 @@ export class DefaultFlag implements CLIFlag {
         'how to use program',
         'how do I use program',
         'how do I watch anime',
+        'how do I update kitsu',
     ];
 
     helpSyntax: string[] = [

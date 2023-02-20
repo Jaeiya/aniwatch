@@ -12,8 +12,10 @@ If you're like me and find the CLI a lot more user-friendly than going to a webs
 
 ### Easy Global Install
 
+The following will install a production-only version of the program that you can start using immediately.
+
 ```bash
-npm i -g wakitsu
+npm i -g wakitsu --omit=dev
 ```
 
 Once it's installed, you can open a command prompt and begin using the program by typing `wak -h`. It should walk you through a few prompts to get your data from [Kitsu] and then immediately display a help screen on how to use the application.

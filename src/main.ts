@@ -16,9 +16,9 @@ import { DirInfoFlag } from './lib/cli/flags/flag-dir-size.js';
 
 console.log('');
 if (isDev()) {
-  const smp = await import('source-map-support');
-  smp.default.install();
-  Logger.info('TypeScript source map support installed');
+    const smp = await import('source-map-support');
+    smp.default.install();
+    Logger.info('TypeScript source map support installed');
 }
 
 process.removeAllListeners('warning');

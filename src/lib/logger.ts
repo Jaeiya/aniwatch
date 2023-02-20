@@ -5,110 +5,110 @@ const _maxTagLength = 10;
 // TODO - Support RGB: \u001B[38;2;255;100;70m\u001B[1m<text>
 // https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 const _consoleColors = {
-  /** Black */
-  bk: '\u001B[30m',
-  /** Bright Black */
-  bbk: '\u001B[90m',
-  /** Red */
-  rd: '\u001B[31m',
-  /** Bright Red */
-  brd: '\u001B[91m',
-  /** Dark Green */
-  gn: '\u001B[32m',
-  /** Bright Green */
-  bgn: '\u001B[92m',
-  /** Yellow */
-  yw: '\u001B[33m',
-  /** Bright Yellow */
-  byw: '\u001B[93m',
-  /** Blue */
-  be: '\u001B[34m',
-  /** Bright Blue */
-  bbe: '\u001B[94m',
-  /** Magenta */
-  ma: '\u001B[35m',
-  /** Bright Magenta */
-  bma: '\u001B[95m',
-  /** Cyan */
-  cn: '\u001B[36m',
-  /** Bright Cyan */
-  bcn: '\u001B[96m',
-  /** Bright White */
-  bwt: '\u001B[97m',
-  /** Clear */
-  x: '\u001B[0m',
+    /** Black */
+    bk: '\u001B[30m',
+    /** Bright Black */
+    bbk: '\u001B[90m',
+    /** Red */
+    rd: '\u001B[31m',
+    /** Bright Red */
+    brd: '\u001B[91m',
+    /** Dark Green */
+    gn: '\u001B[32m',
+    /** Bright Green */
+    bgn: '\u001B[92m',
+    /** Yellow */
+    yw: '\u001B[33m',
+    /** Bright Yellow */
+    byw: '\u001B[93m',
+    /** Blue */
+    be: '\u001B[34m',
+    /** Bright Blue */
+    bbe: '\u001B[94m',
+    /** Magenta */
+    ma: '\u001B[35m',
+    /** Bright Magenta */
+    bma: '\u001B[95m',
+    /** Cyan */
+    cn: '\u001B[36m',
+    /** Bright Cyan */
+    bcn: '\u001B[96m',
+    /** Bright White */
+    bwt: '\u001B[97m',
+    /** Clear */
+    x: '\u001B[0m',
 };
 const _cc = _consoleColors;
 
 export class Logger {
-  static readonly consoleColors = _consoleColors;
+    static readonly consoleColors = _consoleColors;
 
-  static info(msg: string) {
-    log('info', msg, 'gn');
-  }
+    static info(msg: string) {
+        log('info', msg, 'gn');
+    }
 
-  static chainInfo(msgs: string[]) {
-    msgs.forEach((msg) => {
-      if (msg) {
-        Logger.info(msg);
-      } else {
-        console.log('');
-      }
-    });
-  }
+    static chainInfo(msgs: string[]) {
+        msgs.forEach((msg) => {
+            if (msg) {
+                Logger.info(msg);
+            } else {
+                console.log('');
+            }
+        });
+    }
 
-  static error(msg: string) {
-    log('error', msg, 'rd');
-  }
+    static error(msg: string) {
+        log('error', msg, 'rd');
+    }
 
-  static chainError(msgs: string[]) {
-    msgs.forEach((msg) => {
-      if (msg) {
-        Logger.error(msg);
-      } else {
-        console.log('');
-      }
-    });
-  }
+    static chainError(msgs: string[]) {
+        msgs.forEach((msg) => {
+            if (msg) {
+                Logger.error(msg);
+            } else {
+                console.log('');
+            }
+        });
+    }
 
-  static promptRaw(msg: string) {
-    return this.printRaw('ma', 'prompt', msg);
-  }
+    static promptRaw(msg: string) {
+        return this.printRaw('ma', 'prompt', msg);
+    }
 
-  static print(color: keyof typeof _cc, tag: string, msg: string) {
-    log(tag, msg, color);
-  }
+    static print(color: keyof typeof _cc, tag: string, msg: string) {
+        log(tag, msg, color);
+    }
 
-  static printRaw(color: keyof typeof _cc, tag: string, msg: string) {
-    return `${_cc[color]}${toTag(tag)}${_cc.x} ${msg}`;
-  }
+    static printRaw(color: keyof typeof _cc, tag: string, msg: string) {
+        return `${_cc[color]}${toTag(tag)}${_cc.x} ${msg}`;
+    }
 
-  static async prompt(query: string) {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
+    static async prompt(query: string) {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
 
-    const answer = await new Promise<string>((rs) => {
-      // It's cleaner to have prompt spaced from prior logs
-      console.log('');
-      rl.question(Logger.promptRaw(query), rs);
-    });
-    rl.close();
-    return answer;
-  }
+        const answer = await new Promise<string>((rs) => {
+            // It's cleaner to have prompt spaced from prior logs
+            console.log('');
+            rl.question(Logger.promptRaw(query), rs);
+        });
+        rl.close();
+        return answer;
+    }
 }
 
 function log(tagName: string, msg: string, color: keyof typeof _cc) {
-  console.log(`${_cc[color]}${toTag(tagName)}${_cc.x}`, msg);
+    console.log(`${_cc[color]}${toTag(tagName)}${_cc.x}`, msg);
 }
 
 function toTag(tagName: string) {
-  if (tagName.length > _maxTagLength) {
-    throw Error(`Tag longer than maxTagLength: [${tagName}]`);
-  }
-  const specialCharLength = 3; // [, ], :
-  const tagLength = tagName.length + specialCharLength;
-  const offsetLength = _maxTagLength - tagLength;
-  return `${' '.repeat(offsetLength)}[${tagName.toUpperCase()}]:`;
+    if (tagName.length > _maxTagLength) {
+        throw Error(`Tag longer than maxTagLength: [${tagName}]`);
+    }
+    const specialCharLength = 3; // [, ], :
+    const tagLength = tagName.length + specialCharLength;
+    const offsetLength = _maxTagLength - tagLength;
+    return `${' '.repeat(offsetLength)}[${tagName.toUpperCase()}]:`;
 }

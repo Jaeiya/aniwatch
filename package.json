@@ -1,49 +1,49 @@
 {
-  "name": "wakitsu",
-  "version": "2.0.1",
-  "description": "Hobby project for managing anime watch list on Kitsu through CLI",
-  "type": "module",
-  "main": "bin/main.js",
-  "bin": {
-    "wak": "./bin/main.js"
-  },
-  "scripts": {
-    "dev": "cross-env NODE_ENV=development node ./bin/main.js"
-  },
-  "files": [
-    "/bin/**/**.js",
-    "**.md"
-  ],
-  "keywords": [
-    "anime",
-    "track",
-    "kitsu",
-    "update",
-    "progress"
-  ],
-  "bugs": {
-    "url": "https://github.com/Jaeiya/wakitsu/issues"
-  },
-  "engines": {
-    "node": ">= 18"
-  },
-  "homepage": "https://github.com/Jaeiya/wakitsu#readme",
-  "repository": "https://github.com/Jaeiya/wakitsu",
-  "author": "Jaeiya",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^18.14.0",
-    "@types/source-map-support": "^0.5.6",
-    "@typescript-eslint/eslint-plugin": "^5.52.0",
-    "@typescript-eslint/parser": "^5.52.0",
-    "cross-env": "^7.0.3",
-    "eslint": "^8.34.0",
-    "eslint-config-prettier": "^8.6.0",
-    "prettier": "^2.8.4",
-    "source-map-support": "^0.5.21"
-  },
-  "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
-    "zod": "^3.20.6"
-  }
+    "name": "wakitsu",
+    "version": "2.0.1",
+    "description": "Hobby project for managing anime watch list on Kitsu through CLI",
+    "type": "module",
+    "main": "bin/main.js",
+    "bin": {
+        "wak": "./bin/main.js"
+    },
+    "scripts": {
+        "dev": "cross-env NODE_ENV=development node ./bin/main.js"
+    },
+    "files": [
+        "/bin/**/**.js",
+        "**.md"
+    ],
+    "keywords": [
+        "anime",
+        "track",
+        "kitsu",
+        "update",
+        "progress"
+    ],
+    "bugs": {
+        "url": "https://github.com/Jaeiya/wakitsu/issues"
+    },
+    "engines": {
+        "node": ">= 18"
+    },
+    "homepage": "https://github.com/Jaeiya/wakitsu#readme",
+    "repository": "https://github.com/Jaeiya/wakitsu",
+    "author": "Jaeiya",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^18.14.0",
+        "@types/source-map-support": "^0.5.6",
+        "@typescript-eslint/eslint-plugin": "^5.52.0",
+        "@typescript-eslint/parser": "^5.52.0",
+        "cross-env": "^7.0.3",
+        "eslint": "^8.34.0",
+        "eslint-config-prettier": "^8.6.0",
+        "prettier": "^2.8.4",
+        "source-map-support": "^0.5.21"
+    },
+    "dependencies": {
+        "cheerio": "^1.0.0-rc.12",
+        "zod": "^3.20.6"
+    }
 }

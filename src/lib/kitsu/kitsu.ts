@@ -58,6 +58,8 @@ export type CachedAnime = [
     episodeCount: number
 ][];
 
+type Config = [isNew: boolean, config: ConfigFile];
+
 const _workingDir = process.cwd();
 const _cc = Logger.consoleColors;
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
@@ -77,7 +79,9 @@ export class Kitsu {
     }
 
     static async init() {
-        _config = await tryLoadConfig();
+        const [isNew, config] = await tryLoadConfig();
+        _firstSetup = isNew;
+        _config = config;
         if (!_config.cache.length) {
             const cache = await getAnimeCache();
             Logger.info(`${_cc.bcn}Cached Anime: ${_cc.bgn}${cache.length}`);
@@ -194,7 +198,7 @@ export class Kitsu {
     }
 }
 
-async function tryLoadConfig() {
+async function tryLoadConfig(): Promise<Config> {
     const asyncRes = await tryCatchAsync(
         readFile(pathJoin(_workingDir, _configFileName))
     );
@@ -210,10 +214,10 @@ async function tryLoadConfig() {
         JSON.parse(asyncRes.data.toString('utf-8')),
         'Config'
     );
-    return config;
+    return [false, config];
 }
 
-async function trySetupConfig() {
+async function trySetupConfig(): Promise<Config> {
     Logger.info(`Missing Config -- ${_cc.bgn}Setup Activated${_cc.x}`);
     await tryGetSetupConsent();
     const user = await promptUser();
@@ -226,11 +230,10 @@ async function trySetupConfig() {
     }
     const password = await promptPassword();
     const tokens = await getAuthTokens(user.attributes.name, password);
-    const configFile = serializeConfigData(user, tokens);
-    saveConfig(configFile);
+    const config = serializeConfigData(user, tokens);
+    saveConfig(config);
     Logger.chainInfo(['', `${_cc.bcn}Config File:${_cc.x} ${_cc.byw}Created`]);
-    _firstSetup = true;
-    return configFile;
+    return [true, config];
 }
 
 async function tryGetSetupConsent() {

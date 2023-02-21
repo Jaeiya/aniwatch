@@ -20,45 +20,14 @@ import {
     UserDataRequired,
     UserDataRespSchema,
 } from './kitsu-schemas.js';
-
-type AuthTokenResp = {
-    access_token: string;
-    token_type: string;
-    expires_in: number;
-    refresh_token: string;
-    scope: string;
-    created_at: number;
-};
-type AuthTokens = Pick<AuthTokenResp, 'access_token'> &
-    Pick<AuthTokenResp, 'refresh_token'>;
-
-type LibraryPatchData = {
-    data: {
-        id: string;
-        type: 'library-entries';
-        attributes: {
-            progress: number;
-        };
-    };
-};
-
-export type SerializedAnime = {
-    title_jp: string;
-    title_en: string;
-    progress: number;
-    rating: string | number | null;
-    totalEpisodes: number | null;
-    avgRating: string;
-};
-
-export type CachedAnime = [
-    libraryID: string,
-    cannonTitle: string,
-    englishTitle: string,
-    episodeCount: number
-][];
-
-type Config = [isNew: boolean, config: ConfigFile];
+import {
+    AuthTokenResp,
+    KitsuAuthTokens,
+    CachedAnime,
+    KitsuConfig,
+    LibraryPatchData,
+    SerializedAnime,
+} from './kitsu-types.js';
 
 const _workingDir = process.cwd();
 const _cc = Logger.consoleColors;
@@ -198,7 +167,7 @@ export class Kitsu {
     }
 }
 
-async function tryLoadConfig(): Promise<Config> {
+async function tryLoadConfig(): Promise<KitsuConfig> {
     const asyncRes = await tryCatchAsync(
         readFile(pathJoin(_workingDir, _configFileName))
     );
@@ -217,7 +186,7 @@ async function tryLoadConfig(): Promise<Config> {
     return [false, config];
 }
 
-async function trySetupConfig(): Promise<Config> {
+async function trySetupConfig(): Promise<KitsuConfig> {
     Logger.info(`Missing Config -- ${_cc.bgn}Setup Activated${_cc.x}`);
     await tryGetSetupConsent();
     const user = await promptUser();
@@ -309,7 +278,10 @@ function areStatsDefined(data: UserData): data is UserDataRequired {
     return typeof data.stats.time == 'number' && typeof data.stats.completed == 'number';
 }
 
-function serializeConfigData(user: UserDataRequired, tokens: AuthTokens): ConfigFile {
+function serializeConfigData(
+    user: UserDataRequired,
+    tokens: KitsuAuthTokens
+): ConfigFile {
     return {
         id: user.id,
         urls: {

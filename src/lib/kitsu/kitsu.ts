@@ -39,7 +39,7 @@ let _config = {} as ConfigFile;
 let _firstSetup = false;
 
 export class Kitsu {
-    static get animeCache() {
+    static get animeCache(): CachedAnime {
         return _config.cache.slice(0);
     }
 

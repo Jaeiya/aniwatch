@@ -31,11 +31,12 @@ export type SerializedAnime = {
     avgRating: string;
 };
 
-export type CachedAnime = [
+export type AnimeCache = [
     libraryID: string,
     cannonTitle: string,
     englishTitle: string,
     episodeCount: number
 ][];
 
+export type KitsuCache = ConfigFile['cache'];
 export type KitsuConfig = [isNew: boolean, config: ConfigFile];

@@ -3,7 +3,7 @@ import { Kitsu } from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
 import { pathJoin, titleFromAnimeFileName, toEpisodeNumberStr, truncateStr } from './utils.js';
 import { Help } from './help.js';
-import { CachedAnime } from './kitsu/kitsu-types.js';
+import { AnimeCache } from './kitsu/kitsu-types.js';
 
 type WatchConfig = {
     forcedEpNumber: number;
@@ -88,7 +88,7 @@ function getCachedAnimeFromFiles(
     fileNames: string[],
     epName: string,
     epNumStr: string
-): CachedAnime {
+): AnimeCache {
     if (!fileNames.length) {
         Logger.error(
             `${_cc.byw}${epName}${_cc.x} episode ${_cc.byw}${epNumStr}${_cc.x} does NOT exist`
@@ -119,7 +119,7 @@ function displayErrorTooManyFiles(fileNames: string[], epName: string, epNumStr:
     Logger.chainError(errorChain);
 }
 
-function validateCachedAnime(cache: CachedAnime, fileNames: string[], epNumStr: string) {
+function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: string) {
     if (!cache.length) {
         Logger.chainError([
             '',
@@ -143,7 +143,7 @@ function validateCachedAnime(cache: CachedAnime, fileNames: string[], epNumStr: 
     }
 }
 
-async function setAnimeProgress(cachedAnime: CachedAnime, config: WatchConfig) {
+async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
     const cachedID = cachedAnime[0][0];
 
     Logger.info(`${_cc.bcn}Jap Title:${_cc.x} ${_cc.gn}${cachedAnime[0][1]}`);

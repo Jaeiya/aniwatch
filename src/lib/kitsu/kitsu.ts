@@ -4,7 +4,6 @@ import { getColoredTimeWatchedStr, parseWithZod, pathJoin, tryCatchAsync } from 
 import { HTTP } from '../http.js';
 import { writeFileSync } from 'fs';
 import {
-    AnimeCache,
     ConfigFile,
     ConfigFileSchema,
     LibraryEntries,
@@ -18,10 +17,11 @@ import {
 import {
     AuthTokenResp,
     KitsuAuthTokens,
-    CachedAnime,
+    AnimeCache,
     KitsuConfig,
     LibraryPatchData,
     SerializedAnime,
+    KitsuCache,
 } from './kitsu-types.js';
 
 const _workingDir = process.cwd();
@@ -34,7 +34,7 @@ let _config = {} as ConfigFile;
 let _firstSetup = false;
 
 export class Kitsu {
-    static get animeCache(): CachedAnime {
+    static get animeCache(): AnimeCache {
         return _config.cache.slice(0);
     }
 
@@ -294,10 +294,10 @@ async function tryGetDataFromResp<T = unknown>(resp: Response): Promise<T> {
     return data;
 }
 
-async function getAnimeCache(): Promise<CachedAnime> {
+async function getAnimeCache(): Promise<AnimeCache> {
     const resp = await HTTP.get(getAnimeWatchListURL());
     const library = parseWithZod(LibraryInfoSchema, await resp.json(), 'Library');
-    const cache: AnimeCache = [];
+    const cache: KitsuCache = [];
     library.included.forEach((anime, i) => {
         cache.push([
             library.data[i].id,
@@ -329,10 +329,7 @@ function buildLibraryAnimeURL(libraryIds: string[]) {
     return url;
 }
 
-function serializeAnimeInfo(
-    cacheList: CachedAnime,
-    entries: LibraryEntries
-): SerializedAnime[] {
+function serializeAnimeInfo(cacheList: AnimeCache, entries: LibraryEntries): SerializedAnime[] {
     return cacheList.map((cache, i) => {
         const rating = entries.data[i].attributes.ratingTwenty;
         const avgRating = entries.included[i].attributes.averageRating;

@@ -2,9 +2,9 @@
 
 ### Changes
 
-- **chore**: update all dependencies
-- **kitsu**: save config files as `wakitsu.json` instead of `aniwatch.json`
-- all help has been updated to use new `wakitsu` name and `wak` command name
+-   **chore**: update all dependencies ([145fd856](https://github.com/jaeiya/wakitsu/commit/145fd8567df5931591b4e93906d1c7371e48d3fb))
+-   **kitsu**: save config files as `wakitsu.json` instead of `aniwatch.json` ([421c0049](https://github.com/jaeiya/wakitsu/commit/421c00494c1e4ffcfae0261512325cdc8108104b))
+-   all help has been updated to use new `wakitsu` name and `wak` command name ([3f2cc469](https://github.com/jaeiya/wakitsu/commit/3f2cc4691e53b72e5a438d10b8bf3cad09c722d2))
 
 # [2.0.0](https://github.com/jaeiya/wakitsu/compare/v1.3.1...v2.0.0) (2/19/2023)
 

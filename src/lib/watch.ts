@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
-import { Kitsu, CachedAnime } from './kitsu/kitsu.js';
+import { Kitsu } from './kitsu/kitsu.js';
 import { Logger } from './logger.js';
 import {
     pathJoin,
@@ -8,6 +8,7 @@ import {
     truncateStr,
 } from './utils.js';
 import { Help } from './help.js';
+import { CachedAnime } from './kitsu/kitsu-types.js';
 
 type WatchConfig = {
     forcedEpNumber: number;

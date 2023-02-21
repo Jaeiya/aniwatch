@@ -26,9 +26,7 @@ const sourcePath = process.argv[1];
 const workingDir = process.cwd();
 const userArgs = process.argv.slice(2);
 const flagArgs = userArgs.filter((arg: string) => arg.indexOf('-') == 0 && arg[2] != '-');
-const nonFlagArgs = userArgs
-    .filter((arg) => !flagArgs.includes(arg))
-    .map((arg) => arg.trim());
+const nonFlagArgs = userArgs.filter((arg) => !flagArgs.includes(arg)).map((arg) => arg.trim());
 const cleanFlagArgs = flagArgs.map(removeLeadingDash);
 
 export class CLI {

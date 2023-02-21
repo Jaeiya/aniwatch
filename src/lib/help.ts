@@ -103,10 +103,7 @@ export class Help {
                 : `${_ind2} [ ${flagExample} ]`
         );
 
-        _simpleFlagDetails.push(
-            `${_nl}${_fl}-${fitStringEnd(flags[0], 4)}${_x} ${shortHelp}`,
-            ''
-        );
+        _simpleFlagDetails.push(`${_nl}${_fl}-${fitStringEnd(flags[0], 4)}${_x} ${shortHelp}`, '');
     }
 
     static addSimpleFlagExamples(flags: [string, string]) {

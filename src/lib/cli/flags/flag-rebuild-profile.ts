@@ -9,12 +9,7 @@ export class RebuildProfileFlag implements CLIFlag {
     name: CLIFlagName = ['rp', 'rebuild-profile'];
     type: CLIFlagType = 'simple';
 
-    helpAliases: string[] = [
-        ...this.name,
-        'rebuild profile',
-        'reload profile',
-        'load profile',
-    ];
+    helpAliases: string[] = [...this.name, 'rebuild profile', 'reload profile', 'load profile'];
 
     shortHelpDisplay = 'Rebuilds your profile data from Kitsu.';
 

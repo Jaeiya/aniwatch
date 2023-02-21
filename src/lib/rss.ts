@@ -28,8 +28,7 @@ async function getLatestAnimeEntry(html: string) {
     const els = $('.success td + td');
     const numOfResults = $('.success').length;
     const latestTitle =
-        els.children('a.comments + a').eq(0).text().trim() ||
-        els.children('a').eq(0).text();
+        els.children('a.comments + a').eq(0).text().trim() || els.children('a').eq(0).text();
     if (!els.length) {
         Logger.error('Anime Not Found');
         process.exit(1);

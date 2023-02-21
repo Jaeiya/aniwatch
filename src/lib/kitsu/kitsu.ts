@@ -1,11 +1,6 @@
 import { readFile } from 'fs/promises';
 import { Logger } from '../logger.js';
-import {
-    getColoredTimeWatchedStr,
-    parseWithZod,
-    pathJoin,
-    tryCatchAsync,
-} from '../utils.js';
+import { getColoredTimeWatchedStr, parseWithZod, pathJoin, tryCatchAsync } from '../utils.js';
 import { HTTP } from '../http.js';
 import { writeFileSync } from 'fs';
 import {
@@ -60,11 +55,7 @@ export class Kitsu {
     }
 
     static async updateAnime(url: string, data: LibraryPatchData) {
-        const resp = await HTTP.patch(
-            new URL(url),
-            JSON.stringify(data),
-            _config.access_token
-        );
+        const resp = await HTTP.patch(new URL(url), JSON.stringify(data), _config.access_token);
         const resolvedData = await resp.json();
         if (!resp.ok) {
             Logger.chainError([
@@ -103,11 +94,7 @@ export class Kitsu {
         if (!filteredCache.length) return [];
         const libraryAnimeURL = buildLibraryAnimeURL(filteredCache.map((a) => a[0]));
         const resp = await HTTP.get(libraryAnimeURL);
-        const entries = parseWithZod(
-            LibraryEntriesSchema,
-            await resp.json(),
-            'LibraryEntries'
-        );
+        const entries = parseWithZod(LibraryEntriesSchema, await resp.json(), 'LibraryEntries');
         return serializeAnimeInfo(filteredCache, entries);
     }
 
@@ -168,9 +155,7 @@ export class Kitsu {
 }
 
 async function tryLoadConfig(): Promise<KitsuConfig> {
-    const asyncRes = await tryCatchAsync(
-        readFile(pathJoin(_workingDir, _configFileName))
-    );
+    const asyncRes = await tryCatchAsync(readFile(pathJoin(_workingDir, _configFileName)));
     if (!asyncRes.success) {
         if (asyncRes.error.message.includes('ENOENT')) {
             return await trySetupConfig();
@@ -207,9 +192,7 @@ async function trySetupConfig(): Promise<KitsuConfig> {
 
 async function tryGetSetupConsent() {
     const hasCreationConsent =
-        (await _prompt(
-            `${_cc.yw}Proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `
-        )) == 'y';
+        (await _prompt(`${_cc.yw}Proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `)) == 'y';
     if (!hasCreationConsent) {
         Logger.chainInfo(['', `${_cc.byw}Setup Aborted`]);
         process.exit(0);
@@ -278,10 +261,7 @@ function areStatsDefined(data: UserData): data is UserDataRequired {
     return typeof data.stats.time == 'number' && typeof data.stats.completed == 'number';
 }
 
-function serializeConfigData(
-    user: UserDataRequired,
-    tokens: KitsuAuthTokens
-): ConfigFile {
+function serializeConfigData(user: UserDataRequired, tokens: KitsuAuthTokens): ConfigFile {
     return {
         id: user.id,
         urls: {
@@ -343,18 +323,12 @@ function buildLibraryAnimeURL(libraryIds: string[]) {
         libraryIds.reduce((pv, cv) => (pv ? `${pv},${cv}` : cv), '')
     );
     url.searchParams.append('include', 'anime');
-    url.searchParams.append(
-        'fields[anime]',
-        'episodeCount,averageRating,endDate,startDate'
-    );
+    url.searchParams.append('fields[anime]', 'episodeCount,averageRating,endDate,startDate');
     url.searchParams.append('page[limit]', '200');
     return url;
 }
 
-function serializeAnimeInfo(
-    cacheList: CachedAnime,
-    entries: LibraryEntries
-): SerializedAnime[] {
+function serializeAnimeInfo(cacheList: CachedAnime, entries: LibraryEntries): SerializedAnime[] {
     return cacheList.map((cache, i) => {
         const rating = entries.data[i].attributes.ratingTwenty;
         const avgRating = entries.included[i].attributes.averageRating;
@@ -364,16 +338,11 @@ function serializeAnimeInfo(
             progress: entries.data[i].attributes.progress,
             rating: rating ? `${(rating / 20) * 10}` : rating,
             totalEpisodes: entries.included[i].attributes.episodeCount,
-            avgRating: avgRating
-                ? `${(Number(avgRating) / 10).toFixed(2)}`
-                : 'Not Calculated Yet',
+            avgRating: avgRating ? `${(Number(avgRating) / 10).toFixed(2)}` : 'Not Calculated Yet',
         };
     });
 }
 
 function saveConfig(config: ConfigFile) {
-    writeFileSync(
-        pathJoin(_workingDir, _configFileName),
-        JSON.stringify(config, null, 2)
-    );
+    writeFileSync(pathJoin(_workingDir, _configFileName), JSON.stringify(config, null, 2));
 }

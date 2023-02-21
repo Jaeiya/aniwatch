@@ -46,7 +46,10 @@ function validateParams(params: [string, string[], string]) {
     }
 
     const hasInvalidArgs =
-        !epName || !epNumbers.length || isNaN(Number(epNumbers[0])) || isNaN(Number(epNumbers[1]));
+        !epName ||
+        !epNumbers.length ||
+        isNaN(Number(epNumbers[0])) ||
+        isNaN(Number(epNumbers[1]));
 
     if (hasInvalidArgs) {
         Logger.chainError([
@@ -75,7 +78,9 @@ function filterSubsPleaseFiles(workingDir: string, epName: string, epNumSyntax: 
         .map((file) => file.name.toLowerCase())
         .filter(
             (name) =>
-                name.includes('[subsplease]') && name.includes(epName) && name.includes(epNumSyntax)
+                name.includes('[subsplease]') &&
+                name.includes(epName) &&
+                name.includes(epNumSyntax)
         );
 }
 
@@ -94,7 +99,8 @@ function getCachedAnimeFromFiles(
     if (fileNames.length == 1) {
         return Kitsu.animeCache.filter(
             (anime) =>
-                anime[1].toLowerCase().includes(epName) || anime[2].toLowerCase().includes(epName)
+                anime[1].toLowerCase().includes(epName) ||
+                anime[2].toLowerCase().includes(epName)
         );
     }
     displayErrorTooManyFiles(fileNames, epName, epNumStr);
@@ -118,7 +124,10 @@ function validateCachedAnime(cache: CachedAnime, fileNames: string[], epNumStr: 
         Logger.chainError([
             '',
             `${_cc.rd}Watch List Incomplete`,
-            `${_cc.bcn}Missing:${_cc.x} ${_cc.gn}${titleFromAnimeFileName(fileNames[0], epNumStr)}`,
+            `${_cc.bcn}Missing:${_cc.x} ${_cc.gn}${titleFromAnimeFileName(
+                fileNames[0],
+                epNumStr
+            )}`,
         ]);
         process.exit(1);
     }

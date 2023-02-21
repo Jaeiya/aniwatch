@@ -192,7 +192,8 @@ async function trySetupConfig(): Promise<KitsuConfig> {
 
 async function tryGetSetupConsent() {
     const hasCreationConsent =
-        (await _prompt(`${_cc.yw}Proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `)) == 'y';
+        (await _prompt(`${_cc.yw}Proceed with setup? ${_cc.bwt}(y/n)${_cc.x}:${_cc.byw} `)) ==
+        'y';
     if (!hasCreationConsent) {
         Logger.chainInfo(['', `${_cc.byw}Setup Aborted`]);
         process.exit(0);
@@ -328,7 +329,10 @@ function buildLibraryAnimeURL(libraryIds: string[]) {
     return url;
 }
 
-function serializeAnimeInfo(cacheList: CachedAnime, entries: LibraryEntries): SerializedAnime[] {
+function serializeAnimeInfo(
+    cacheList: CachedAnime,
+    entries: LibraryEntries
+): SerializedAnime[] {
     return cacheList.map((cache, i) => {
         const rating = entries.data[i].attributes.ratingTwenty;
         const avgRating = entries.included[i].attributes.averageRating;
@@ -338,7 +342,9 @@ function serializeAnimeInfo(cacheList: CachedAnime, entries: LibraryEntries): Se
             progress: entries.data[i].attributes.progress,
             rating: rating ? `${(rating / 20) * 10}` : rating,
             totalEpisodes: entries.included[i].attributes.episodeCount,
-            avgRating: avgRating ? `${(Number(avgRating) / 10).toFixed(2)}` : 'Not Calculated Yet',
+            avgRating: avgRating
+                ? `${(Number(avgRating) / 10).toFixed(2)}`
+                : 'Not Calculated Yet',
         };
     });
 }

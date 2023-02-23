@@ -81,7 +81,7 @@ export class Kitsu {
     }
 
     static async findAnime(name: string) {
-        const filteredCache = _config.cache.filter((anime) => {
+        const filteredCache: AnimeCache = _config.cache.filter((anime) => {
             const hasCanonTitle = anime[1].toLowerCase().includes(name.toLowerCase());
             const hasEnglishTitle = anime[2].toLowerCase().includes(name.toLowerCase());
             return hasCanonTitle || hasEnglishTitle;

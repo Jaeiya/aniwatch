@@ -9,8 +9,7 @@ import { fitStringEnd } from '../../utils.js';
 
 type FileStat = [bytes: number, modifiedTimeMs: number, fileName: string];
 
-const { h1, h2, ex, f, x, arg, d } = Help.colors;
-const { nl } = Help.textFlowUtils;
+const { h1, h2, nl } = Help.display;
 const toReadableBytes = createReadableBytesFunc();
 
 export class DirInfoFlag implements CLIFlag {
@@ -29,9 +28,9 @@ export class DirInfoFlag implements CLIFlag {
     shortHelpDisplay = 'Analyzes the "watched" folder and displays breakdown.';
 
     helpDisplay: string[] = [
-        `${h1}Display Watched Folder Info:`,
-        `${nl}Breaks down various details about the "watch" folder`,
-        `${nl}that may or may not be relevant.`,
+        h1('Display Watched Folder Info'),
+        `Breaks down various details about the "watch" folder`,
+        `that may or may not be relevant.`,
         '',
     ];
 
@@ -63,29 +62,29 @@ function displayFolderInfo(fileStats: Awaited<ReturnType<typeof serializeFileSta
     } = fileStats;
 
     Logger.chainInfo([
-        `${ex}Watched Folder Info`,
-        `${nl}The following is a detailed analysis of the "watched"`,
-        `${nl}folder on your disk.`,
+        `;by;Watched Folder Info`,
+        nl(`The following is a detailed analysis of the "watched"`),
+        nl(`folder on your disk.`),
         '',
-        `${h2}Folder Details`,
-        `${nl}${f}${fitStringEnd('Size', 15)} ${d}: ${arg}${size}`,
-        `${nl}${f}${fitStringEnd('File Count', 15)} ${d}: ${arg}${fileCount}`,
-        `${nl}${f}${fitStringEnd('Avg. File Size', 15)} ${d}: ${arg}${avgFileSize}`,
+        h2(`Folder Details`),
+        nl(`;bc;${fitStringEnd('Size', 15)} ;bk;: ;y;${size}`),
+        nl(`;bc;${fitStringEnd('File Count', 15)} ;bk;: ;y;${fileCount}`),
+        nl(`;bc;${fitStringEnd('Avg. File Size', 15)} ;bk;: ;y;${avgFileSize}`),
         '',
-        `${h2}File Details`,
-        `${nl}${f}${fitStringEnd('Newest', 8)} ${d}: ${x}${lastWatchedFile}`,
-        `${nl}${indent} ${d}: ${arg}${lastWatchedFileDate.toLocaleString()}`,
-        `${nl}${indent} ${d}: ${arg}${lastWatchedFileSize}`,
+        h2(`File Details`),
+        nl(`;bc;${fitStringEnd('Newest', 8)} ;bk;: ;x;${lastWatchedFile}`),
+        nl(`${indent} ;bk;: ;y;${lastWatchedFileDate.toLocaleString()}`),
+        nl(`${indent} ;bk;: ;y;${lastWatchedFileSize}`),
         ' ',
-        `${nl}${f}${fitStringEnd('Oldest', 8)} ${d}: ${x}${oldestFile}`,
-        `${nl}${indent} ${d}: ${arg}${oldestFileDate.toLocaleString()}`,
-        `${nl}${indent} ${d}: ${arg}${oldestFileSize}`,
+        nl(`;bc;${fitStringEnd('Oldest', 8)} ;bk;: ;x;${oldestFile}`),
+        nl(`${indent} ;bk;: ;y;${oldestFileDate.toLocaleString()}`),
+        nl(`${indent} ;bk;: ;y;${oldestFileSize}`),
         ' ',
-        `${nl}${f}${fitStringEnd('Largest', 8)} ${d}: ${x}${largestFile}`,
-        `${nl}${indent} ${d}: ${arg}${largestFileSize}`,
+        nl(`;bc;${fitStringEnd('Largest', 8)} ;bk;: ;x;${largestFile}`),
+        nl(`${indent} ;bk;: ;y;${largestFileSize}`),
         ' ',
-        `${nl}${f}${fitStringEnd('Smallest', 8)} ${d}: ${x}${smallestFile}`,
-        `${nl}${indent} ${d}: ${arg}${smallestFileSize}`,
+        nl(`;bc;${fitStringEnd('Smallest', 8)} ;bk;: ;x;${smallestFile}`),
+        nl(`${indent} ;bk;: ;y;${smallestFileSize}`),
     ]);
 }
 

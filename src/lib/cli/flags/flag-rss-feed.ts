@@ -3,9 +3,7 @@ import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Logger } from '../../logger.js';
 import * as rss from '../../rss.js';
 
-const { h1, h2, d, f, arg, x, ex } = Help.colors;
-const _cc = Logger.consoleColors;
-const { nl } = Help.textFlowUtils;
+const { h1, h2, nl } = Help.display;
 
 export class RSSFeedFlag implements CLIFlag {
     name: CLIFlagName = ['rss', 'rss-feed'];
@@ -22,28 +20,28 @@ export class RSSFeedFlag implements CLIFlag {
     ];
 
     helpSyntax: string[] = [
-        `${h2}Syntax:`,
-        `${nl}${ex}wak ${x}[${f}-rss ${x}| ${f}--rss-feed${x}] ${arg}<name>`,
+        h2(`Syntax`),
+        nl(`;by;wak ;x;[;bc;-rss ;x;| ;bc;--rss-feed;x;] ;y;<name>`),
         '',
-        `${h2}Details:`,
-        `${nl}${arg}name    ${x}The exact name or partial name of any anime.`,
+        h2(`Details`),
+        nl(`;y;name    ;x;The exact name or partial name of any anime.`),
         '',
-        `${h2}Examples:`,
-        `${nl}${ex}wak ${f}-rss ${arg}"boku no hero"`,
-        `${nl}${ex}wak ${f}--rss-feed ${arg}berserk`,
+        h2(`Examples`),
+        nl(`;by;wak ;bc;-rss ;y;"boku no hero"`),
+        nl(`;by;wak ;bc;--rss-feed ;y;berserk`),
     ];
 
     helpDisplay: string[] = [
-        `${h1}RSS Feed:`,
-        `${nl}Searches ${x}nyaa.si${d} for an anime name filtered by`,
-        `${nl}${x}SubsPlease ${d}and ${x}1080p${d}. This results in the number`,
-        `${nl}of torrents found, file-name of latest torrent`,
-        `${nl}and an RSS Feed link.`,
+        h1(`RSS Feed`),
+        nl(`Searches ;x;nyaa.si;bk; for an anime name filtered by`),
+        nl(`;x;SubsPlease ;bk;and ;x;1080p;bk;. This results in the number`),
+        nl(`of torrents found, file-name of latest torrent`),
+        nl(`and an RSS Feed link.`),
         '',
-        `${nl}${_cc.ma}NOTE:${d} This allows you to quickly set up RSS for your`,
-        `${nl}torrents to be downloaded automatically. The number`,
-        `${nl}of entries should clue you in on whether or not you`,
-        `${nl}need to refine your search.`,
+        nl(`;m;NOTE: ;bk;This allows you to quickly set up RSS for your`),
+        nl(`torrents to be downloaded automatically. The number`),
+        nl(`of entries should clue you in on whether or not you`),
+        nl(`need to refine your search.`),
         '',
         ...this.helpSyntax,
     ];
@@ -51,9 +49,9 @@ export class RSSFeedFlag implements CLIFlag {
     async exec(cli: typeof CLI) {
         const result = await rss.getFansubRSS(cli.nonFlagArgs.join(' '));
         Logger.chainInfo([
-            `${_cc.bcn}Entry Count: ${_cc.gn}${result.entryCount}`,
-            `${_cc.bcn}Latest: ${_cc.yw}${result.latestTitle}`,
-            `${_cc.bcn}RSS: ${_cc.x}${result.rss}`,
+            `;bc;Entry Count: ;g;${result.entryCount}`,
+            `;bc;Latest: ;y;${result.latestTitle}`,
+            `;bc;RSS: ;x;${result.rss}`,
         ]);
     }
 }

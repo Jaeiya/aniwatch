@@ -19,7 +19,6 @@ export interface CLIFlag {
 
 const _flags: CLIFlag[] = [];
 
-const _cc = Logger.consoleColors;
 const rawArgs = process.argv;
 const execPath = process.argv[0];
 const sourcePath = process.argv[1];
@@ -73,11 +72,7 @@ export class CLI {
 
 function validateFlag(flag?: CLIFlag): flag is CLIFlag {
     if (!flag) {
-        Logger.chainError([
-            '',
-            `${_cc.rd}Flag Error`,
-            `${_cc.bcn}Unknown Flag: ${_cc.byw}${flagArgs[0]}`,
-        ]);
+        Logger.chainError(['', `;r;Flag Error`, `;bc;Unknown Flag: ;by;${flagArgs[0]}`]);
         return false;
     }
 
@@ -94,7 +89,7 @@ function validateFlag(flag?: CLIFlag): flag is CLIFlag {
 function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
     if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
         Logger.chainError([
-            `${_cc.rd}Invalid Flag Syntax`,
+            `;r;Invalid Flag Syntax`,
             'Read the help below to learn the correct syntax',
             '',
         ]);
@@ -107,7 +102,7 @@ function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
 function isMultiArg(flag: CLIFlag) {
     if (!nonFlagArgs.length) {
         Logger.chainError([
-            `${_cc.rd}Missing Argument`,
+            `;r;Missing Argument`,
             'Read the help below to learn the correct syntax:',
             '',
         ]);

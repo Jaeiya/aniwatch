@@ -2,8 +2,7 @@ import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Logger } from '../../logger.js';
 
-const { h1, h2, f, arg, x, d, ex } = Help.colors;
-const { nl, ind2 } = Help.textFlowUtils;
+const { h1, h2, nl, i2 } = Help.display;
 
 export class HelpFlag implements CLIFlag {
     name: CLIFlagName = ['h', 'help'];
@@ -12,41 +11,41 @@ export class HelpFlag implements CLIFlag {
     helpAliases: string[] = [...this.name, 'need help', 'how to use help'];
 
     helpDisplay: string[] = [
-        `${h1}Help`,
-        `${nl}Allows you to discover all functionality about`,
-        `${nl}this application.`,
+        h1(`Help`),
+        nl(`Allows you to discover all functionality about`),
+        nl(`this application.`),
         '',
-        `${h2}Syntax:`,
-        `${nl}${ex}wak ${x}[${f}-h ${x}| ${f}--help${x}] ${arg}<all|simple|flag|desc>`,
+        h2(`Syntax`),
+        nl(`;by;wak ;x;[;bc;-h ;x;| ;bc;--help;x;] ;y;<all|simple|flag|desc>`),
         '',
-        `${h2}Details:`,
-        `${nl}${arg}all${x}    Displays all available help entries (Huge List).`,
+        h2(`Details`),
+        nl(`;y;all    ;x;Displays all available help entries (Huge List).`),
         '',
-        `${nl}${arg}simple${x} Displays help for all basic commands.`,
+        nl(`;y;simple ;x;Displays help for all basic commands.`),
         '',
-        `${nl}${arg}flag${x}   The name of an existing flag that you want more`,
-        `${ind2}    help with.`,
+        nl(`;y;flag   ;x;The name of an existing flag that you want more`),
+        i2(`    help with.`),
         '',
-        `${nl}${arg}desc${x}   Description of the action you want help for.`,
+        nl(`;y;desc   ;x;Description of the action you want help for.`),
         '',
-        `${h2}Examples:`,
-        `${nl}${ex}wak ${f}-h ${arg}all           ${d}(Displays all default help)`,
-        `${nl}${ex}wak ${f}-h ${arg}f             ${d}(Displays --find-anime help)`,
-        `${nl}${ex}wak ${f}-h ${arg}c             ${d}(Displays --cache help)`,
-        `${nl}${ex}wak ${f}-h ${arg}basic usage   ${d}(Displays how to watch anime)`,
-        `${nl}${ex}wak ${f}-h ${arg}show profile  ${d}(Displays --profile help)`,
-        `${nl}${ex}wak ${f}-h ${arg}reload cache  ${d}(Displays --rebuild-cache help)`,
+        h2(`Examples`),
+        nl(`;by;wak ;bc;-h ;y;all           ;bk;(Displays all default help)`),
+        nl(`;by;wak ;bc;-h ;y;f             ;bk;(Displays --find-anime help)`),
+        nl(`;by;wak ;bc;-h ;y;c             ;bk;(Displays --cache help)`),
+        nl(`;by;wak ;bc;-h ;y;basic usage   ;bk;(Displays how to watch anime)`),
+        nl(`;by;wak ;bc;-h ;y;show profile  ;bk;(Displays --profile help)`),
+        nl(`;by;wak ;bc;-h ;y;reload cache  ;bk;(Displays --rebuild-cache help)`),
         '',
-        `${h2}Broad Explanation:`,
-        `${nl}When using the ${arg}desc ${d}argument, think of the event`,
-        `${nl}you're trying to get help with. If you want to know how`,
-        `${nl}to lookup an existing anime, you could type something`,
-        `${nl}like ${h1}search anime ${d}or ${h1}lookup anime ${d}as a ${arg}desc ${d}argument.`,
+        h2(`Broad Explanation`),
+        nl(`When using the ;y;desc ;bk;argument, think of the event`),
+        nl(`you're trying to get help with. If you want to know how`),
+        nl(`to lookup an existing anime, you could type something`),
+        nl(`like ;x;search anime ;bk;or ;x;lookup anime ;bk;as a ;y;desc ;bk;argument.`),
         '',
-        `${nl}There's still a possibility that you type in an unknown`,
-        `${nl}description, but if you think about it long enough, you`,
-        `${nl}should be able to figure out a known description for`,
-        `${nl}the functionality you're looking for.`,
+        nl(`There's still a possibility that you type in an unknown`),
+        nl(`description, but if you think about it long enough, you`),
+        nl(`should be able to figure out a known description for`),
+        nl(`the functionality you're looking for.`),
     ];
 
     exec(cli: typeof CLI) {
@@ -63,7 +62,7 @@ export class HelpFlag implements CLIFlag {
 
         const helpStrings = Help.findHelp(helpArg);
         if (!helpStrings) {
-            Logger.error(`Could not find help using: ${ex}${helpArg}`);
+            Logger.error(`Could not find help using: ;by;${helpArg}`);
             return;
         }
         Help.displayHelp(helpStrings);

@@ -1,50 +1,60 @@
 import readline from 'readline';
 
+type ColorCode = keyof typeof _consoleColors;
 const _maxTagLength = 10;
+
 //*                                R   G   B
 // TODO - Support RGB: \u001B[38;2;255;100;70m\u001B[1m<text>
 // https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 const _consoleColors = {
     /** Black */
-    bk: '\u001B[30m',
+    k: '\u001B[30m',
     /** Bright Black */
-    bbk: '\u001B[90m',
-    /** Red */
-    rd: '\u001B[31m',
-    /** Bright Red */
-    brd: '\u001B[91m',
-    /** Dark Green */
-    gn: '\u001B[32m',
-    /** Bright Green */
-    bgn: '\u001B[92m',
-    /** Yellow */
-    yw: '\u001B[33m',
-    /** Bright Yellow */
-    byw: '\u001B[93m',
-    /** Blue */
-    be: '\u001B[34m',
-    /** Bright Blue */
-    bbe: '\u001B[94m',
-    /** Magenta */
-    ma: '\u001B[35m',
-    /** Bright Magenta */
-    bma: '\u001B[95m',
-    /** Cyan */
-    cn: '\u001B[36m',
-    /** Bright Cyan */
-    bcn: '\u001B[96m',
+    bk: '\u001B[90m',
     /** Bright White */
-    bwt: '\u001B[97m',
+    bw: '\u001B[97m',
+    /** Red */
+    r: '\u001B[31m',
+    /** Bright Red */
+    br: '\u001B[91m',
+    /** Dark Green */
+    g: '\u001B[32m',
+    /** Bright Green */
+    bg: '\u001B[92m',
+    /** Yellow */
+    y: '\u001B[33m',
+    /** Bright Yellow */
+    by: '\u001B[93m',
+    /** Blue */
+    b: '\u001B[34m',
+    /** Bright Blue */
+    bb: '\u001B[94m',
+    /** Magenta */
+    m: '\u001B[35m',
+    /** Bright Magenta */
+    bm: '\u001B[95m',
+    /** Cyan */
+    c: '\u001B[36m',
+    /** Bright Cyan */
+    bc: '\u001B[96m',
     /** Clear */
     x: '\u001B[0m',
 };
-const _cc = _consoleColors;
+
+const _colorMap = (function () {
+    const map = new Map();
+    for (const key in _consoleColors) {
+        const k = key as keyof typeof _consoleColors;
+        map.set(k, _consoleColors[k]);
+    }
+    return map;
+})();
 
 export class Logger {
     static readonly consoleColors = _consoleColors;
 
     static info(msg: string) {
-        log('info', msg, 'gn');
+        log('info', msg, 'g');
     }
 
     static chainInfo(msgs: string[]) {
@@ -58,7 +68,7 @@ export class Logger {
     }
 
     static error(msg: string) {
-        log('error', msg, 'rd');
+        log('error', msg, 'r');
     }
 
     static chainError(msgs: string[]) {
@@ -72,15 +82,15 @@ export class Logger {
     }
 
     static promptRaw(msg: string) {
-        return this.printRaw('ma', 'prompt', msg);
+        return this.printRaw('m', 'prompt', msg);
     }
 
-    static print(color: keyof typeof _cc, tag: string, msg: string) {
+    static print(color: ColorCode, tag: string, msg: string) {
         log(tag, msg, color);
     }
 
-    static printRaw(color: keyof typeof _cc, tag: string, msg: string) {
-        return `${_cc[color]}${toTag(tag)}${_cc.x} ${msg}`;
+    static printRaw(color: ColorCode, tag: string, msg: string) {
+        return colorStr(`;${color};${toTag(tag)} ;x;${msg}`);
     }
 
     static async prompt(query: string) {
@@ -99,8 +109,8 @@ export class Logger {
     }
 }
 
-function log(tagName: string, msg: string, color: keyof typeof _cc) {
-    console.log(`${_cc[color]}${toTag(tagName)}${_cc.x}`, msg);
+function log(tagName: string, msg: string, color: ColorCode) {
+    console.log(colorStr(`;${color};${toTag(tagName)} ;x;${msg}`));
 }
 
 function toTag(tagName: string) {
@@ -111,4 +121,18 @@ function toTag(tagName: string) {
     const tagLength = tagName.length + specialCharLength;
     const offsetLength = _maxTagLength - tagLength;
     return `${' '.repeat(offsetLength)}[${tagName.toUpperCase()}]:`;
+}
+
+function colorStr(str: string) {
+    if (!str.match(/;[a-z]{1,2};/g)) return str;
+
+    let coloredStr = str;
+    for (const [code, color] of _colorMap) {
+        const colorCode = `;${code};`;
+        if (str.includes(colorCode)) {
+            coloredStr = coloredStr.replaceAll(colorCode, color);
+        }
+    }
+
+    return coloredStr;
 }

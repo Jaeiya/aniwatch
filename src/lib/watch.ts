@@ -11,15 +11,13 @@ type WatchConfig = {
     workingDir: string;
 };
 
-const _cc = Logger.consoleColors;
-
 export async function watchAnime(
     epName: string,
     epNumStrings: [string, string],
     workingDir: string
 ) {
     validateParams([epName, epNumStrings, workingDir]);
-    Logger.info(`Working directory: ${_cc.bgn}${workingDir}`);
+    Logger.info(`Working directory: ;bg;${workingDir}`);
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
     tryCreateWatchedDir(workingDir);
@@ -41,7 +39,7 @@ function validateParams(params: [string, string[], string]) {
     const [epName, epNumbers, workingDir] = params;
 
     if (!existsSync(workingDir)) {
-        Logger.error(`Working directory invalid: ${_cc.yw}${workingDir}`);
+        Logger.error(`Working directory invalid: ;y;${workingDir}`);
         process.exit(1);
     }
 
@@ -54,7 +52,7 @@ function validateParams(params: [string, string[], string]) {
     if (hasInvalidArgs) {
         Logger.chainError([
             'Incorrect Argument Syntax',
-            `${_cc.byw}Read the syntax below and try again`,
+            `;by;Read the syntax below and try again`,
             '',
         ]);
         const defaultHelp = Help.findHelp('default');
@@ -68,7 +66,7 @@ function tryCreateWatchedDir(workingDir: string) {
 
     if (!existsSync(watchedDir)) {
         mkdirSync(watchedDir);
-        Logger.info(`Watched directory created: ${_cc.byw}${watchedDir}`);
+        Logger.info(`Watched directory created: ;by;${watchedDir}`);
     }
 }
 
@@ -90,9 +88,7 @@ function getCachedAnimeFromFiles(
     epNumStr: string
 ): AnimeCache {
     if (!fileNames.length) {
-        Logger.error(
-            `${_cc.byw}${epName}${_cc.x} episode ${_cc.byw}${epNumStr}${_cc.x} does NOT exist`
-        );
+        Logger.error(`;by;${epName} ;x;episode ;by;${epNumStr} ;x;does NOT exist`);
         process.exit(1);
     }
 
@@ -108,12 +104,11 @@ function getCachedAnimeFromFiles(
 }
 
 function displayErrorTooManyFiles(fileNames: string[], epName: string, epNumStr: string) {
-    const errorChain = ['', `${_cc.rd}More than one file name found`];
+    const errorChain = ['', `;r;More than one file name found`];
 
     for (const fileName of fileNames) {
         const trimmedFileName = truncateStr(fileName.split('- ' + epNumStr)[0].trimEnd(), 60);
-        const coloredFileName = trimmedFileName.replace(epName, `${_cc.byw}${epName}${_cc.x}`);
-        errorChain.push(`${coloredFileName} - ${epNumStr}`);
+        errorChain.push(`;by;${trimmedFileName} ;x;- ${epNumStr}`);
     }
 
     Logger.chainError(errorChain);
@@ -123,21 +118,18 @@ function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: s
     if (!cache.length) {
         Logger.chainError([
             '',
-            `${_cc.rd}Watch List Incomplete`,
-            `${_cc.bcn}Missing:${_cc.x} ${_cc.gn}${titleFromAnimeFileName(
-                fileNames[0],
-                epNumStr
-            )}`,
+            `;r;Watch List Incomplete`,
+            `;bc;Missing: ;g;${titleFromAnimeFileName(fileNames[0], epNumStr)}`,
         ]);
         process.exit(1);
     }
 
     if (cache.length > 1) {
-        const errorChain = ['', `${_cc.rd}Multiple Cached Titles Found`];
-        cache.forEach((anime) => errorChain.push(`${_cc.bcn}Title:${_cc.x} ${anime[1]}`));
+        const errorChain = ['', `;r;Multiple Cached Titles Found`];
+        cache.forEach((anime) => errorChain.push(`;bc;Title: ;x;${anime[1]}`));
         Logger.chainError([
             ...errorChain,
-            `${_cc.byw}Use a more unique name to reference the episode`,
+            `;by;Use a more unique name to reference the episode`,
         ]);
         process.exit(1);
     }
@@ -146,8 +138,8 @@ function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: s
 async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
     const cachedID = cachedAnime[0][0];
 
-    Logger.info(`${_cc.bcn}Jap Title:${_cc.x} ${_cc.gn}${cachedAnime[0][1]}`);
-    Logger.info(`${_cc.bcn}Eng Title:${_cc.x} ${_cc.gn}${cachedAnime[0][2]}`);
+    Logger.info(`;bc;Jap Title: ;g;${cachedAnime[0][1]}`);
+    Logger.info(`;bc;Eng Title: ;g;${cachedAnime[0][2]}`);
 
     const progress = await Kitsu.updateAnime(
         `https://kitsu.io/api/edge/library-entries/${cachedID}`,
@@ -161,14 +153,10 @@ async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
             },
         }
     );
-    Logger.info(
-        `${_cc.bcn}Progress Set:${_cc.x} ${_cc.gn}${progress} ${_cc.byw}/ ${_cc.ma}${
-            cachedAnime[0][3] || 'unknown'
-        }`
-    );
+    Logger.info(`;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0][3] || 'unknown'}`);
 }
 
 function moveFileToWatchedDir(fileName: string, workingDir: string) {
     renameSync(pathJoin(workingDir, fileName), pathJoin(workingDir, 'watched', fileName));
-    Logger.info(`${_cc.bcn}Moved To:${_cc.x} ${_cc.byw}${pathJoin(workingDir, 'watched')}`);
+    Logger.info(`;bc;Moved To: ;by;${pathJoin(workingDir, 'watched')}`);
 }

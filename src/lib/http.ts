@@ -1,8 +1,6 @@
 import { Logger } from './logger.js';
 import { tryCatchAsync } from './utils.js';
 
-const _cc = Logger.consoleColors;
-
 export class HTTP {
     static async post(url: string, body: string) {
         const asyncRes = await tryCatchAsync(
@@ -53,5 +51,5 @@ export class HTTP {
 }
 
 function execError(resp: Error, method: string, url: string) {
-    Logger.chainError(['', `${_cc.rd}Failed ${method}ing ${url}`, resp.message]);
+    Logger.chainError(['', `;r;Failed ${method}ing ${url}`, resp.message]);
 }

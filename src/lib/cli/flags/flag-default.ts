@@ -4,9 +4,7 @@ import { Kitsu } from '../../kitsu/kitsu.js';
 import { Logger } from '../../logger.js';
 import { watchAnime } from '../../watch.js';
 
-const { h1, h2, x, arg, em, ex, d } = Help.colors;
-const { nl, ind2 } = Help.textFlowUtils;
-const _cc = Logger.consoleColors;
+const { h1, h2, nl, i2 } = Help.display;
 
 export class DefaultFlag implements CLIFlag {
     name: CLIFlagName = ['', 'default'];
@@ -27,40 +25,40 @@ export class DefaultFlag implements CLIFlag {
     ];
 
     helpSyntax: string[] = [
-        `${h2}Default Syntax:`,
-        `${nl}${ex}wak ${arg}<name> <ep> <fep>`,
+        h2(`Default Syntax`),
+        nl(`;by;wak ;y;<name> <ep> <fep>`),
         '',
-        `${h2}Details:${nl}`,
-        `${nl}${arg}name${x}   Full or partial name of an existing anime on disk.`,
+        h2(`Details`),
+        nl(`;y;name   ;x;Full or partial name of an existing anime on disk.`),
         ' ',
-        `${nl}${arg}ep${x}     Episode number of anime ${arg}<name>${x} on disk.`,
+        nl(`;y;ep     ;x;Episode number of anime ;y;<name> ;x;on disk.`),
         ' ',
-        `${nl}${arg}fep${x}    ${em}(Optional)${x} Update Kitsu progress with ${arg}<fep>`,
-        `${ind2}${x}    instead of ${arg}<ep>${d}.`,
+        nl(`;y;fep    ;m;(Optional) ;x;Update Kitsu progress with ;y;<fep>`),
+        nl(i2(`;x;instead of ;y;<ep>;bk;.`)),
         '',
-        `${h2}Examples:`,
-        `${nl}${ex}wak ${arg}"boku no hero" 10`,
-        `${nl}${ex}wak ${arg}berserk 3`,
-        `${nl}${ex}wak ${arg}bleach 367 1`,
+        h2(`Examples`),
+        nl(`;by;wak ;y;"boku no hero" 10`),
+        nl(`;by;wak ;y;berserk 3`),
+        nl(`;by;wak ;y;bleach 367 1`),
     ];
 
     helpDisplay: string[] = [
-        `${h1}Default Usage`,
-        `${nl}Scan the current working directory for the`,
-        `${nl}specified anime ${arg}name ${d}and ${arg}ep${d}isode number, then`,
-        `${nl}updates your progress on Kitsu for that anime`,
-        `${nl}at the ${arg}ep${d}isode number you specified.`,
+        h1(`Default Usage`),
+        nl(`Scan the current working directory for the`),
+        nl(`specified anime ;y;name ;bk;and ;y;ep;bk;isode number, then`),
+        nl(`updates your progress on Kitsu for that anime`),
+        nl(`at the ;y;ep;bk;isode number you specified.`),
         '',
-        `${nl}If the anime file on disk is using a different`,
-        `${nl}numbering schema than Kitsu, then you can use`,
-        `${nl}the ${arg}f${d}orced ${arg}ep${d}isode number: ${arg}fep${d}, to set episode`,
-        `${nl}progress manually. This will force Kitsu to update `,
-        `${nl}your progress to ${arg}fep${d}.`,
+        nl(`If the anime file on disk is using a different`),
+        nl(`numbering schema than Kitsu, then you can use`),
+        nl(`the ;y;f;bk;orced ;y;ep;bk;isode number: ;y;fep;bk;, to set episode`),
+        nl(`progress manually. This will force Kitsu to update `),
+        nl(`your progress to ;y;fep;bk;.`),
         '',
-        `${nl}${_cc.ma}NOTE:${d} If the ${arg}name ${d}you use returns multiple`,
-        `${nl}results, the program will display them and exit.`,
-        `${nl}This allows you to try again with a more specific`,
-        `${nl}${arg}name${d}.`,
+        nl(`;m;NOTE:;bk; If the ;y;name ;bk;you use returns multiple`),
+        nl(`results, the program will display them and exit.`),
+        nl(`This allows you to try again with a more specific`),
+        nl(`;y;name;bk;.`),
         '',
         ...this.helpSyntax,
     ];
@@ -74,7 +72,7 @@ export class DefaultFlag implements CLIFlag {
 
         if (flagArgs.length < 2 || flagArgs.length > 3) {
             Logger.chainError([
-                `${_cc.rd}Invalid Syntax`,
+                `;r;Invalid Syntax`,
                 'Read the help below to learn the correct syntax:',
                 '',
             ]);

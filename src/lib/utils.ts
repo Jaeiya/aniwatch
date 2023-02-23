@@ -2,8 +2,6 @@ import { resolve, join } from 'path';
 import { z, ZodSchema } from 'zod';
 import { Logger } from './logger.js';
 
-const _cc = Logger.consoleColors;
-
 export function isDev() {
     return process.env.NODE_ENV == 'development';
 }
@@ -23,9 +21,9 @@ export function parseWithZod<T extends ZodSchema>(
     const zodResp = schema.safeParse(data);
     if (!zodResp.success) {
         Logger.chainError([
-            `${_cc.rd}Failed To Parse ${_cc.byw}${failedSchemaName} ${_cc.rd}Schema`,
+            `;r;Failed To Parse ;by;${failedSchemaName} ;r;Schema`,
             ...zodResp.error.issues.map((issue) => {
-                return `${_cc.yw}${issue.path}${_cc.x}: ${
+                return `;y;${issue.path};x;: ${
                     issue.message == 'Required' ? 'Missing or Undefined' : issue.message
                 }`;
             }),
@@ -89,10 +87,10 @@ export function getColoredTimeWatchedStr(seconds: number) {
     const daysWatchingAnime = hoursWatchingAnime / 24;
     const monthsWatchingAnime = daysWatchingAnime / 30;
 
-    const coloredMinutesLeft = `${_cc.byw}${leftOverMinutes.toFixed(0)}${_cc.gn} Minutes`;
-    const coloredHours = `${_cc.byw}${Math.floor(hoursWatchingAnime)}${_cc.gn} Hours`;
-    const coloredDays = `${_cc.byw}${daysWatchingAnime.toFixed(1)}${_cc.gn} Days`;
-    const coloredMonths = `${_cc.byw}${monthsWatchingAnime.toFixed(1)}${_cc.gn} Months`;
+    const coloredMinutesLeft = `;by;${leftOverMinutes.toFixed(0)} ;g;Minutes`;
+    const coloredHours = `;by;${Math.floor(hoursWatchingAnime)} ;g;Hours`;
+    const coloredDays = `;by;${daysWatchingAnime.toFixed(1)} ;g;Days`;
+    const coloredMonths = `;by;${monthsWatchingAnime.toFixed(1)} ;g;Months`;
 
     const allTimeStr =
         monthsWatchingAnime >= 1
@@ -103,7 +101,7 @@ export function getColoredTimeWatchedStr(seconds: number) {
 
     return {
         allTimeStr,
-        hoursAndMinutesLeft: `${coloredHours}${_cc.gn}, ${coloredMinutesLeft}`,
+        hoursAndMinutesLeft: `${coloredHours};g;, ${coloredMinutesLeft}`,
     };
 }
 

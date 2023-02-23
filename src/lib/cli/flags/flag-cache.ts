@@ -2,8 +2,7 @@ import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
 
-const { h1 } = Help.colors;
-const { nl } = Help.textFlowUtils;
+const { h1, nl } = Help.display;
 
 export class CacheFlag implements CLIFlag {
     name: CLIFlagName = ['c', 'cache'];
@@ -21,9 +20,9 @@ export class CacheFlag implements CLIFlag {
     shortHelpDisplay = 'Displays all currently Cached information.';
 
     helpDisplay: string[] = [
-        `${h1}Display Cache:`,
-        `${nl}This flag allows you to display the currently saved`,
-        `${nl}cache information.`,
+        h1(`Display Cache`),
+        nl(`This flag allows you to display the currently saved`),
+        nl(`cache information.`),
         '',
     ];
 

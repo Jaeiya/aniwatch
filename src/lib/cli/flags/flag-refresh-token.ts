@@ -2,8 +2,7 @@ import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
 
-const { h1, em, d } = Help.colors;
-const { nl } = Help.textFlowUtils;
+const { h1, nl } = Help.display;
 
 export class RefreshTokenFlag implements CLIFlag {
     name: CLIFlagName = ['rt', 'refresh-token'];
@@ -20,16 +19,16 @@ export class RefreshTokenFlag implements CLIFlag {
         'get access token',
     ];
 
-    shortHelpDisplay = `Retrieves a new access token ${em}(rarely needed)${d}.`;
+    shortHelpDisplay = `Retrieves a new access token ;m;(rarely needed);bk;.`;
 
     helpDisplay: string[] = [
-        `${h1}Refresh Access Token:`,
-        `${nl}Refreshes your current access token. This will`,
-        `${nl}only be ${em}necessary ${d}if your current token`,
-        `${nl}expires.`,
+        h1(`Refresh Access Token`),
+        nl(`Refreshes your current access token. This will`),
+        nl(`only be ;m;necessary ;bk;if your current token`),
+        nl(`expires.`),
         '',
-        `${nl}Tokens tend to be valid for a long time, so this`,
-        `${nl}isn't a flag you'll be using very often.`,
+        nl(`Tokens tend to be valid for a long time, so this`),
+        nl(`isn't a flag you'll be using very often.`),
         '',
     ];
 

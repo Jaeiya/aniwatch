@@ -2,68 +2,44 @@ import { CLIFlagName } from './cli/cli.js';
 import { Logger } from './logger.js';
 import { fitStringEnd } from './utils.js';
 
-const _cc = Logger.consoleColors;
-/** ANSI Clear Char */
-const _x = _cc.x;
-/** ANSI Bright Black */
-const _blk = _cc.bbk;
-/** ANSI Heading Color */
-const _hd = _cc.bwt;
-/** ANSI Subheading Color */
-const _shd = _cc.bma;
-/** ANSI Flag Color */
-const _fl = _cc.bcn;
-/** 3-Spaced Line */
-const _ind1 = ' '.repeat(3);
-/** 6-Spaced Line */
-const _ind2 = ' '.repeat(6);
-/** New Line */
-const _nl = `${_ind1}${_blk}`;
-
 type SimpleHelpTuple = [shortHelp: string, longHelp: string[]];
 type HelpTuple = [aliases: string[], help: string[]];
+const _display = {
+    /**
+     * Header **Level 1** Displays string with trailing colon and
+     * **Bright White** color
+     */
+    h1: (header1: string) => `;bw;${header1}:`,
+    /**
+     * Header **Level 2** displays string with trailing colon and
+     * **Bright Magenta** color
+     */
+    h2: (header2: string) => `;bm;${header2}:`,
+    /** Indent **level 1** with Bright Black color */
+    i1: (line: string) => `${' '.repeat(3)};bk;${line}`,
+    /** Indent **level 2** with Bright Black color */
+    i2: (line: string) => `${' '.repeat(6)};bk;${line}`,
+    /** Indented Line with Bright Black color (signifies
+     * **new line** when used after help header) */
+    nl: (line: string) => _display.i1(`;bk;${line}`),
+};
+const { h1, h2, nl, i2 } = _display;
 
 const _advancedFlagHelp: HelpTuple[] = [];
 const _simpleFlagHelp: HelpTuple[] = [];
-const _simpleFlagSyntax: string[] = [`${_shd}Syntax:`];
-const _simpleFlagDetails: string[] = [`${_shd}Details:`];
-const _simpleFlagExamples: string[] = [`${_shd}Examples:`];
+const _simpleFlagSyntax: string[] = [h2(`Syntax`)];
+const _simpleFlagDetails: string[] = [h2(`Details`)];
+const _simpleFlagExamples: string[] = [h2(`Examples`)];
 
 export class Help {
-    static readonly colors = {
-        /** ANSI Clear Char */
-        x: _cc.x,
-        /** Default */
-        d: _cc.bbk,
-        /** Executing Program */
-        ex: _cc.byw,
-        /** Emphasis */
-        em: _cc.ma,
-        /** Heading 1*/
-        h1: _cc.bwt,
-        /** Heading 2*/
-        h2: _cc.bma,
-        /** Flag */
-        f: _cc.bcn,
-        /** Argument */
-        arg: _cc.yw,
-    };
-
-    static readonly textFlowUtils = {
-        /** 3-Spaced Indent */
-        ind1: _ind1,
-        /** 6-Spaced Indent */
-        ind2: _ind2,
-        /** New Line */
-        nl: `${_ind1}${_blk}`,
-    };
+    static readonly display = _display;
 
     static displaySimpleHelp() {
         const help = [
-            `${_hd}Simple Flag Usage`,
-            `${_nl}These are flags that can only be used by themselves`,
-            `${_nl}without arguments. If an attempt is made to use them`,
-            `${_nl}with other flags or arguments, an error will occur.`,
+            h1(`Simple Flag Usage`),
+            nl(`These are flags that can only be used by themselves`),
+            nl(`without arguments. If an attempt is made to use them`),
+            nl(`with other flags or arguments, an error will occur.`),
             '',
             ..._simpleFlagSyntax,
             '',
@@ -95,22 +71,19 @@ export class Help {
     static addFlagSyntax(flags: [string, string], shortHelp: string) {
         const shortFlag = fitStringEnd(flags[0], 3);
         const longFlag = fitStringEnd(flags[1], 15);
-        const flagExample = `${_fl}-${shortFlag}${_x}| ${_fl}--${longFlag}${_x}`;
+        const flagExample = `;bc;-${shortFlag};x;| ;bc;--${longFlag};x;`;
 
         _simpleFlagSyntax.push(
             _simpleFlagSyntax.length == 1
-                ? `${_nl}${_cc.byw}wak ${_x}[ ${flagExample} ]`
-                : `${_ind2} [ ${flagExample} ]`
+                ? nl(`;by;wak ;x;[ ${flagExample} ]`)
+                : i2(`[ ${flagExample} ]`)
         );
 
-        _simpleFlagDetails.push(
-            `${_nl}${_fl}-${fitStringEnd(flags[0], 4)}${_x} ${shortHelp}`,
-            ''
-        );
+        _simpleFlagDetails.push(nl(`;bc;-${fitStringEnd(flags[0], 4)} ;x;${shortHelp}`), '');
     }
 
     static addSimpleFlagExamples(flags: [string, string]) {
-        const getExampleLine = (flag: string) => `${_nl}${_cc.byw}wak ${_fl}${flag}`;
+        const getExampleLine = (flag: string) => nl(`;by;wak ;bc;${flag}`);
         if (_simpleFlagExamples.length < 5) {
             _simpleFlagExamples.push(`${getExampleLine(`-${flags[0]}`)}`);
             _simpleFlagExamples.push(`${getExampleLine(`--${flags[1]}`)}`);
@@ -136,11 +109,11 @@ export class Help {
 function getNoArgSyntax(flags: [string, string]) {
     const [short, long] = flags;
     return [
-        `${_shd}Default Syntax:`,
-        `${_nl}${_cc.byw}wak ${_x}[${_fl}-${short} ${_x}| ${_fl}--${long}${_x}]`,
+        h2(`Default Syntax`),
+        nl(`;by;wak ;x;[;bc;-${short} ;x;| ;bc;--${long};x;]`),
         '',
-        `${_shd}Examples:`,
-        `${_nl}${_cc.byw}wak ${_fl}-${short}`,
-        `${_nl}${_cc.byw}wak ${_fl}--${long}`,
+        h2(`Examples`),
+        nl(`;by;wak ;bc;-${short}`),
+        nl(`;by;wak ;bc;--${long}`),
     ];
 }

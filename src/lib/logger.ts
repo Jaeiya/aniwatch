@@ -3,7 +3,6 @@ import { createSpinner } from './cli/cli-spinner.js';
 
 type HexColor = string;
 type ColorCode = keyof typeof _consoleColors;
-type StopLoading = () => void;
 
 const _tagOffsetLength = 3; // [, ], :
 let _maxTagLength = 10 - _tagOffsetLength;
@@ -122,15 +121,27 @@ export class ConsoleLogger {
         _colorCodeMap.set(code, `\u001B[38;2;${r};${g};${b}m`);
     }
 
-    static printLoading(msg = ';bg;*** ;by;Loading ;bg;***', color = 'by'): StopLoading {
+    static getLoadPrinter(color = 'by') {
+        let spinner: ReturnType<typeof createSpinner> | undefined;
         const spinCount = 4;
         const spins = '@spin'.repeat(spinCount);
         const loaderStr = `${' '.repeat(
             _maxTagLength - spinCount
-        )};bm;[;${color};${spins};bm;]: ;x;${msg}`;
-        const spinner = createSpinner(colorStr(loaderStr));
-        spinner.start(13);
-        return spinner.stop;
+        )};bm;[;${color};${spins};bm;]:`;
+
+        return {
+            start: (msg = ';bg;*** ;by;Loading ;bg;***') => {
+                spinner = createSpinner(colorStr(`${loaderStr} ;x;${msg}`));
+                spinner.start(13);
+            },
+            stop: () => {
+                if (!spinner) {
+                    throw Error('you must start loader before you can stop it');
+                }
+                spinner.stop();
+                spinner = undefined;
+            },
+        };
     }
 
     static debug(...args: any[]) {

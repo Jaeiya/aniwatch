@@ -121,14 +121,16 @@ export class ConsoleLogger {
         _colorCodeMap.set(code, `\u001B[38;2;${r};${g};${b}m`);
     }
 
+    static printLoader(msg = ';bg;*** ;by;Loading ;bg;***', color = 'by') {
+        const loaderStr = getLoaderStr(color);
+        const spinner = createSpinner(colorStr(`${loaderStr} ;x;${msg}`));
+        spinner.start(13);
+        return spinner.stop;
+    }
+
     static getLoadPrinter(color = 'by') {
         let spinner: ReturnType<typeof createSpinner> | undefined;
-        const spinCount = 4;
-        const spins = '@spin'.repeat(spinCount);
-        const loaderStr = `${' '.repeat(
-            _maxTagLength - spinCount
-        )};bm;[;${color};${spins};bm;]:`;
-
+        const loaderStr = getLoaderStr(color);
         return {
             start: (msg = ';bg;*** ;by;Loading ;bg;***') => {
                 spinner = createSpinner(colorStr(`${loaderStr} ;x;${msg}`));
@@ -167,6 +169,12 @@ export class ConsoleLogger {
         this.print('b', 'debug', `;br;${'#'.repeat(65)}\n`);
         console.log('');
     }
+}
+
+function getLoaderStr(color = 'by') {
+    const spinCount = 4;
+    const spins = '@spin'.repeat(spinCount);
+    return `${' '.repeat(_maxTagLength - spinCount)};bm;[;${color};${spins};bm;]:`;
 }
 
 function chainLogs(logs: string[], type: 'error' | 'info') {

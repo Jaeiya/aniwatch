@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import './globals.js';
 import { CLI } from './lib/cli/cli.js';
 import { Kitsu } from './lib/kitsu/kitsu.js';
 import { isDev } from './lib/utils.js';
@@ -15,7 +16,6 @@ import { DirInfoFlag } from './lib/cli/flags/flag-dir-size.js';
 import { ConsoleLogger } from './lib/logger.js';
 
 console.log('');
-global._con = ConsoleLogger;
 
 if (isDev()) {
     const smp = await import('source-map-support');

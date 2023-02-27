@@ -3,7 +3,7 @@
         "incremental": true,
         "target": "ESNext",
         "module": "ESNext",
-        "moduleResolution": "node",
+        "moduleResolution": "nodenext",
         "resolveJsonModule": true,
         "rootDir": "./src",
         "outDir": "./bin",

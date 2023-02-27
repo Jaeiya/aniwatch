@@ -16,7 +16,6 @@
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
-        "@typescript-eslint/no-explicit-any": 0,
-        "no-param-reassign": "error"
+        "@typescript-eslint/no-explicit-any": 0
     }
 }

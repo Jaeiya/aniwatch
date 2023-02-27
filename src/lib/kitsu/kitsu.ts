@@ -1,5 +1,4 @@
 import { readFile } from 'fs/promises';
-import { Logger } from '../logger.js';
 import { getColoredTimeWatchedStr, parseWithZod, pathJoin, tryCatchAsync } from '../utils.js';
 import { HTTP } from '../http.js';
 import { writeFileSync } from 'fs';
@@ -26,7 +25,6 @@ import {
 
 const _workingDir = process.cwd();
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
-const _prompt = Logger.prompt;
 const _configFileName = 'wakitsu.json';
 
 let _config = {} as ConfigFile;
@@ -47,7 +45,7 @@ export class Kitsu {
         _config = config;
         if (!_config.cache.length) {
             const cache = await getAnimeCache();
-            Logger.info(`;bc;Cached Anime: ;bg;${cache.length}`);
+            _con.info(`;bc;Cached Anime: ;bg;${cache.length}`);
             _config.cache = cache;
             saveConfig(_config);
         }
@@ -57,7 +55,7 @@ export class Kitsu {
         const resp = await HTTP.patch(new URL(url), JSON.stringify(data), _config.access_token);
         const resolvedData = await resp.json();
         if (!resp.ok) {
-            Logger.chainError(['', `;r;Kitsu API Error`, resolvedData['errors'][0]['detail']]);
+            _con.chainError(['', `;r;Kitsu API Error`, resolvedData['errors'][0]['detail']]);
             process.exit(1);
         }
         const libPatchResp = parseWithZod(
@@ -77,7 +75,7 @@ export class Kitsu {
         _config.stats.completedSeries = completed ?? completedSeries;
         _config.about = userData.attributes.about;
         saveConfig(_config);
-        Logger.chainInfo(['', `;bc;Profile: ;by;Updated!`]);
+        _con.chainInfo(['', `;bc;Profile: ;by;Updated!`]);
     }
 
     static async findAnime(name: string) {
@@ -95,12 +93,12 @@ export class Kitsu {
 
     static async rebuildCache() {
         if (!_config.access_token) {
-            Logger.error('KitsuAPI not initialized');
+            _con.error('KitsuAPI not initialized');
             process.exit(1);
         }
         const cachedAnime = await getAnimeCache();
         _config.cache = cachedAnime;
-        Logger.info(`;bc;Cache Reloaded: ;by;${cachedAnime.length}`);
+        _con.info(`;bc;Cache Reloaded: ;by;${cachedAnime.length}`);
     }
 
     static async refreshToken() {
@@ -113,19 +111,16 @@ export class Kitsu {
         _config.access_token = data.access_token;
         _config.refresh_token = data.refresh_token;
         saveConfig(_config);
-        Logger.chainInfo([
-            `;bc;Config File: ;g;Saved`,
-            `;bc;New Token: ;g;${data.access_token}`,
-        ]);
+        _con.chainInfo([`;bc;Config File: ;g;Saved`, `;bc;New Token: ;g;${data.access_token}`]);
     }
 
     static displayCacheInfo() {
-        Logger.chainInfo([
+        _con.chainInfo([
             `;by;Anime Cache Info`,
             `;bc;Cached Anime: ;g;${_config.cache.length}`,
         ]);
         _config.cache.forEach((c) => {
-            Logger.chainInfo([
+            _con.chainInfo([
                 '',
                 `;bc;title_jp: ;x;${c[1]}`,
                 `;bc;title_en: ;x;${c[2]}`,
@@ -138,7 +133,7 @@ export class Kitsu {
         const { allTimeStr, hoursAndMinutesLeft } = getColoredTimeWatchedStr(
             _config.stats.secondsSpentWatching
         );
-        Logger.chainInfo([
+        _con.chainInfo([
             `;by;Current User Profile`,
             `;bc;Name: ;g;${_config.username}`,
             `;bc;About: ;x;${_config.about}`,
@@ -155,7 +150,7 @@ async function tryLoadConfig(): Promise<KitsuConfig> {
         if (asyncRes.error.message.includes('ENOENT')) {
             return await trySetupConfig();
         }
-        Logger.error(asyncRes.error.message);
+        _con.error(asyncRes.error.message);
         process.exit(1);
     }
     const config = parseWithZod(
@@ -167,11 +162,11 @@ async function tryLoadConfig(): Promise<KitsuConfig> {
 }
 
 async function trySetupConfig(): Promise<KitsuConfig> {
-    Logger.info(`Missing Config -- ;bg;Setup Activated;x;`);
+    _con.info(`Missing Config -- ;bg;Setup Activated;x;`);
     await tryGetSetupConsent();
     const user = await promptUser();
     if (!areStatsDefined(user)) {
-        Logger.chainError([
+        _con.chainError([
             'Failed to Serialize Config Data',
             `;bc;Stats Undefined: ;by;stats.time ;x;|| ;by;stats.completed`,
         ]);
@@ -181,29 +176,29 @@ async function trySetupConfig(): Promise<KitsuConfig> {
     const tokens = await getAuthTokens(user.attributes.name, password);
     const config = serializeConfigData(user, tokens);
     saveConfig(config);
-    Logger.chainInfo(['', `;bc;Config File: ;by;Created`]);
+    _con.chainInfo(['', `;bc;Config File: ;by;Created`]);
     return [true, config];
 }
 
 async function tryGetSetupConsent() {
     const hasCreationConsent =
-        (await _prompt(`;y;Proceed with setup? ;bw;(y/n);x;: ;by;`)) == 'y';
+        (await _con.prompt(`;y;Proceed with setup? ;bw;(y/n);x;: ;by;`)) == 'y';
     if (!hasCreationConsent) {
-        Logger.chainInfo(['', `;by;Setup Aborted`]);
+        _con.chainInfo(['', `;by;Setup Aborted`]);
         process.exit(0);
     }
 }
 
 async function promptUser(): Promise<UserData> {
-    const username = await _prompt(`;y;Enter Kitsu username: ;by;`);
+    const username = await _con.prompt(`;y;Enter Kitsu username: ;by;`);
     const user = await getUserData(username);
-    Logger.chainInfo([
+    _con.chainInfo([
         '',
         `;bc;Name: ;g;${user.attributes.name}`,
         `;bc;Profile: ;g;https://kitsu.io/users/${user.attributes.name}`,
         `;bc;About: ;x;${user.attributes.about}`,
     ]);
-    const isVerifiedUser = (await _prompt(`;y;Is this you? ;bw;(y/n): ;by;`)) == 'y';
+    const isVerifiedUser = (await _con.prompt(`;y;Is this you? ;bw;(y/n): ;by;`)) == 'y';
     if (!isVerifiedUser) {
         return await promptUser();
     }
@@ -215,7 +210,7 @@ async function getUserData(userName: string) {
     const resp = await HTTP.get(url);
     const user = parseWithZod(UserDataRespSchema, await resp.json(), 'UserData');
     if (!user.data.length) {
-        Logger.error(`;by;${userName} ;x;not found`);
+        _con.error(`;by;${userName} ;x;not found`);
         process.exit(1);
     }
     return {
@@ -234,7 +229,7 @@ function buildUserDataURL(userName: string) {
 }
 
 async function promptPassword() {
-    return await _prompt(`;y;Enter password: ;by;`);
+    return await _con.prompt(`;y;Enter password: ;by;`);
 }
 
 async function getAuthTokens(username: string, password: string) {
@@ -277,11 +272,11 @@ async function tryGetDataFromResp<T = unknown>(resp: Response): Promise<T> {
     const data = await resp.json();
     if (!resp.ok) {
         const errorType = data['error'];
-        Logger.chainError(['', `${errorType}`]);
+        _con.chainError(['', `${errorType}`]);
         if (errorType == 'invalid_grant') {
-            Logger.error(`;by;Make sure you entered the correct password`);
+            _con.error(`;by;Make sure you entered the correct password`);
         }
-        Logger.error(`${data['error_description']}`);
+        _con.error(`${data['error_description']}`);
         process.exit(1);
     }
     return data;

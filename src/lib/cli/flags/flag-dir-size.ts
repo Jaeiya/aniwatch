@@ -3,7 +3,6 @@ import { Help } from '../../help.js';
 import { createReadableBytesFunc, pathJoin, stripFansubInfo } from '../../utils.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { stat } from 'fs/promises';
-import { Logger } from '../../logger.js';
 import { Dirent } from 'fs';
 import { fitStringEnd } from '../../utils.js';
 
@@ -61,7 +60,7 @@ function displayFolderInfo(fileStats: Awaited<ReturnType<typeof serializeFileSta
         smallestFileSize,
     } = fileStats;
 
-    Logger.chainInfo([
+    _con.chainInfo([
         `;by;Watched Folder Info`,
         nl(`The following is a detailed analysis of the "watched"`),
         nl(`folder on your disk.`),

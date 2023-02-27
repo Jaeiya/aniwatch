@@ -1,4 +1,3 @@
-import { Logger } from '../logger.js';
 import { Help } from '../help.js';
 
 export type CLIFlagType = 'multiArg' | 'simple';
@@ -72,7 +71,7 @@ export class CLI {
 
 function validateFlag(flag?: CLIFlag): flag is CLIFlag {
     if (!flag) {
-        Logger.chainError(['', `;r;Flag Error`, `;bc;Unknown Flag: ;by;${flagArgs[0]}`]);
+        _con.chainError(['', `;r;Flag Error`, `;bc;Unknown Flag: ;by;${flagArgs[0]}`]);
         return false;
     }
 
@@ -88,7 +87,7 @@ function validateFlag(flag?: CLIFlag): flag is CLIFlag {
  */
 function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
     if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
-        Logger.chainError([
+        _con.chainError([
             `;r;Invalid Flag Syntax`,
             'Read the help below to learn the correct syntax',
             '',
@@ -101,7 +100,7 @@ function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
 
 function isMultiArg(flag: CLIFlag) {
     if (!nonFlagArgs.length) {
-        Logger.chainError([
+        _con.chainError([
             `;r;Missing Argument`,
             'Read the help below to learn the correct syntax:',
             '',

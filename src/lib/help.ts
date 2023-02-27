@@ -1,5 +1,4 @@
 import { CLIFlagName } from './cli/cli.js';
-import { Logger } from './logger.js';
 import { fitStringEnd } from './utils.js';
 
 type SimpleHelpTuple = [shortHelp: string, longHelp: string[]];
@@ -102,7 +101,7 @@ export class Help {
     }
 
     static displayHelp(helpStrings: string[]) {
-        Logger.chainInfo(helpStrings);
+        _con.chainInfo(helpStrings);
     }
 }
 

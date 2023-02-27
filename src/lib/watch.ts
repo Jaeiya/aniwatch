@@ -1,6 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import { Kitsu } from './kitsu/kitsu.js';
-import { Logger } from './logger.js';
 import { pathJoin, titleFromAnimeFileName, toEpisodeNumberStr, truncateStr } from './utils.js';
 import { Help } from './help.js';
 import { AnimeCache } from './kitsu/kitsu-types.js';
@@ -17,7 +16,7 @@ export async function watchAnime(
     workingDir: string
 ) {
     validateParams([epName, epNumStrings, workingDir]);
-    Logger.info(`Working directory: ;bg;${workingDir}`);
+    _con.info(`Working directory: ;bg;${workingDir}`);
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
     tryCreateWatchedDir(workingDir);
@@ -39,7 +38,7 @@ function validateParams(params: [string, string[], string]) {
     const [epName, epNumbers, workingDir] = params;
 
     if (!existsSync(workingDir)) {
-        Logger.error(`Working directory invalid: ;y;${workingDir}`);
+        _con.error(`Working directory invalid: ;y;${workingDir}`);
         process.exit(1);
     }
 
@@ -50,7 +49,7 @@ function validateParams(params: [string, string[], string]) {
         isNaN(Number(epNumbers[1]));
 
     if (hasInvalidArgs) {
-        Logger.chainError([
+        _con.chainError([
             'Incorrect Argument Syntax',
             `;by;Read the syntax below and try again`,
             '',
@@ -66,7 +65,7 @@ function tryCreateWatchedDir(workingDir: string) {
 
     if (!existsSync(watchedDir)) {
         mkdirSync(watchedDir);
-        Logger.info(`Watched directory created: ;by;${watchedDir}`);
+        _con.info(`Watched directory created: ;by;${watchedDir}`);
     }
 }
 
@@ -88,7 +87,7 @@ function getCachedAnimeFromFiles(
     epNumStr: string
 ): AnimeCache {
     if (!fileNames.length) {
-        Logger.error(`;by;${epName} ;x;episode ;by;${epNumStr} ;x;does NOT exist`);
+        _con.error(`;by;${epName} ;x;episode ;by;${epNumStr} ;x;does NOT exist`);
         process.exit(1);
     }
 
@@ -111,12 +110,12 @@ function displayErrorTooManyFiles(fileNames: string[], epName: string, epNumStr:
         errorChain.push(`;by;${trimmedFileName} ;x;- ${epNumStr}`);
     }
 
-    Logger.chainError(errorChain);
+    _con.chainError(errorChain);
 }
 
 function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: string) {
     if (!cache.length) {
-        Logger.chainError([
+        _con.chainError([
             '',
             `;r;Watch List Incomplete`,
             `;bc;Missing: ;g;${titleFromAnimeFileName(fileNames[0], epNumStr)}`,
@@ -127,10 +126,7 @@ function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: s
     if (cache.length > 1) {
         const errorChain = ['', `;r;Multiple Cached Titles Found`];
         cache.forEach((anime) => errorChain.push(`;bc;Title: ;x;${anime[1]}`));
-        Logger.chainError([
-            ...errorChain,
-            `;by;Use a more unique name to reference the episode`,
-        ]);
+        _con.chainError([...errorChain, `;by;Use a more unique name to reference the episode`]);
         process.exit(1);
     }
 }
@@ -138,8 +134,8 @@ function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: s
 async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
     const cachedID = cachedAnime[0][0];
 
-    Logger.info(`;bc;Jap Title: ;g;${cachedAnime[0][1]}`);
-    Logger.info(`;bc;Eng Title: ;g;${cachedAnime[0][2]}`);
+    _con.info(`;bc;Jap Title: ;g;${cachedAnime[0][1]}`);
+    _con.info(`;bc;Eng Title: ;g;${cachedAnime[0][2]}`);
 
     const progress = await Kitsu.updateAnime(
         `https://kitsu.io/api/edge/library-entries/${cachedID}`,
@@ -153,10 +149,10 @@ async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
             },
         }
     );
-    Logger.info(`;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0][3] || 'unknown'}`);
+    _con.info(`;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0][3] || 'unknown'}`);
 }
 
 function moveFileToWatchedDir(fileName: string, workingDir: string) {
     renameSync(pathJoin(workingDir, fileName), pathJoin(workingDir, 'watched', fileName));
-    Logger.info(`;bc;Moved To: ;by;${pathJoin(workingDir, 'watched')}`);
+    _con.info(`;bc;Moved To: ;by;${pathJoin(workingDir, 'watched')}`);
 }

@@ -1,7 +1,6 @@
 import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
-import { Logger } from '../../logger.js';
 import { SerializedAnime } from '../../kitsu/kitsu-types.js';
 
 const { h1, h2, nl, i2 } = Help.display;
@@ -53,7 +52,7 @@ export class FindAnimeFlag implements CLIFlag {
 async function getAnimeList(cli: typeof CLI) {
     const animeList = await Kitsu.findAnime(cli.nonFlagArgs.join(' '));
     if (!animeList.length) {
-        Logger.chainInfo([
+        _con.chainInfo([
             `;by;No Entries Found`,
             'The anime is either not in your cache or your search',
             'terms were incorrectly spelled.',
@@ -66,7 +65,7 @@ async function getAnimeList(cli: typeof CLI) {
 function displayAnimeList(animeList: SerializedAnime[]) {
     animeList.forEach((anime) => {
         const totalEps = anime.totalEpisodes ? anime.totalEpisodes : `;r;unknown`;
-        Logger.chainInfo([
+        _con.chainInfo([
             `;bc;Title JP: ;x;${anime.title_jp}`,
             `;bc;Title EN: ;x;${anime.title_en}`,
             `;bc;Progress: ;g;${anime.progress} ;by;/ ;m;${totalEps}`,

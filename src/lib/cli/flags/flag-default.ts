@@ -1,7 +1,6 @@
 import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
-import { Logger } from '../../logger.js';
 import { watchAnime } from '../../watch.js';
 
 const { h1, h2, nl, i2 } = Help.display;
@@ -71,7 +70,7 @@ export class DefaultFlag implements CLIFlag {
         }
 
         if (flagArgs.length < 2 || flagArgs.length > 3) {
-            Logger.chainError([
+            _con.chainError([
                 `;r;Invalid Syntax`,
                 'Read the help below to learn the correct syntax:',
                 '',

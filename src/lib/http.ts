@@ -1,4 +1,3 @@
-import { Logger } from './logger.js';
 import { tryCatchAsync } from './utils.js';
 
 export class HTTP {
@@ -51,5 +50,5 @@ export class HTTP {
 }
 
 function execError(resp: Error, method: string, url: string) {
-    Logger.chainError(['', `;r;Failed ${method}ing ${url}`, resp.message]);
+    _con.chainError(['', `;r;Failed ${method}ing ${url}`, resp.message]);
 }

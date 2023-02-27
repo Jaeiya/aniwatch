@@ -1,6 +1,5 @@
 import { resolve, join } from 'path';
 import { z, ZodSchema } from 'zod';
-import { Logger } from './logger.js';
 
 export function isDev() {
     return process.env.NODE_ENV == 'development';
@@ -20,7 +19,7 @@ export function parseWithZod<T extends ZodSchema>(
 ) {
     const zodResp = schema.safeParse(data);
     if (!zodResp.success) {
-        Logger.chainError([
+        _con.chainError([
             `;r;Failed To Parse ;by;${failedSchemaName} ;r;Schema`,
             ...zodResp.error.issues.map((issue) => {
                 return `;y;${issue.path};x;: ${

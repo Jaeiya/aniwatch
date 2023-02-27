@@ -1,5 +1,4 @@
 import { HTTP } from './http.js';
-import { Logger } from './logger.js';
 
 const _nyaaURLStr = 'https://nyaa.si';
 
@@ -30,7 +29,7 @@ async function getLatestAnimeEntry(html: string) {
     const latestTitle =
         els.children('a.comments + a').eq(0).text().trim() || els.children('a').eq(0).text();
     if (!els.length) {
-        Logger.error('Anime Not Found');
+        _con.error('Anime Not Found');
         process.exit(1);
     }
     return [numOfResults, latestTitle];

@@ -1,6 +1,5 @@
 import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import { Logger } from '../../logger.js';
 
 const { h1, h2, nl, i2 } = Help.display;
 
@@ -62,7 +61,7 @@ export class HelpFlag implements CLIFlag {
 
         const helpStrings = Help.findHelp(helpArg);
         if (!helpStrings) {
-            Logger.error(`Could not find help using: ;by;${helpArg}`);
+            _con.error(`Could not find help using: ;by;${helpArg}`);
             return;
         }
         Help.displayHelp(helpStrings);

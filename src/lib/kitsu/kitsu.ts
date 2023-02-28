@@ -23,6 +23,10 @@ import {
     KitsuCache,
 } from './kitsu-types.js';
 
+type KitsuError = {
+    errors: { title: string; detail?: string; status: number }[];
+};
+
 const _workingDir = process.cwd();
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
 const _configFileName = 'wakitsu.json';
@@ -55,7 +59,15 @@ export class Kitsu {
         const resp = await HTTP.patch(new URL(url), JSON.stringify(data), _config.access_token);
         const resolvedData = await resp.json();
         if (!resp.ok) {
-            _con.chainError(['', `;r;Kitsu API Error`, resolvedData['errors'][0]['detail']]);
+            const errData = resolvedData as KitsuError;
+            if (errData.errors[0].title == 'Invalid token') {
+                _con.chainError(['', ';r;Kitsu API Error', 'Authentication Tokens Expired']);
+                process.exit(1);
+            }
+            const errMessage = errData.errors[0].detail
+                ? errData.errors[0].detail
+                : errData.errors[0].title;
+            _con.chainError(['', `;r;Kitsu API Error`, errMessage]);
             process.exit(1);
         }
         const libPatchResp = parseWithZod(

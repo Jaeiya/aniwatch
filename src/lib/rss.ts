@@ -11,6 +11,7 @@ export async function getFansubRSS(animeName: string) {
     url.searchParams.append('q', `subsplease 1080p ${animeName}`);
     const resp = await HTTP.get(url);
     if (!resp.ok) {
+        _printLoader.stop();
         console.log(await resp.text());
         process.exit(1);
     }

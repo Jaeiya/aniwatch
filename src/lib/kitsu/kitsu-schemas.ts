@@ -46,6 +46,7 @@ export const ConfigFileSchema = z.object({
     username: z.string(),
     access_token: z.string(),
     refresh_token: z.string(),
+    token_expiration: z.number(),
     cache: z.array(z.tuple([z.string(), z.string(), z.string(), z.number()])),
 });
 

@@ -10,7 +10,8 @@ export type AuthTokenResp = {
 };
 
 export type KitsuAuthTokens = Pick<AuthTokenResp, 'access_token'> &
-    Pick<AuthTokenResp, 'refresh_token'>;
+    Pick<AuthTokenResp, 'refresh_token'> &
+    Pick<AuthTokenResp, 'expires_in'>;
 
 export type LibraryPatchData = {
     data: {

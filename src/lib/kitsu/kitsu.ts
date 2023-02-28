@@ -259,6 +259,7 @@ async function getAuthTokens(username: string, password: string) {
     return {
         access_token: data.access_token,
         refresh_token: data.refresh_token,
+        expires_in: data.expires_in,
     };
 }
 
@@ -279,7 +280,9 @@ function serializeConfigData(user: UserDataRequired, tokens: KitsuAuthTokens): C
         },
         about: user.attributes.about,
         username: user.attributes.name,
-        ...tokens,
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        token_expiration: Math.floor(tokens.expires_in + Date.now() / 1000),
         cache: [],
     };
 }

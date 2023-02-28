@@ -10,6 +10,8 @@ type WatchConfig = {
     workingDir: string;
 };
 
+const _printLoader = _con.getLoadPrinter();
+
 export async function watchAnime(
     epName: string,
     epNumStrings: [string, string],
@@ -20,6 +22,7 @@ export async function watchAnime(
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
     tryCreateWatchedDir(workingDir);
+    _printLoader.start('Updating Kitsu');
     const epNumStr = toEpisodeNumberStr(Number(fileEpNumStr));
     const fansubFileNames = filterSubsPleaseFiles(workingDir, epName, `- ${epNumStr}`);
 
@@ -133,10 +136,6 @@ function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: s
 
 async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
     const cachedID = cachedAnime[0][0];
-
-    _con.info(`;bc;Jap Title: ;g;${cachedAnime[0][1]}`);
-    _con.info(`;bc;Eng Title: ;g;${cachedAnime[0][2]}`);
-
     const progress = await Kitsu.updateAnime(
         `https://kitsu.io/api/edge/library-entries/${cachedID}`,
         {
@@ -149,6 +148,9 @@ async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
             },
         }
     );
+    _printLoader.stop();
+    _con.info(`;bc;Jap Title: ;g;${cachedAnime[0][1]}`);
+    _con.info(`;bc;Eng Title: ;g;${cachedAnime[0][2]}`);
     _con.info(`;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0][3] || 'unknown'}`);
 }
 

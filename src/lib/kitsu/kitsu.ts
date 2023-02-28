@@ -67,6 +67,7 @@ export class Kitsu {
     }
 
     static async rebuildProfile() {
+        const stopLoader = _con.printLoader('Fetching Profile Data');
         const userData = await getUserData(_config.username);
         const { time, completed } = userData.stats;
         const { secondsSpentWatching, completedSeries } = _config.stats;
@@ -75,6 +76,7 @@ export class Kitsu {
         _config.stats.completedSeries = completed ?? completedSeries;
         _config.about = userData.attributes.about;
         saveConfig(_config);
+        stopLoader();
         _con.chainInfo(['', `;bc;Profile: ;by;Updated!`]);
     }
 
@@ -96,8 +98,10 @@ export class Kitsu {
             _con.error('KitsuAPI not initialized');
             process.exit(1);
         }
+        const stopLoader = _con.printLoader('Fetching Kitsu Data');
         const cachedAnime = await getAnimeCache();
         _config.cache = cachedAnime;
+        stopLoader();
         _con.info(`;bc;Cache Reloaded: ;by;${cachedAnime.length}`);
     }
 

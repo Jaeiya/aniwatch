@@ -50,7 +50,9 @@ export class FindAnimeFlag implements CLIFlag {
 }
 
 async function getAnimeList(cli: typeof CLI) {
+    const stopLoader = _con.printLoader('Fetching Anime');
     const animeList = await Kitsu.findAnime(cli.nonFlagArgs.join(' '));
+    stopLoader();
     if (!animeList.length) {
         _con.chainInfo([
             `;by;No Entries Found`,

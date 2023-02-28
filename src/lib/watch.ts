@@ -149,9 +149,12 @@ async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
         }
     );
     _printLoader.stop();
-    _con.info(`;bc;Jap Title: ;g;${cachedAnime[0][1]}`);
-    _con.info(`;bc;Eng Title: ;g;${cachedAnime[0][2]}`);
-    _con.info(`;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0][3] || 'unknown'}`);
+    _con.chainInfo([
+        '',
+        `;bc;Jap Title: ;g;${cachedAnime[0][1]}`,
+        `;bc;Eng Title: ;g;${cachedAnime[0][2]}`,
+        `;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0][3] || 'unknown'}`,
+    ]);
 }
 
 function moveFileToWatchedDir(fileName: string, workingDir: string) {

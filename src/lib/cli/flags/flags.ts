@@ -9,7 +9,7 @@ import { RefreshTokenFlag } from './flag-refresh-token.js';
 import { RSSFeedFlag } from './flag-rss-feed.js';
 import { CacheFlag } from './flag-cache.js';
 
-export const flags = [
+export const Flags = [
     DefaultFlag,
     HelpFlag,
     ProfileFlag,

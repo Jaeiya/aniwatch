@@ -4,7 +4,7 @@ import { CLI } from './lib/cli/cli.js';
 import { Kitsu } from './lib/kitsu/kitsu.js';
 import { isDev } from './lib/utils.js';
 import { ConsoleLogger } from './lib/logger.js';
-import { flags } from './lib/cli/flags/flags.js';
+import { Flags } from './lib/cli/flags/flags.js';
 
 console.log('');
 
@@ -18,8 +18,8 @@ process.removeAllListeners('warning');
 
 await Kitsu.init();
 
-for (const flag of flags) {
-    CLI.addFlag(new flag());
+for (const Flag of Flags) {
+    CLI.addFlag(new Flag());
 }
 
 await CLI.tryExecFlags();

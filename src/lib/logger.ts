@@ -121,9 +121,10 @@ export class ConsoleLogger {
         _colorCodeMap.set(code, `\u001B[38;2;${r};${g};${b}m`);
     }
 
-    static printLoader(msg = ';bg;*** ;by;Loading ;bg;***', color = 'by') {
+    static printLoader(msg = 'Loading', color = 'by') {
         const loaderStr = getLoaderStr(color);
-        const spinner = createSpinner(colorStr(`${loaderStr} ;x;${msg}`));
+        const loadMsg = `;bg;*** ;x;${msg} ;bg;***`;
+        const spinner = createSpinner(colorStr(`${loaderStr} ;x;${loadMsg}`));
         spinner.start(13);
         return spinner.stop;
     }
@@ -132,8 +133,9 @@ export class ConsoleLogger {
         let spinner: ReturnType<typeof createSpinner> | undefined;
         const loaderStr = getLoaderStr(color);
         return {
-            start: (msg = ';bg;*** ;by;Loading ;bg;***') => {
-                spinner = createSpinner(colorStr(`${loaderStr} ;x;${msg}`));
+            start: (msg = 'Loading') => {
+                const loadMsg = `;bg;*** ;by;${msg} ;bg;***`;
+                spinner = createSpinner(colorStr(`${loaderStr} ;x;${loadMsg}`));
                 spinner.start(13);
             },
             stop: () => {

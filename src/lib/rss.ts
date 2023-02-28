@@ -4,7 +4,7 @@ const _nyaaURLStr = 'https://nyaa.si';
 const _printLoader = _con.getLoadPrinter();
 
 export async function getFansubRSS(animeName: string) {
-    _printLoader.start(';bg;*** ;by;Looking up RSS ;bg;***');
+    _printLoader.start('Looking up RSS');
     const url = new URL(_nyaaURLStr);
     url.searchParams.append('f', '2');
     url.searchParams.append('c', '1_2');

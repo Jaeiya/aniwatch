@@ -18,6 +18,10 @@ const _display = {
     i1: (line: string) => `${' '.repeat(3)};bk;${line}`,
     /** Indent **level 2** with Bright Black color */
     i2: (line: string) => `${' '.repeat(6)};bk;${line}`,
+    /** Indent **level 3** with Bright Black color */
+    i3: (line: string) => `${' '.repeat(9)};bk;${line}`,
+    /** Indent **level 4** with Bright Black color */
+    i4: (line: string) => `${' '.repeat(12)};bk;${line}`,
     /** Indented Line with Bright Black color (signifies
      * **new line** when used after help header) */
     nl: (line: string) => _display.i1(`;bk;${line}`),

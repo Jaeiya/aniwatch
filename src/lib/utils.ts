@@ -81,26 +81,31 @@ export function titleFromAnimeFileName(name: string, ep: string) {
 }
 
 export function getColoredTimeWatchedStr(seconds: number) {
-    const hoursWatchingAnime = seconds / 60 / 60;
-    const leftOverMinutes = (hoursWatchingAnime % 1) * 60;
-    const daysWatchingAnime = hoursWatchingAnime / 24;
-    const monthsWatchingAnime = daysWatchingAnime / 30;
-
+    const { hours, days, months } = getTimeUnits(seconds);
+    const leftOverMinutes = (hours % 1) * 60;
     const coloredMinutesLeft = `;by;${leftOverMinutes.toFixed(0)} ;g;Minutes`;
-    const coloredHours = `;by;${Math.floor(hoursWatchingAnime)} ;g;Hours`;
-    const coloredDays = `;by;${daysWatchingAnime.toFixed(1)} ;g;Days`;
-    const coloredMonths = `;by;${monthsWatchingAnime.toFixed(1)} ;g;Months`;
+    const coloredHours = `;by;${Math.floor(hours)} ;g;Hours`;
+    const coloredDays = `;by;${hours.toFixed(1)} ;g;Days`;
+    const coloredMonths = `;by;${months.toFixed(1)} ;g;Months`;
 
-    const allTimeStr =
-        monthsWatchingAnime >= 1
-            ? coloredMonths
-            : daysWatchingAnime >= 1
-            ? coloredDays
-            : coloredHours;
+    const allTimeStr = months >= 1 ? coloredMonths : days >= 1 ? coloredDays : coloredHours;
 
     return {
         allTimeStr,
         hoursAndMinutesLeft: `${coloredHours};g;, ${coloredMinutesLeft}`,
+    };
+}
+
+export function getTimeUnits(seconds: number) {
+    const minutes = seconds / 60;
+    const hours = minutes / 60;
+    const days = hours / 24;
+    const months = days / 30;
+    return {
+        minutes,
+        hours,
+        days,
+        months,
     };
 }
 

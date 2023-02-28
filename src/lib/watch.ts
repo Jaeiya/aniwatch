@@ -10,8 +10,6 @@ type WatchConfig = {
     workingDir: string;
 };
 
-const _printLoader = _con.getLoadPrinter();
-
 export async function watchAnime(
     epName: string,
     epNumStrings: [string, string],
@@ -22,7 +20,6 @@ export async function watchAnime(
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
     tryCreateWatchedDir(workingDir);
-    _printLoader.start('Updating Kitsu');
     const epNumStr = toEpisodeNumberStr(Number(fileEpNumStr));
     const fansubFileNames = filterSubsPleaseFiles(workingDir, epName, `- ${epNumStr}`);
 
@@ -148,7 +145,6 @@ async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
             },
         }
     );
-    _printLoader.stop();
     _con.chainInfo([
         '',
         `;bc;Jap Title: ;g;${cachedAnime[0][1]}`,

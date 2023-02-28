@@ -224,11 +224,12 @@ async function promptUser(): Promise<UserData> {
 async function getUserData(userName: string) {
     const url = buildUserDataURL(userName);
     const resp = await HTTP.get(url);
-    const user = parseWithZod(UserDataRespSchema, await resp.json(), 'UserData');
-    if (!user.data.length) {
+    const resolvedResp = await resp.json();
+    if (!resolvedResp.data.length) {
         _con.error(`;by;${userName} ;x;not found`);
         process.exit(1);
     }
+    const user = parseWithZod(UserDataRespSchema, resolvedResp, 'UserData');
     return {
         ...user.data[0],
         stats: {

@@ -134,6 +134,7 @@ export class Kitsu {
         const data = await tryGetDataFromResp<AuthTokenResp>(resp);
         _config.access_token = data.access_token;
         _config.refresh_token = data.refresh_token;
+        _config.token_expiration = data.expires_in + Date.now() / 1000;
         saveConfig(_config);
         _con.chainInfo([`;bc;Config File: ;g;Saved`, `;bc;New Token: ;g;${data.access_token}`]);
     }

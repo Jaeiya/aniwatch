@@ -1,4 +1,4 @@
-import { ConfigFile } from './kitsu-schemas.js';
+import { ConfigFile } from './kitsu-schemas.ts';
 
 export type AuthTokenResp = {
     access_token: string;

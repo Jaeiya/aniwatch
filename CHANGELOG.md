@@ -1,3 +1,28 @@
+# [3.0.0](https://github.com/jaeiya/wakitsu/compare/v2.0.1...v3.0.0) (2/28/2023)
+
+### Breaking Changes ([3d5b335](https://github.com/Jaeiya/aniwatch/commit/3d5b335))
+
+The `wakitsu.json` configuration file will now store the auth token expiration date. This means that you'll need to delete your existing `wakitsu.json` before you can use this version. In a future update, this expiration date will be used to determine when you need to refresh your auth token.
+
+Authentication tokens, **once expired**, no longer allow you to refresh them. So it's very important to know when it's about to expire.
+
+### Features
+
+#### Console Logger ([30406d8](https://github.com/Jaeiya/aniwatch/commit/30406d8), [49e5f35](https://github.com/Jaeiya/aniwatch/commit/49e5f35))
+
+This module has been effectively re-written, in order to make coloring the text a bit more intuitive and less cumbersome. It now also supports custom colors, which will be implemented in future updates.
+
+### Changes
+
+- **cli**: add animated loading log for longer running processes ([79be9726](https://github.com/jaeiya/wakitsu/commit/79be972650ebbedf308c64752592ba1dd8f330a5))
+- **default-flag**: add another help alias ([0ac2ce6e](https://github.com/jaeiya/wakitsu/commit/0ac2ce6e02ab7ba5d44ee23d4b4fea8b1c3eae2a))
+- **utils**: `tryCatchAsync()` is now more type-safe ([ceb15dca](https://github.com/jaeiya/wakitsu/commit/ceb15dca5c06057fb9668d9b719550ce5c42ba0e))
+
+### Fixes
+
+- **kitsu**: not all API errors were handled properly ([ff890ca](https://github.com/Jaeiya/aniwatch/commit/ff890ca))
+- **kitsu**: zod failed parse when user not found ([8aea34b](https://github.com/Jaeiya/aniwatch/commit/8aea34b))
+
 # [2.0.1](https://github.com/jaeiya/wakitsu/compare/v2.0.0...v2.0.1) (2/19/2023)
 
 ### Changes

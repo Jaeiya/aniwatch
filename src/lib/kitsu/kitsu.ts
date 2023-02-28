@@ -43,6 +43,14 @@ export class Kitsu {
         return _firstSetup;
     }
 
+    static get tokenInfo() {
+        return {
+            accessToken: _config.access_token,
+            refreshToken: _config.refresh_token,
+            expires: _config.token_expiration,
+        };
+    }
+
     static async init() {
         const [isNew, config] = await tryLoadConfig();
         _firstSetup = isNew;

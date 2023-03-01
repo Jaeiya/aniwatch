@@ -13,6 +13,12 @@ export type KitsuAuthTokens = Pick<AuthTokenResp, 'access_token'> &
     Pick<AuthTokenResp, 'refresh_token'> &
     Pick<AuthTokenResp, 'expires_in'>;
 
+export type KitsuTokenData = {
+    access_token: string;
+    refresh_token: string;
+    token_expiration: number;
+};
+
 export type LibraryPatchData = {
     data: {
         id: string;

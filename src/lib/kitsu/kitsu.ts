@@ -21,6 +21,7 @@ import {
     LibraryPatchData,
     SerializedAnime,
     KitsuCache,
+    KitsuTokenData,
 } from './kitsu-types.js';
 
 type KitsuError = {
@@ -132,9 +133,7 @@ export class Kitsu {
         });
         const resp = await HTTP.post(_tokenURL, credentials);
         const data = await tryGetDataFromResp<AuthTokenResp>(resp);
-        _config.access_token = data.access_token;
-        _config.refresh_token = data.refresh_token;
-        _config.token_expiration = data.expires_in + Date.now() / 1000;
+        _config = { ..._config, ...serializeTokenData(data) };
         saveConfig(_config);
         _con.chainInfo([`;bc;Config File: ;g;Saved`, '']);
     }
@@ -166,6 +165,14 @@ export class Kitsu {
             `;bc;Watch Time: ;g;${allTimeStr} ;m;or ${hoursAndMinutesLeft}`,
             `;bc;Series Completed: ;g;${_config.stats.completedSeries}`,
         ]);
+    }
+
+    static async resetToken() {
+        const password = await promptPassword();
+        const tokenData = await getAuthTokens(_config.username, password);
+        _config = { ..._config, ...tokenData };
+        saveConfig(_config);
+        _con.chainInfo(['', `;bc;Config File: ;by;Saved`, '']);
     }
 }
 
@@ -258,7 +265,7 @@ async function promptPassword() {
     return await _con.prompt(`;y;Enter password: ;by;`);
 }
 
-async function getAuthTokens(username: string, password: string) {
+async function getAuthTokens(username: string, password: string): Promise<KitsuTokenData> {
     const credentials = JSON.stringify({
         grant_type: 'password',
         username: username,
@@ -266,18 +273,14 @@ async function getAuthTokens(username: string, password: string) {
     });
     const resp = await HTTP.post(_tokenURL, credentials);
     const data = await tryGetDataFromResp<AuthTokenResp>(resp);
-    return {
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
-        expires_in: data.expires_in,
-    };
+    return serializeTokenData(data);
 }
 
 function areStatsDefined(data: UserData): data is UserDataRequired {
     return typeof data.stats.time == 'number' && typeof data.stats.completed == 'number';
 }
 
-function serializeConfigData(user: UserDataRequired, tokens: KitsuAuthTokens): ConfigFile {
+function serializeConfigData(user: UserDataRequired, tokens: KitsuTokenData): ConfigFile {
     return {
         id: user.id,
         urls: {
@@ -290,9 +293,7 @@ function serializeConfigData(user: UserDataRequired, tokens: KitsuAuthTokens): C
         },
         about: user.attributes.about,
         username: user.attributes.name,
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
-        token_expiration: Math.floor(tokens.expires_in + Date.now() / 1000),
+        ...tokens,
         cache: [],
     };
 }
@@ -361,6 +362,14 @@ function serializeAnimeInfo(cacheList: AnimeCache, entries: LibraryEntries): Ser
                 : 'Not Calculated Yet',
         };
     });
+}
+
+function serializeTokenData(tokenData: KitsuAuthTokens) {
+    return {
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        token_expiration: Math.floor(tokenData.expires_in + Date.now() / 1000),
+    };
 }
 
 function saveConfig(config: ConfigFile) {

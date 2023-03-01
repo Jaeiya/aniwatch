@@ -168,6 +168,7 @@ export class Kitsu {
     }
 
     static async resetToken() {
+        _con.chainInfo(['', ';bg;Resetting Access Token']);
         const password = await promptPassword();
         const tokenData = await grantTokenData(_config.username, password);
         _config = { ..._config, ...tokenData };

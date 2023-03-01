@@ -135,7 +135,7 @@ export class Kitsu {
         const tokenResp = await tryGetDataFromResp<TokenGrantResp>(resp);
         _config = { ..._config, ...serializeTokenData(tokenResp) };
         saveConfig(_config);
-        _con.chainInfo([`;bc;Config File: ;g;Saved`, '']);
+        _con.chainInfo([`;bc;Config File: ;g;Saved`]);
     }
 
     static displayCacheInfo() {

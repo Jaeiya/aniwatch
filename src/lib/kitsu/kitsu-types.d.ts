@@ -1,6 +1,6 @@
 import { ConfigFile } from './kitsu-schemas.ts';
 
-export type AuthTokenResp = {
+export type TokenGrantResp = {
     access_token: string;
     token_type: string;
     expires_in: number;
@@ -9,11 +9,11 @@ export type AuthTokenResp = {
     created_at: number;
 };
 
-export type KitsuAuthTokens = Pick<AuthTokenResp, 'access_token'> &
-    Pick<AuthTokenResp, 'refresh_token'> &
-    Pick<AuthTokenResp, 'expires_in'>;
+export type KitsuTokenData = Pick<TokenGrantResp, 'access_token'> &
+    Pick<TokenGrantResp, 'refresh_token'> &
+    Pick<TokenGrantResp, 'expires_in'>;
 
-export type KitsuTokenData = {
+export type KitsuSerializedTokenData = {
     access_token: string;
     refresh_token: string;
     token_expiration: number;

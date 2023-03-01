@@ -14,14 +14,14 @@ import {
     UserDataRespSchema,
 } from './kitsu-schemas.js';
 import {
-    AuthTokenResp,
-    KitsuAuthTokens,
+    TokenGrantResp,
+    KitsuTokenData,
     AnimeCache,
     KitsuConfig,
     LibraryPatchData,
     SerializedAnime,
     KitsuCache,
-    KitsuTokenData,
+    KitsuSerializedTokenData,
 } from './kitsu-types.js';
 
 type KitsuError = {
@@ -32,7 +32,7 @@ const _workingDir = process.cwd();
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
 const _configFileName = 'wakitsu.json';
 
-let _config = {} as ConfigFile;
+let _config: ConfigFile;
 let _firstSetup = false;
 
 export class Kitsu {
@@ -132,8 +132,8 @@ export class Kitsu {
             refresh_token: _config.refresh_token,
         });
         const resp = await HTTP.post(_tokenURL, credentials);
-        const data = await tryGetDataFromResp<AuthTokenResp>(resp);
-        _config = { ..._config, ...serializeTokenData(data) };
+        const tokenResp = await tryGetDataFromResp<TokenGrantResp>(resp);
+        _config = { ..._config, ...serializeTokenData(tokenResp) };
         saveConfig(_config);
         _con.chainInfo([`;bc;Config File: ;g;Saved`, '']);
     }
@@ -169,7 +169,7 @@ export class Kitsu {
 
     static async resetToken() {
         const password = await promptPassword();
-        const tokenData = await getAuthTokens(_config.username, password);
+        const tokenData = await grantTokenData(_config.username, password);
         _config = { ..._config, ...tokenData };
         saveConfig(_config);
         _con.chainInfo(['', `;bc;Config File: ;by;Saved`, '']);
@@ -205,8 +205,8 @@ async function trySetupConfig(): Promise<KitsuConfig> {
         process.exit(1);
     }
     const password = await promptPassword();
-    const tokens = await getAuthTokens(user.attributes.name, password);
-    const config = serializeConfigData(user, tokens);
+    const tokenData = await grantTokenData(user.attributes.name, password);
+    const config = serializeConfigData(user, tokenData);
     saveConfig(config);
     _con.chainInfo(['', `;bc;Config File: ;by;Created`]);
     return [true, config];
@@ -265,22 +265,28 @@ async function promptPassword() {
     return await _con.prompt(`;y;Enter password: ;by;`);
 }
 
-async function getAuthTokens(username: string, password: string): Promise<KitsuTokenData> {
+async function grantTokenData(
+    username: string,
+    password: string
+): Promise<KitsuSerializedTokenData> {
     const credentials = JSON.stringify({
         grant_type: 'password',
         username: username,
         password: password,
     });
     const resp = await HTTP.post(_tokenURL, credentials);
-    const data = await tryGetDataFromResp<AuthTokenResp>(resp);
-    return serializeTokenData(data);
+    const tokenResp = await tryGetDataFromResp<TokenGrantResp>(resp);
+    return serializeTokenData(tokenResp);
 }
 
 function areStatsDefined(data: UserData): data is UserDataRequired {
     return typeof data.stats.time == 'number' && typeof data.stats.completed == 'number';
 }
 
-function serializeConfigData(user: UserDataRequired, tokens: KitsuTokenData): ConfigFile {
+function serializeConfigData(
+    user: UserDataRequired,
+    serializedTokenData: KitsuSerializedTokenData
+): ConfigFile {
     return {
         id: user.id,
         urls: {
@@ -293,7 +299,7 @@ function serializeConfigData(user: UserDataRequired, tokens: KitsuTokenData): Co
         },
         about: user.attributes.about,
         username: user.attributes.name,
-        ...tokens,
+        ...serializedTokenData,
         cache: [],
     };
 }
@@ -364,7 +370,7 @@ function serializeAnimeInfo(cacheList: AnimeCache, entries: LibraryEntries): Ser
     });
 }
 
-function serializeTokenData(tokenData: KitsuAuthTokens) {
+function serializeTokenData(tokenData: KitsuTokenData): KitsuSerializedTokenData {
     return {
         access_token: tokenData.access_token,
         refresh_token: tokenData.refresh_token,

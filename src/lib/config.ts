@@ -3,17 +3,20 @@ import { KitsuData, zodKitsuConfigData } from './kitsu/kitsu-schemas.js';
 import { parseWithZod, pathJoin, tryCatchAsync } from './utils.js';
 import * as z from 'zod';
 import { readFile } from 'fs/promises';
+import { DeepPartial } from '../types/globals.js';
+
+export type ConfigFile = z.infer<typeof ConfigSchema>;
+type PartialConfigFile = DeepPartial<ConfigFile>;
+type SetDefaultPropsFn = (config: PartialConfigFile) => PartialConfigFile;
 
 type ConfigInitOptions = {
     setupNewConfig: () => Promise<void>;
+    setDefaultProps: SetDefaultPropsFn;
 };
-
-type SetDefaultPropsFn = (config: ConfigFile) => ConfigFile;
 
 let _config: ConfigFile = {} as any;
 const _configFileName = 'wakitsu.json';
 
-export type ConfigFile = z.infer<typeof ConfigSchema>;
 const ConfigSchema = z.object({
     kitsu: z.object(zodKitsuConfigData),
 });
@@ -51,9 +54,10 @@ export class Config {
             _con.error(asyncRes.error.message);
             process.exit(1);
         }
-        const respDataObj = JSON.parse(asyncRes.data.toString('utf-8'));
+        const respDataObj: PartialConfigFile = JSON.parse(asyncRes.data.toString('utf-8'));
         const [error, data] = parseWithZod(ConfigSchema, respDataObj, 'ConfigFile');
         if (error) {
+            tryUpdateConfig(respDataObj, options.setDefaultProps);
             return;
         }
         _config = data;
@@ -66,4 +70,19 @@ export class Config {
         );
         _con.info(';bc;Config File: ;g;Saved');
     }
+}
+
+async function tryUpdateConfig(
+    partialConfig: PartialConfigFile,
+    setDefaultProps: SetDefaultPropsFn
+) {
+    const config = setDefaultProps({ ...partialConfig });
+    const [error, data] = parseWithZod(ConfigSchema, config, 'ConfigFile');
+    if (error) {
+        _con.chainError(error);
+        process.exit(1);
+    }
+    _config = data;
+    _con.info(';bc;Config: ;by;Updated!');
+    Config.save();
 }

@@ -10,6 +10,16 @@ await Config.init({
         _con.info(`;bc;Working Directory: ;g;${process.cwd()}`);
         await Kitsu.init();
     },
+    setDefaultProps: (config) => {
+        if (config.kitsu) {
+            config.kitsu.cache ??= [];
+        }
+        if (config.kitsu?.stats) {
+            config.kitsu.stats.secondsSpentWatching ??= 0;
+            config.kitsu.stats.completedSeries ??= 0;
+        }
+        return config;
+    },
 });
 
 for (const Flag of Flags) {

@@ -47,11 +47,12 @@ export class Config {
             _con.error(asyncRes.error.message);
             process.exit(1);
         }
-        _config = parseWithZod(
-            ConfigSchema,
-            JSON.parse(asyncRes.data.toString('utf-8')),
-            'ConfigFile'
-        );
+        const respDataObj = JSON.parse(asyncRes.data.toString('utf-8'));
+        const [error, data] = parseWithZod(ConfigSchema, respDataObj, 'ConfigFile');
+        if (error) {
+            return;
+        }
+        _config = data;
     }
 
     static save() {

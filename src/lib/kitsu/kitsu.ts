@@ -78,11 +78,15 @@ export class Kitsu {
             _con.chainError(['', `;r;Kitsu API Error`, errMessage]);
             process.exit(1);
         }
-        const libPatchResp = parseWithZod(
+        const [error, libPatchResp] = parseWithZod(
             LibraryPatchRespSchema,
             resolvedData,
             'LibraryPatchResponse'
         );
+        if (error) {
+            _con.chainError(error);
+            process.exit(1);
+        }
         return libPatchResp.data.attributes.progress;
     }
 
@@ -111,7 +115,15 @@ export class Kitsu {
         if (!filteredCache.length) return [];
         const libraryAnimeURL = buildLibraryAnimeURL(filteredCache.map((a) => a[0]));
         const resp = await HTTP.get(libraryAnimeURL);
-        const entries = parseWithZod(LibraryEntriesSchema, await resp.json(), 'LibraryEntries');
+        const [error, entries] = parseWithZod(
+            LibraryEntriesSchema,
+            await resp.json(),
+            'LibraryEntries'
+        );
+        if (error) {
+            _con.chainError(error);
+            process.exit(1);
+        }
         return serializeAnimeInfo(filteredCache, entries);
     }
 
@@ -214,7 +226,11 @@ async function getUserData(userName: string) {
         _con.error(`;by;${userName} ;x;not found`);
         process.exit(1);
     }
-    const user = parseWithZod(UserDataRespSchema, resolvedResp, 'UserData');
+    const [error, user] = parseWithZod(UserDataRespSchema, resolvedResp, 'UserData');
+    if (error) {
+        _con.chainError(error);
+        process.exit(1);
+    }
     return {
         ...user.data[0],
         stats: {
@@ -289,7 +305,11 @@ async function tryGetDataFromResp<T = unknown>(resp: Response): Promise<T> {
 
 async function getAnimeCache(): Promise<AnimeCache> {
     const resp = await HTTP.get(buildAnimeWatchListURL());
-    const library = parseWithZod(LibraryInfoSchema, await resp.json(), 'Library');
+    const [error, library] = parseWithZod(LibraryInfoSchema, await resp.json(), 'Library');
+    if (error) {
+        _con.chainError(error);
+        process.exit(1);
+    }
     const cache: KitsuCache = [];
     library.included.forEach((anime, i) => {
         cache.push([

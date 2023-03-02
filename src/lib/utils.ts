@@ -19,17 +19,18 @@ export function parseWithZod<T extends ZodSchema>(
 ) {
     const zodResp = schema.safeParse(data);
     if (!zodResp.success) {
-        _con.chainError([
+        const errorMsgArray = [
             `;r;Failed To Parse ;by;${failedSchemaName} ;r;Schema`,
             ...zodResp.error.issues.map((issue) => {
                 return `;y;${issue.path};x;: ${
                     issue.message == 'Required' ? 'Missing or Undefined' : issue.message
                 }`;
             }),
-        ]);
-        process.exit(1);
+        ];
+        return [errorMsgArray, null] as const;
+        // process.exit(1);
     }
-    return zodResp.data as z.infer<T>;
+    return [null, zodResp.data as z.infer<T>] as const;
 }
 
 type AsyncError = {

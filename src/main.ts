@@ -5,6 +5,7 @@ import { Kitsu } from './lib/kitsu/kitsu.js';
 import { isDev } from './lib/utils.js';
 import { ConsoleLogger } from './lib/logger.js';
 import { Flags } from './lib/cli/flags/flags.js';
+import { Config } from './lib/config.js';
 
 console.log('');
 
@@ -14,9 +15,9 @@ if (isDev()) {
     ConsoleLogger.info('TypeScript source map support installed');
 }
 
-process.removeAllListeners('warning');
+await Config.init();
 
-await Kitsu.init();
+process.removeAllListeners('warning');
 
 for (const Flag of Flags) {
     CLI.addFlag(new Flag());

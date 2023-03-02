@@ -65,7 +65,7 @@ export class DefaultFlag implements CLIFlag {
     exec(cli: typeof CLI) {
         const flagArgs = cli.nonFlagArgs;
 
-        if (!cli.userArgs.length && Kitsu.isFirstSetup) {
+        if (!cli.userArgs.length) {
             return;
         }
 

@@ -1,10 +1,8 @@
-import { readFile } from 'fs/promises';
-import { getColoredTimeWatchedStr, parseWithZod, pathJoin, tryCatchAsync } from '../utils.js';
+import { getColoredTimeWatchedStr, parseWithZod, pathJoin } from '../utils.js';
 import { HTTP } from '../http.js';
 import { writeFileSync } from 'fs';
 import {
-    ConfigFile,
-    ConfigFileSchema,
+    KitsuData,
     LibraryEntries,
     LibraryEntriesSchema,
     LibraryInfoSchema,
@@ -17,12 +15,12 @@ import {
     TokenGrantResp,
     KitsuTokenData,
     AnimeCache,
-    KitsuConfig,
     LibraryPatchData,
     SerializedAnime,
     KitsuCache,
     KitsuSerializedTokenData,
 } from './kitsu-types.js';
+import { Config } from '../config.js';
 
 type KitsuError = {
     errors: { title: string; detail?: string; status: number }[];
@@ -30,42 +28,43 @@ type KitsuError = {
 
 const _workingDir = process.cwd();
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
-const _configFileName = 'wakitsu.json';
-
-let _config: ConfigFile;
-let _firstSetup = false;
+/** Get Kitsu properties */
+const _gK = Config.getKitsuProp;
+/** Set Kitsu Properties */
+const _sK = Config.setKitsuProp;
 
 export class Kitsu {
     static get animeCache(): AnimeCache {
-        return _config.cache.slice(0);
-    }
-
-    static get isFirstSetup() {
-        return _firstSetup;
+        return _gK('cache').slice(0);
     }
 
     static get tokenInfo() {
         return {
-            accessToken: _config.access_token,
-            refreshToken: _config.refresh_token,
-            expires: _config.token_expiration,
+            accessToken: _gK('access_token'),
+            refreshToken: _gK('refresh_token'),
+            expires: _gK('token_expiration'),
         };
     }
 
     static async init() {
-        const [isNew, config] = await tryLoadConfig();
-        _firstSetup = isNew;
-        _config = config;
-        if (!_config.cache.length) {
-            const cache = await getAnimeCache();
-            _con.info(`;bc;Cached Anime: ;bg;${cache.length}`);
-            _config.cache = cache;
-            saveConfig(_config);
+        await tryGetSetupConsent();
+        const user = await promptUser();
+        if (!areStatsDefined(user)) {
+            _con.chainError([
+                'Failed to Serialize Kitsu Data',
+                `;bc;Stats Undefined: ;by;stats.time ;x;|| ;by;stats.completed`,
+            ]);
+            process.exit(1);
         }
+        const password = await promptPassword();
+        const tokenData = await grantTokenData(user.attributes.name, password);
+        Config.setKitsuData(serializeKitsuData(user, tokenData));
+        const animeCache = await getAnimeCache();
+        Config.setKitsuProp('cache', animeCache);
     }
 
     static async updateAnime(url: string, data: LibraryPatchData) {
-        const resp = await HTTP.patch(new URL(url), JSON.stringify(data), _config.access_token);
+        const resp = await HTTP.patch(new URL(url), JSON.stringify(data), _gK('access_token'));
         const resolvedData = await resp.json();
         if (!resp.ok) {
             const errData = resolvedData as KitsuError;
@@ -89,20 +88,22 @@ export class Kitsu {
 
     static async rebuildProfile() {
         const stopLoader = _con.printLoader('Fetching Profile Data');
-        const userData = await getUserData(_config.username);
+        const userData = await getUserData(_gK('username'));
         const { time, completed } = userData.stats;
-        const { secondsSpentWatching, completedSeries } = _config.stats;
-
-        _config.stats.secondsSpentWatching = time ?? secondsSpentWatching;
-        _config.stats.completedSeries = completed ?? completedSeries;
-        _config.about = userData.attributes.about;
-        saveConfig(_config);
+        const { secondsSpentWatching, completedSeries } = _gK('stats');
+        const stats = {
+            secondsSpentWatching: time ?? secondsSpentWatching,
+            completedSeries: completed ?? completedSeries,
+        };
+        _sK('about', userData.attributes.about);
+        _sK('stats', stats);
         stopLoader();
-        _con.chainInfo(['', `;bc;Profile: ;by;Updated!`]);
+        _con.info(`;bc;Profile: ;by;Updated!`);
+        Config.save();
     }
 
     static async findAnime(name: string) {
-        const filteredCache: AnimeCache = _config.cache.filter((anime) => {
+        const filteredCache: AnimeCache = _gK('cache').filter((anime) => {
             const hasCanonTitle = anime[1].toLowerCase().includes(name.toLowerCase());
             const hasEnglishTitle = anime[2].toLowerCase().includes(name.toLowerCase());
             return hasCanonTitle || hasEnglishTitle;
@@ -115,35 +116,32 @@ export class Kitsu {
     }
 
     static async rebuildCache() {
-        if (!_config.access_token) {
+        if (!_gK('access_token')) {
             _con.error('KitsuAPI not initialized');
             process.exit(1);
         }
         const stopLoader = _con.printLoader('Fetching Kitsu Data');
         const cachedAnime = await getAnimeCache();
-        _config.cache = cachedAnime;
+        _sK('cache', cachedAnime);
         stopLoader();
         _con.info(`;bc;Cache Reloaded: ;by;${cachedAnime.length}`);
+        Config.save();
     }
 
     static async refreshToken() {
         const credentials = JSON.stringify({
             grant_type: 'refresh_token',
-            refresh_token: _config.refresh_token,
+            refresh_token: _gK('refresh_token'),
         });
         const resp = await HTTP.post(_tokenURL, credentials);
         const tokenResp = await tryGetDataFromResp<TokenGrantResp>(resp);
-        _config = { ..._config, ...serializeTokenData(tokenResp) };
-        saveConfig(_config);
-        _con.chainInfo([`;bc;Config File: ;g;Saved`]);
+        saveTokenData(serializeTokenData(tokenResp));
     }
 
     static displayCacheInfo() {
-        _con.chainInfo([
-            `;by;Anime Cache Info`,
-            `;bc;Cached Anime: ;g;${_config.cache.length}`,
-        ]);
-        _config.cache.forEach((c) => {
+        const cache = _gK('cache');
+        _con.chainInfo([`;by;Anime Cache Info`, `;bc;Cached Anime: ;g;${cache.length}`]);
+        cache.forEach((c) => {
             _con.chainInfo([
                 '',
                 `;bc;title_jp: ;x;${c[1]}`,
@@ -154,63 +152,33 @@ export class Kitsu {
     }
 
     static displayUserProfile() {
+        const stats = _gK('stats');
         const { allTimeStr, hoursAndMinutesLeft } = getColoredTimeWatchedStr(
-            _config.stats.secondsSpentWatching
+            stats.secondsSpentWatching
         );
         _con.chainInfo([
             `;by;Current User Profile`,
-            `;bc;Name: ;g;${_config.username}`,
-            `;bc;About: ;x;${_config.about}`,
-            `;bc;Link: ;g;${_config.urls.profile}`,
+            `;bc;Name: ;g;${_gK('username')}`,
+            `;bc;About: ;x;${_gK('about')}`,
+            `;bc;Link: ;g;${_gK('urls').profile}`,
             `;bc;Watch Time: ;g;${allTimeStr} ;m;or ${hoursAndMinutesLeft}`,
-            `;bc;Series Completed: ;g;${_config.stats.completedSeries}`,
+            `;bc;Series Completed: ;g;${stats.completedSeries}`,
         ]);
     }
 
     static async resetToken() {
         _con.chainInfo(['', ';bg;Resetting Access Token']);
         const password = await promptPassword();
-        const tokenData = await grantTokenData(_config.username, password);
-        _config = { ..._config, ...tokenData };
-        saveConfig(_config);
-        _con.chainInfo(['', `;bc;Config File: ;by;Saved`, '']);
+        const tokenData = await grantTokenData(_gK('username'), password);
+        saveTokenData(tokenData);
     }
 }
 
-async function tryLoadConfig(): Promise<KitsuConfig> {
-    const asyncRes = await tryCatchAsync(readFile(pathJoin(_workingDir, _configFileName)));
-    if (!asyncRes.success) {
-        if (asyncRes.error.message.includes('ENOENT')) {
-            return await trySetupConfig();
-        }
-        _con.error(asyncRes.error.message);
-        process.exit(1);
-    }
-    const config = parseWithZod(
-        ConfigFileSchema,
-        JSON.parse(asyncRes.data.toString('utf-8')),
-        'Config'
-    );
-    return [false, config];
-}
-
-async function trySetupConfig(): Promise<KitsuConfig> {
-    _con.info(`Missing Config -- ;bg;Setup Activated;x;`);
-    await tryGetSetupConsent();
-    const user = await promptUser();
-    if (!areStatsDefined(user)) {
-        _con.chainError([
-            'Failed to Serialize Config Data',
-            `;bc;Stats Undefined: ;by;stats.time ;x;|| ;by;stats.completed`,
-        ]);
-        process.exit(1);
-    }
-    const password = await promptPassword();
-    const tokenData = await grantTokenData(user.attributes.name, password);
-    const config = serializeConfigData(user, tokenData);
-    saveConfig(config);
-    _con.chainInfo(['', `;bc;Config File: ;by;Created`]);
-    return [true, config];
+function saveTokenData(data: KitsuSerializedTokenData) {
+    _sK('token_expiration', data.token_expiration);
+    _sK('access_token', data.access_token);
+    _sK('refresh_token', data.refresh_token);
+    Config.save();
 }
 
 async function tryGetSetupConsent() {
@@ -284,10 +252,10 @@ function areStatsDefined(data: UserData): data is UserDataRequired {
     return typeof data.stats.time == 'number' && typeof data.stats.completed == 'number';
 }
 
-function serializeConfigData(
+function serializeKitsuData(
     user: UserDataRequired,
     serializedTokenData: KitsuSerializedTokenData
-): ConfigFile {
+): KitsuData {
     return {
         id: user.id,
         urls: {
@@ -320,7 +288,7 @@ async function tryGetDataFromResp<T = unknown>(resp: Response): Promise<T> {
 }
 
 async function getAnimeCache(): Promise<AnimeCache> {
-    const resp = await HTTP.get(getAnimeWatchListURL());
+    const resp = await HTTP.get(buildAnimeWatchListURL());
     const library = parseWithZod(LibraryInfoSchema, await resp.json(), 'Library');
     const cache: KitsuCache = [];
     library.included.forEach((anime, i) => {
@@ -334,8 +302,8 @@ async function getAnimeCache(): Promise<AnimeCache> {
     return cache;
 }
 
-function getAnimeWatchListURL() {
-    const url = new URL(_config.urls.library);
+function buildAnimeWatchListURL() {
+    const url = new URL(_gK('urls').library);
     url.searchParams.append('filter[status]', 'current');
     url.searchParams.append('page[limit]', '200');
     url.searchParams.append('include', 'anime');
@@ -377,8 +345,4 @@ function serializeTokenData(tokenData: KitsuTokenData): KitsuSerializedTokenData
         refresh_token: tokenData.refresh_token,
         token_expiration: Math.floor(tokenData.expires_in + Date.now() / 1000),
     };
-}
-
-function saveConfig(config: ConfigFile) {
-    writeFileSync(pathJoin(_workingDir, _configFileName), JSON.stringify(config, null, 2));
 }

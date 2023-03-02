@@ -31,8 +31,8 @@ export const UserDataRespSchema = z.object({
     ),
 });
 
-export type ConfigFile = z.infer<typeof ConfigFileSchema>;
-export const ConfigFileSchema = z.object({
+export type KitsuData = z.infer<typeof KitsuDataSchema>;
+export const zodKitsuConfigData = {
     id: z.string(),
     urls: z.object({
         profile: z.string(),
@@ -48,7 +48,8 @@ export const ConfigFileSchema = z.object({
     refresh_token: z.string(),
     token_expiration: z.number(),
     cache: z.array(z.tuple([z.string(), z.string(), z.string(), z.number()])),
-});
+};
+export const KitsuDataSchema = z.object(zodKitsuConfigData);
 
 export type LibraryEntries = z.infer<typeof LibraryEntriesSchema>;
 export const LibraryEntriesSchema = z.object({

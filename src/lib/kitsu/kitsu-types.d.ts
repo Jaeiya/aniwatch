@@ -1,4 +1,4 @@
-import { ConfigFile } from './kitsu-schemas.ts';
+import { KitsuData } from './kitsu-schemas.ts';
 
 export type TokenGrantResp = {
     access_token: string;
@@ -45,5 +45,5 @@ export type AnimeCache = [
     episodeCount: number
 ][];
 
-export type KitsuCache = ConfigFile['cache'];
-export type KitsuConfig = [isNew: boolean, config: ConfigFile];
+export type KitsuCache = KitsuData['cache'];
+export type KitsuConfig = [isNew: boolean, config: KitsuData];

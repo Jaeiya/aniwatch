@@ -3,7 +3,12 @@ import { KitsuData, zodKitsuConfigData } from './kitsu/kitsu-schemas.js';
 import { parseWithZod, pathJoin, tryCatchAsync } from './utils.js';
 import * as z from 'zod';
 import { readFile } from 'fs/promises';
-import { Kitsu } from './kitsu/kitsu.js';
+
+type ConfigInitOptions = {
+    setupNewConfig: () => Promise<void>;
+};
+
+type SetDefaultPropsFn = (config: ConfigFile) => ConfigFile;
 
 let _config: ConfigFile = {} as any;
 const _configFileName = 'wakitsu.json';
@@ -34,15 +39,14 @@ export class Config {
         _config.kitsu = data;
     }
 
-    static async init() {
+    static async init(options: ConfigInitOptions) {
         const asyncRes = await tryCatchAsync(
             readFile(pathJoin(process.cwd(), _configFileName))
         );
         if (!asyncRes.success) {
             if (asyncRes.error.message.includes('ENOENT')) {
-                await Kitsu.init();
-                Config.save();
-                return;
+                await options.setupNewConfig();
+                return Config.save();
             }
             _con.error(asyncRes.error.message);
             process.exit(1);

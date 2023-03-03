@@ -1,4 +1,4 @@
-import { resolve, join } from 'path';
+import { resolve, join, basename } from 'path';
 import { z, ZodSchema } from 'zod';
 
 export function isDev() {
@@ -133,3 +133,4 @@ export function stripFansubInfo(name: string) {
 
 export const pathResolve = resolve;
 export const pathJoin = join;
+export const pathBasename = basename;

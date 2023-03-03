@@ -40,6 +40,7 @@
         "eslint": "^8.34.0",
         "eslint-config-prettier": "^8.6.0",
         "prettier": "^2.8.4",
+        "typescript": "^5.0.1-rc"
     },
     "dependencies": {
         "cheerio": "^1.0.0-rc.12",

@@ -19,5 +19,6 @@
         "orced",
         "subsplease",
         "wakitsu"
-    ]
+    ],
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }

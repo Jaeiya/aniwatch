@@ -168,12 +168,14 @@ export class Kitsu {
             stats.secondsSpentWatching
         );
         _con.chainInfo([
+            '',
             `;by;Current User Profile`,
             `;bc;Name: ;g;${_gK('username')}`,
             `;bc;About: ;x;${_gK('about')}`,
             `;bc;Link: ;g;${_gK('urls').profile}`,
             `;bc;Watch Time: ;g;${allTimeStr} ;m;or ${hoursAndMinutesLeft}`,
-            `;bc;Series Completed: ;g;${stats.completedSeries}`,
+            `;bc;Watching: ;by;${_gK('cache').length} ;g;Series`,
+            `;bc;Completed: ;by;${stats.completedSeries} ;g;Series`,
         ]);
     }
 

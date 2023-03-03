@@ -157,6 +157,7 @@ export class Kitsu {
                 `;bc;id: ;y;${c.libID}`,
                 `;bc;title_jp: ;x;${c.jpTitle}`,
                 `;bc;title_en: ;x;${c.enTitle}`,
+                `;bc;link: ;x;https://kitsu.io/anime/${c.slug}`,
             ]);
         });
     }
@@ -315,6 +316,8 @@ async function getAnimeCache() {
             jpTitle: anime.attributes.canonicalTitle.trim(),
             enTitle: anime.attributes.titles.en.trim(),
             epCount: anime.attributes.episodeCount || 0,
+            slug: anime.attributes.slug,
+            synopsis: anime.attributes.synopsis,
         });
     });
     return cache;

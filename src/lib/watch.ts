@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import { Kitsu } from './kitsu/kitsu.js';
 import { pathJoin, titleFromAnimeFileName, toEpisodeNumberStr, truncateStr } from './utils.js';
 import { Help } from './help.js';
-import { AnimeCache } from './kitsu/kitsu-types.js';
+import { KitsuCache } from './kitsu/kitsu-types.js';
 
 type WatchConfig = {
     forcedEpNumber: number;
@@ -81,11 +81,7 @@ function filterSubsPleaseFiles(workingDir: string, epName: string, epNumSyntax: 
         );
 }
 
-function getCachedAnimeFromFiles(
-    fileNames: string[],
-    epName: string,
-    epNumStr: string
-): AnimeCache {
+function getCachedAnimeFromFiles(fileNames: string[], epName: string, epNumStr: string) {
     if (!fileNames.length) {
         _con.error(`;by;${epName} ;x;episode ;by;${epNumStr} ;x;does NOT exist`);
         process.exit(1);
@@ -94,8 +90,8 @@ function getCachedAnimeFromFiles(
     if (fileNames.length == 1) {
         return Kitsu.animeCache.filter(
             (anime) =>
-                anime[1].toLowerCase().includes(epName) ||
-                anime[2].toLowerCase().includes(epName)
+                anime.jpTitle.toLowerCase().includes(epName) ||
+                anime.enTitle.toLowerCase().includes(epName)
         );
     }
     displayErrorTooManyFiles(fileNames, epName, epNumStr);
@@ -113,7 +109,7 @@ function displayErrorTooManyFiles(fileNames: string[], epName: string, epNumStr:
     _con.chainError(errorChain);
 }
 
-function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: string) {
+function validateCachedAnime(cache: KitsuCache, fileNames: string[], epNumStr: string) {
     if (!cache.length) {
         _con.chainError([
             '',
@@ -125,14 +121,14 @@ function validateCachedAnime(cache: AnimeCache, fileNames: string[], epNumStr: s
 
     if (cache.length > 1) {
         const errorChain = ['', `;r;Multiple Cached Titles Found`];
-        cache.forEach((anime) => errorChain.push(`;bc;Title: ;x;${anime[1]}`));
+        cache.forEach((anime) => errorChain.push(`;bc;Title: ;x;${anime.jpTitle}`));
         _con.chainError([...errorChain, `;by;Use a more unique name to reference the episode`]);
         process.exit(1);
     }
 }
 
-async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
-    const cachedID = cachedAnime[0][0];
+async function setAnimeProgress(cachedAnime: KitsuCache, config: WatchConfig) {
+    const cachedID = cachedAnime[0].libID;
     const progress = await Kitsu.updateAnime(
         `https://kitsu.io/api/edge/library-entries/${cachedID}`,
         {
@@ -147,9 +143,9 @@ async function setAnimeProgress(cachedAnime: AnimeCache, config: WatchConfig) {
     );
     _con.chainInfo([
         '',
-        `;bc;Jap Title: ;g;${cachedAnime[0][1]}`,
-        `;bc;Eng Title: ;g;${cachedAnime[0][2]}`,
-        `;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0][3] || 'unknown'}`,
+        `;bc;Jap Title: ;g;${cachedAnime[0].jpTitle}`,
+        `;bc;Eng Title: ;g;${cachedAnime[0].enTitle}`,
+        `;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0].epCount || 'unknown'}`,
     ]);
 }
 

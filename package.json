@@ -8,7 +8,7 @@
         "wak": "./bin/main.js"
     },
     "scripts": {
-        "dev": "cross-env NODE_ENV=development node ./bin/main.js",
+        "dev": "cd test && node --enable-source-maps ../bin/main.js",
         "build": "rm -rf ./bin/ && tsc"
     },
     "files": [
@@ -34,14 +34,12 @@
     "license": "MIT",
     "devDependencies": {
         "@types/node": "^18.14.0",
-        "@types/source-map-support": "^0.5.6",
         "@typescript-eslint/eslint-plugin": "^5.52.0",
         "@typescript-eslint/parser": "^5.52.0",
         "cross-env": "^7.0.3",
         "eslint": "^8.34.0",
         "eslint-config-prettier": "^8.6.0",
         "prettier": "^2.8.4",
-        "source-map-support": "^0.5.21"
     },
     "dependencies": {
         "cheerio": "^1.0.0-rc.12",

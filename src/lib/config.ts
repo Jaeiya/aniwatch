@@ -18,6 +18,7 @@ let _config: ConfigFile = {} as any;
 const _configFileName = 'wakitsu.json';
 
 const ConfigSchema = z.object({
+    useColor: z.boolean(),
     kitsu: z.object(zodKitsuConfigData),
 });
 
@@ -25,6 +26,10 @@ export class Config {
     static get<K extends keyof ConfigFile>(key: K) {
         if (!_config) throw Error('config not initialized');
         return _config[key];
+    }
+
+    static set<K extends keyof ConfigFile, T extends ConfigFile[K]>(key: K, val: T) {
+        _config[key] = val;
     }
 
     static getKitsuProp<K extends keyof KitsuData>(key: K) {

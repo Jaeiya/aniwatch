@@ -8,6 +8,7 @@ import { RebuildProfileFlag } from './flag-rebuild-profile.js';
 import { RSSFeedFlag } from './flag-rss-feed.js';
 import { CacheFlag } from './flag-cache.js';
 import { TokenFlag } from './flag-token.js';
+import { ColorFlag } from './flag-color.js';
 
 export const Flags = [
     DefaultFlag,
@@ -16,6 +17,7 @@ export const Flags = [
     RebuildProfileFlag,
     CacheFlag,
     RebuildCacheFlag,
+    ColorFlag,
     DirInfoFlag,
     TokenFlag,
     FindAnimeFlag,

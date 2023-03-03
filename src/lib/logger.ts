@@ -59,6 +59,10 @@ const _colorCodeMap = (function () {
 export class ConsoleLogger {
     static readonly consoleColors = _consoleColors;
 
+    static get showColor() {
+        return _showColor;
+    }
+
     static set showColor(val: boolean) {
         _showColor = val;
     }

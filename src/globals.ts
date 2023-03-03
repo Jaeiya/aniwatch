@@ -10,8 +10,11 @@ await Config.init({
     setupNewConfig: async () => {
         _con.info(`;bc;Working Directory: ;g;${process.cwd()}`);
         await Kitsu.init();
+        Config.set('useColor', true);
+        _con.showColor = Config.get('useColor');
     },
     setDefaultProps: (config) => {
+        config.useColor ??= false;
         if (config.kitsu) {
             config.kitsu.cache ??= [];
         }
@@ -22,4 +25,3 @@ await Config.init({
         return config;
     },
 });
-

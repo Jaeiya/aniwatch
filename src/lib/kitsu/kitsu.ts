@@ -1,6 +1,5 @@
-import { getColoredTimeWatchedStr, parseWithZod, pathJoin } from '../utils.js';
+import { getColoredTimeWatchedStr, parseWithZod } from '../utils.js';
 import { HTTP } from '../http.js';
-import { writeFileSync } from 'fs';
 import {
     KitsuData,
     LibraryEntries,
@@ -26,7 +25,6 @@ type KitsuError = {
     errors: { title: string; detail?: string; status: number }[];
 };
 
-const _workingDir = process.cwd();
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
 /** Get Kitsu properties */
 const _gK = Config.getKitsuProp;

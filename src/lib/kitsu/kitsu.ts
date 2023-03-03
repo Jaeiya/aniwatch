@@ -32,7 +32,7 @@ const _gK = Config.getKitsuProp;
 const _sK = Config.setKitsuProp;
 
 export class Kitsu {
-    static get animeCache(): AnimeCache {
+    static get animeCache() {
         return _gK('cache').slice(0);
     }
 
@@ -105,13 +105,13 @@ export class Kitsu {
     }
 
     static async findAnime(name: string) {
-        const filteredCache: AnimeCache = _gK('cache').filter((anime) => {
-            const hasCanonTitle = anime[1].toLowerCase().includes(name.toLowerCase());
-            const hasEnglishTitle = anime[2].toLowerCase().includes(name.toLowerCase());
+        const filteredCache = _gK('cache').filter((anime) => {
+            const hasCanonTitle = anime.jpTitle.toLowerCase().includes(name.toLowerCase());
+            const hasEnglishTitle = anime.enTitle.toLowerCase().includes(name.toLowerCase());
             return hasCanonTitle || hasEnglishTitle;
         });
         if (!filteredCache.length) return [];
-        const libraryAnimeURL = buildLibraryAnimeURL(filteredCache.map((a) => a[0]));
+        const libraryAnimeURL = buildLibraryAnimeURL(filteredCache.map((a) => a.libID));
         const resp = await HTTP.get(libraryAnimeURL);
         const [error, entries] = parseWithZod(
             LibraryEntriesSchema,
@@ -148,15 +148,15 @@ export class Kitsu {
         saveTokenData(serializeTokenData(tokenResp));
     }
 
-    static displayCacheInfo() {
+    static async displayCacheInfo() {
         const cache = _gK('cache');
         _con.chainInfo([`;by;Anime Cache Info`, `;bc;Cached Anime: ;g;${cache.length}`]);
         cache.forEach((c) => {
             _con.chainInfo([
                 '',
-                `;bc;title_jp: ;x;${c[1]}`,
-                `;bc;title_en: ;x;${c[2]}`,
-                `;bc;Entry: ;y;https://kitsu.io/api/edge/library-entries/${c[0]}`,
+                `;bc;id: ;y;${c.libID}`,
+                `;bc;title_jp: ;x;${c.jpTitle}`,
+                `;bc;title_en: ;x;${c.enTitle}`,
             ]);
         });
     }
@@ -301,7 +301,7 @@ async function tryGetDataFromResp<T = unknown>(resp: Response): Promise<T> {
     return data;
 }
 
-async function getAnimeCache(): Promise<AnimeCache> {
+async function getAnimeCache() {
     const resp = await HTTP.get(buildAnimeWatchListURL());
     const [error, library] = parseWithZod(LibraryInfoSchema, await resp.json(), 'Library');
     if (error) {
@@ -310,12 +310,12 @@ async function getAnimeCache(): Promise<AnimeCache> {
     }
     const cache: KitsuCache = [];
     library.included.forEach((anime, i) => {
-        cache.push([
-            library.data[i].id,
-            anime.attributes.canonicalTitle.trim(),
-            anime.attributes.titles.en.trim(),
-            anime.attributes.episodeCount || 0,
-        ]);
+        cache.push({
+            libID: library.data[i].id,
+            jpTitle: anime.attributes.canonicalTitle.trim(),
+            enTitle: anime.attributes.titles.en.trim(),
+            epCount: anime.attributes.episodeCount || 0,
+        });
     });
     return cache;
 }
@@ -340,13 +340,13 @@ function buildLibraryAnimeURL(libraryIds: string[]) {
     return url;
 }
 
-function serializeAnimeInfo(cacheList: AnimeCache, entries: LibraryEntries): SerializedAnime[] {
+function serializeAnimeInfo(cacheList: KitsuCache, entries: LibraryEntries): SerializedAnime[] {
     return cacheList.map((cache, i) => {
         const rating = entries.data[i].attributes.ratingTwenty;
         const avgRating = entries.included[i].attributes.averageRating;
         return {
-            title_jp: cache[1],
-            title_en: cache[2],
+            title_jp: cache.jpTitle,
+            title_en: cache.enTitle,
             progress: entries.data[i].attributes.progress,
             rating: rating ? `${(rating / 20) * 10}` : rating,
             totalEpisodes: entries.included[i].attributes.episodeCount,

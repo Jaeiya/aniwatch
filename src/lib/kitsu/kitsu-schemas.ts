@@ -32,6 +32,12 @@ export const UserDataRespSchema = z.object({
 });
 
 export type KitsuData = z.infer<typeof KitsuDataSchema>;
+export const KitsuCacheSchema = z.object({
+    libID: z.string(),
+    jpTitle: z.string(),
+    enTitle: z.string(),
+    epCount: z.number(),
+});
 export const zodKitsuConfigData = {
     id: z.string(),
     urls: z.object({
@@ -47,7 +53,7 @@ export const zodKitsuConfigData = {
     access_token: z.string(),
     refresh_token: z.string(),
     token_expiration: z.number(),
-    cache: z.array(z.tuple([z.string(), z.string(), z.string(), z.number()])),
+    cache: z.array(KitsuCacheSchema),
 };
 export const KitsuDataSchema = z.object(zodKitsuConfigData);
 

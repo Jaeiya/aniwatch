@@ -1,4 +1,4 @@
-import { getColoredTimeWatchedStr, parseWithZod } from '../utils.js';
+import { getColoredTimeWatchedStr, getTimeUnits, parseWithZod } from '../utils.js';
 import { HTTP } from '../http.js';
 import {
     KitsuData,
@@ -13,7 +13,6 @@ import {
 import {
     TokenGrantResp,
     KitsuTokenData,
-    AnimeCache,
     LibraryPatchData,
     SerializedAnime,
     KitsuCache,
@@ -175,6 +174,7 @@ export class Kitsu {
             `;bc;Link: ;g;${_gK('urls').profile}`,
             `;bc;Watch Time: ;g;${allTimeStr} ;m;or ${hoursAndMinutesLeft}`,
             `;bc;Watching: ;by;${_gK('cache').length} ;g;Series`,
+            `;bc;Watch Time Left: ;by;${toWatchTimeLeft(_gK('cache'))}`,
             `;bc;Completed: ;by;${stats.completedSeries} ;g;Series`,
         ]);
     }
@@ -369,4 +369,17 @@ function serializeTokenData(tokenData: KitsuTokenData): KitsuSerializedTokenData
         refresh_token: tokenData.refresh_token,
         token_expiration: Math.floor(tokenData.expires_in + Date.now() / 1000),
     };
+}
+
+function toWatchTimeLeft(cache: KitsuCache) {
+    const episodesLeft = cache.reduce(
+        (pv, cv) => (cv.epCount > 0 ? pv + (cv.epCount - cv.epProgress) : pv),
+        0
+    );
+    const timeLeft = getTimeUnits(episodesLeft * 24 * 60);
+    return timeLeft.hours > 2
+        ? `${timeLeft.hours.toFixed(0)} ;g;hours, ;by;${Math.ceil(
+              (timeLeft.hours % 1) * 60
+          )} ;g;Minutes`
+        : `${timeLeft.minutes} Minutes`;
 }

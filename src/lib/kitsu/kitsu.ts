@@ -318,6 +318,7 @@ async function getAnimeCache() {
             jpTitle: anime.attributes.canonicalTitle.trim(),
             enTitle: anime.attributes.titles.en.trim(),
             epCount: anime.attributes.episodeCount || 0,
+            epProgress: library.data[i].attributes.progress || 0,
             slug: anime.attributes.slug,
             synopsis: anime.attributes.synopsis,
         });

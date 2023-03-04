@@ -37,6 +37,7 @@ export const KitsuCacheSchema = z.object({
     jpTitle: z.string(),
     enTitle: z.string(),
     epCount: z.number(),
+    epProgress: z.number(),
     slug: z.string(),
     synopsis: z.string(),
 });
@@ -87,6 +88,9 @@ export const LibraryInfoSchema = z.object({
     data: z.array(
         z.object({
             id: z.string(),
+            attributes: z.object({
+                progress: z.number(),
+            }),
         })
     ),
     included: z.array(

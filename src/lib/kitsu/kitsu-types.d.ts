@@ -46,4 +46,5 @@ export type AnimeCache = [
 ][];
 
 export type KitsuCache = KitsuData['cache'];
+export type KitsuCacheItem = KitsuCache['0'];
 export type KitsuConfig = [isNew: boolean, config: KitsuData];

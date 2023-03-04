@@ -2,7 +2,8 @@ import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import { Kitsu } from './kitsu/kitsu.js';
 import { pathJoin, titleFromAnimeFileName, toEpisodeNumberStr, truncateStr } from './utils.js';
 import { Help } from './help.js';
-import { KitsuCache } from './kitsu/kitsu-types.js';
+import { KitsuCacheItem, KitsuCache } from './kitsu/kitsu-types.js';
+import { Config } from './config.js';
 
 type WatchConfig = {
     forcedEpNumber: number;
@@ -24,9 +25,9 @@ export async function watchAnime(
     const fansubFileNames = filterSubsPleaseFiles(workingDir, epName, `- ${epNumStr}`);
 
     const cachedAnime = getCachedAnimeFromFiles(fansubFileNames, epName, epNumStr);
-    validateCachedAnime(cachedAnime, fansubFileNames, epNumStr);
+    const validCache = validateCachedAnime(cachedAnime, fansubFileNames, epNumStr);
 
-    await setAnimeProgress(cachedAnime, {
+    await setAnimeProgress(validCache, {
         workingDir,
         forcedEpNumber: Number(forcedEpNumStr),
         fileEpNumber: Number(fileEpNumStr),
@@ -125,15 +126,15 @@ function validateCachedAnime(cache: KitsuCache, fileNames: string[], epNumStr: s
         _con.chainError([...errorChain, `;by;Use a more unique name to reference the episode`]);
         process.exit(1);
     }
+    return cache[0];
 }
 
-async function setAnimeProgress(cachedAnime: KitsuCache, config: WatchConfig) {
-    const cachedID = cachedAnime[0].libID;
+async function setAnimeProgress(cachedItem: KitsuCacheItem, config: WatchConfig) {
     const progress = await Kitsu.updateAnime(
-        `https://kitsu.io/api/edge/library-entries/${cachedID}`,
+        `https://kitsu.io/api/edge/library-entries/${cachedItem.libID}`,
         {
             data: {
-                id: cachedID,
+                id: cachedItem.libID,
                 type: 'library-entries',
                 attributes: {
                     progress: config.forcedEpNumber || config.fileEpNumber,
@@ -141,12 +142,15 @@ async function setAnimeProgress(cachedAnime: KitsuCache, config: WatchConfig) {
             },
         }
     );
+    // Mutates config Class item cache
+    cachedItem.epProgress = progress;
     _con.chainInfo([
         '',
-        `;bc;Jap Title: ;g;${cachedAnime[0].jpTitle}`,
-        `;bc;Eng Title: ;g;${cachedAnime[0].enTitle}`,
-        `;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedAnime[0].epCount || 'unknown'}`,
+        `;bc;Jap Title: ;g;${cachedItem.jpTitle}`,
+        `;bc;Eng Title: ;g;${cachedItem.enTitle}`,
+        `;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedItem.epCount || 'unknown'}`,
     ]);
+    Config.save();
 }
 
 function moveFileToWatchedDir(fileName: string, workingDir: string) {

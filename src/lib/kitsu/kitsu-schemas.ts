@@ -117,4 +117,11 @@ export const LibraryPatchRespSchema = z.object({
             progress: z.number(),
         }),
     }),
+    included: z.array(
+        z.object({
+            attributes: z.object({
+                episodeCount: z.number().nullable(),
+            }),
+        })
+    ),
 });

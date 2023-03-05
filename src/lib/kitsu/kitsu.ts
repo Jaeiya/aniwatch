@@ -61,7 +61,11 @@ export class Kitsu {
     }
 
     static async updateAnime(url: string, data: LibraryPatchData) {
-        const resp = await HTTP.patch(new URL(url), JSON.stringify(data), _gK('access_token'));
+        const urlObj = new URL(url);
+        urlObj.searchParams.append('include', 'anime');
+        urlObj.searchParams.append('fields[anime]', 'episodeCount');
+
+        const resp = await HTTP.patch(urlObj, JSON.stringify(data), _gK('access_token'));
         const resolvedData = await resp.json();
         if (!resp.ok) {
             const errData = resolvedData as KitsuError;
@@ -84,7 +88,10 @@ export class Kitsu {
             _con.chainError(error);
             process.exit(1);
         }
-        return libPatchResp.data.attributes.progress;
+        return [
+            libPatchResp.data.attributes.progress,
+            libPatchResp.included[0].attributes.episodeCount,
+        ] as const;
     }
 
     static async rebuildProfile() {

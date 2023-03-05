@@ -130,7 +130,7 @@ function validateCachedAnime(cache: KitsuCache, fileNames: string[], epNumStr: s
 }
 
 async function setAnimeProgress(cachedItem: KitsuCacheItem, config: WatchConfig) {
-    const progress = await Kitsu.updateAnime(
+    const [progress, episodeCount] = await Kitsu.updateAnime(
         `https://kitsu.io/api/edge/library-entries/${cachedItem.libID}`,
         {
             data: {
@@ -142,8 +142,12 @@ async function setAnimeProgress(cachedItem: KitsuCacheItem, config: WatchConfig)
             },
         }
     );
-    // Mutates config Class item cache
+    // Mutates Config
     cachedItem.epProgress = progress;
+    // Kitsu may or may not know how many episodes an anime
+    // will be, at the beginning of a season, so we need to
+    // make sure we keep up with those changes.
+    cachedItem.epCount = episodeCount ?? 0;
     _con.chainInfo([
         '',
         `;bc;Jap Title: ;g;${cachedItem.jpTitle}`,

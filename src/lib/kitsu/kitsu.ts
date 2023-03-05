@@ -24,6 +24,8 @@ type KitsuError = {
     errors: { title: string; detail?: string; status: number }[];
 };
 
+type UpdatedProgress = Promise<readonly [progress: number, episodeCount: number | null]>;
+
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
 /** Get Kitsu properties */
 const _gK = Config.getKitsuProp;
@@ -60,7 +62,7 @@ export class Kitsu {
         Config.setKitsuProp('cache', animeCache);
     }
 
-    static async updateAnime(url: string, data: LibraryPatchData) {
+    static async updateAnime(url: string, data: LibraryPatchData): UpdatedProgress {
         const urlObj = new URL(url);
         urlObj.searchParams.append('include', 'anime');
         urlObj.searchParams.append('fields[anime]', 'episodeCount');

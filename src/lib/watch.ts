@@ -5,12 +5,6 @@ import { Help } from './help.js';
 import { KitsuCacheItem, KitsuCache } from './kitsu/kitsu-types.js';
 import { Config } from './config.js';
 
-type WatchConfig = {
-    forcedEpNumber: number;
-    fileEpNumber: number;
-    workingDir: string;
-};
-
 type ProgressOptions = {
     /** Anime being updated */
     anime: KitsuCacheItem;

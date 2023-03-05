@@ -25,14 +25,20 @@ export async function watchAnime(
     const fansubFileNames = filterSubsPleaseFiles(workingDir, epName, `- ${epNumStr}`);
 
     const cachedAnime = getCachedAnimeFromFiles(fansubFileNames, epName, epNumStr);
-    const validCache = validateCachedAnime(cachedAnime, fansubFileNames, epNumStr);
+    const [validAnime, cacheIndex] = validateCachedAnime(
+        cachedAnime,
+        fansubFileNames,
+        epNumStr
+    );
 
-    await setAnimeProgress(validCache, {
+    const anime = await setAnimeProgress(validAnime, {
         workingDir,
         forcedEpNumber: Number(forcedEpNumStr),
         fileEpNumber: Number(fileEpNumStr),
     });
+    Config.getKitsuProp('cache')[cacheIndex] = anime;
     moveFileToWatchedDir(fansubFileNames[0], workingDir);
+    Config.save();
 }
 
 function validateParams(params: [string, string[], string]) {
@@ -126,15 +132,18 @@ function validateCachedAnime(cache: KitsuCache, fileNames: string[], epNumStr: s
         _con.chainError([...errorChain, `;by;Use a more unique name to reference the episode`]);
         process.exit(1);
     }
-    return cache[0];
+    return [
+        structuredClone(cache[0]),
+        Config.getKitsuProp('cache').findIndex((c) => c == cache[0]),
+    ] as const;
 }
 
-async function setAnimeProgress(cachedItem: KitsuCacheItem, config: WatchConfig) {
+async function setAnimeProgress(anime: KitsuCacheItem, config: WatchConfig) {
     const [progress, episodeCount] = await Kitsu.updateAnime(
-        `https://kitsu.io/api/edge/library-entries/${cachedItem.libID}`,
+        `https://kitsu.io/api/edge/library-entries/${anime.libID}`,
         {
             data: {
-                id: cachedItem.libID,
+                id: anime.libID,
                 type: 'library-entries',
                 attributes: {
                     progress: config.forcedEpNumber || config.fileEpNumber,
@@ -142,19 +151,18 @@ async function setAnimeProgress(cachedItem: KitsuCacheItem, config: WatchConfig)
             },
         }
     );
-    // Mutates Config
-    cachedItem.epProgress = progress;
+    anime.epProgress = progress;
     // Kitsu may or may not know how many episodes an anime
     // will be, at the beginning of a season, so we need to
     // make sure we keep up with those changes.
-    cachedItem.epCount = episodeCount ?? 0;
+    anime.epCount = episodeCount ?? 0;
     _con.chainInfo([
         '',
-        `;bc;Jap Title: ;g;${cachedItem.jpTitle}`,
-        `;bc;Eng Title: ;g;${cachedItem.enTitle}`,
-        `;bc;Progress Set: ;g;${progress} ;by;/ ;m;${cachedItem.epCount || 'unknown'}`,
+        `;bc;Jap Title: ;g;${anime.jpTitle}`,
+        `;bc;Eng Title: ;g;${anime.enTitle}`,
+        `;bc;Progress Set: ;g;${progress} ;by;/ ;m;${anime.epCount || 'unknown'}`,
     ]);
-    Config.save();
+    return anime;
 }
 
 function moveFileToWatchedDir(fileName: string, workingDir: string) {

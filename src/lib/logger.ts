@@ -154,24 +154,15 @@ export class ConsoleLogger {
     }
 
     static debug(...args: any[]) {
-        let location = '';
         const stack = Error('').stack;
-        if (stack) {
-            const stackLines = stack.split('\n').filter((line) => line.includes(':\\'));
-            stackLines.shift(); // remove logger execution file
-            location = stackLines[0];
-        }
-        const offender = location.trim().split(' ')[1];
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const fileWithLineNumber = location.split('/').at(-1)!;
-        const [filePath, lineNumber] = fileWithLineNumber.split(':\\')[1].split(':');
-        console.log('\n');
+        if (!stack) return;
+        const [offender, filePath, lineNumber] = getStackInfo(stack);
         this.print('b', 'debug', `;br;${'#'.repeat(65)}\n`);
         console.log(colorStr(';x;\n'), ...args, '\n\n');
         this.print(
             'y',
             'log',
-            `;g;Exec ;m;by ;g;${offender}() ;m;in file ;g;${pathBasename(
+            `;g;Exec ;m;by ;g;${offender || 'file'} ;m;in file ;g;${pathBasename(
                 filePath
             )} ;m;at line ;g;${lineNumber}`
         );
@@ -235,4 +226,24 @@ function toRGBFromHex(hex: string) {
     const fullHex = hex.length > 3 ? hex : [...hex].map((c) => c + c).join('');
     const intFromHex = parseInt(fullHex, 16);
     return [(intFromHex >> 16) & 0xff, (intFromHex >> 8) & 0xff, intFromHex & 0xff];
+}
+
+function getStackInfo(stack: string) {
+    const stackLines = stack.split('\n');
+    if (!stackLines.length || stackLines[1].trim().indexOf('at ') != 0) {
+        throw Error('not a stack trace');
+    }
+    const hasSourceMap = stack.includes('.ts:');
+    const pathLines = stackLines.map((l) => l.trim().replace('file:///', ''));
+    // Remove "Error" and Logger{} lines
+    pathLines.splice(0, 2);
+    const execLine = pathLines[0];
+    const offenderFunc = execLine.includes(' (')
+        ? execLine.split(' (')[0].replace('at ', '')
+        : '';
+    const [path, lineNumber] = execLine
+        .split(hasSourceMap ? ':\\' : ':/')[1]
+        .split(':')
+        .map((v) => v.replace(')', ''));
+    return [offenderFunc, pathBasename(path), lineNumber] as const;
 }

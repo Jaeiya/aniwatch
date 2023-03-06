@@ -13,7 +13,7 @@ await Config.init({
         Config.set('useColor', true);
     },
     setDefaultProps: (config) => {
-        config.useColor ??= false;
+        config.useColor ??= true;
         if (config.kitsu) {
             config.kitsu.cache ??= [];
         }

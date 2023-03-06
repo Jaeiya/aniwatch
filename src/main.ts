@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import './globals.js';
+import './init.js';
 import { CLI } from './lib/cli/cli.js';
 import { Flags } from './lib/cli/flags/flags.js';
 

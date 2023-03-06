@@ -11,7 +11,6 @@ await Config.init({
         _con.info(`;bc;Working Directory: ;g;${process.cwd()}`);
         await Kitsu.init();
         Config.set('useColor', true);
-        _con.showColor = Config.get('useColor');
     },
     setDefaultProps: (config) => {
         config.useColor ??= false;
@@ -25,3 +24,5 @@ await Config.init({
         return config;
     },
 });
+
+_con.showColor = Config.get('useColor');

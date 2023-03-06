@@ -1,3 +1,33 @@
+# [4.0.0](https://github.com/jaeiya/wakitsu/compare/v3.0.0...v4.0.0) (3/6/2023)
+
+### Breaking Changes ([dd0fd42](https://github.com/Jaeiya/aniwatch/commit/dd0fd42))
+
+The structure of the config file has been changed yet again, but this time it should be a lot more resilient with future updates. After this update, any changes to the config, will first check if a default value can be applied, and if so, it updates the config automatically.
+
+Unfortunately, this time around, you'll need to delete your `wakitsu.json` config file.
+
+### Deprecations
+
+- **flags**: `-rt` and `--refresh-token` have been removed in favor of the new `-t` and `--token` flags
+
+### Features
+
+- **flags**: add `-t` and `--token` flags to alow refreshing, resetting, and displaying token information ([6330710](https://github.com/Jaeiya/aniwatch/commit/6330710))
+- **flags**: add `-cl` and `--color` flags to allow toggling console color on/off ([69cbf26](https://github.com/Jaeiya/aniwatch/commit/69cbf26))
+- **watch**: update episode count after each watch execution (Kitsu does not always have an accurate episode count until later in a series) ([d4bd666](https://github.com/Jaeiya/aniwatch/commit/d4bd666))
+- **--profile**: added number of series currently being watched ([c98208a](https://github.com/Jaeiya/aniwatch/commit/c98208a))
+- **--profile**: added how much time it will take to watch remaining series ([0ef3fe7](https://github.com/Jaeiya/aniwatch/commit/0ef3fe7))
+- **cache**: now stores `slug`, `synopsis`, and `episode progress` information ([5eea47b](https://github.com/Jaeiya/aniwatch/commit/5eea47b), [7f3b4a9](https://github.com/Jaeiya/aniwatch/commit/7f3b4a9))
+- **config**: added resiliency to configuration updates ([dd0fd42](https://github.com/Jaeiya/aniwatch/commit/dd0fd42))
+
+### Minor Changes
+
+- **config**: move configuration into its own Class and use it as a global state for the application ([d8a3e19](https://github.com/Jaeiya/aniwatch/commit/d8a3e19))
+
+### Fixes
+
+- **kitsu**: save token expiration when token is refreshed ([e7bf773](https://github.com/Jaeiya/aniwatch/commit/e7bf773))
+
 # [3.0.0](https://github.com/jaeiya/wakitsu/compare/v2.0.1...v3.0.0) (2/28/2023)
 
 ### Breaking Changes ([3d5b335](https://github.com/Jaeiya/aniwatch/commit/3d5b335))

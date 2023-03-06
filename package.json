@@ -9,7 +9,7 @@
     },
     "scripts": {
         "dev": "cd test && node --enable-source-maps ../bin/main.js",
-        "build": "rm -rf ./bin/ && tsc"
+        "build": "rm -rf ./bin/ && tsc -b -f"
     },
     "files": [
         "/bin/**/**.js",

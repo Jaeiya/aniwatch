@@ -1,3 +1,10 @@
+# [4.0.1](https://github.com/jaeiya/wakitsu/compare/v4.0.0...v4.0.1) (3/6/2023)
+
+#### Fixes
+
+- Color configuration not initialized properly ([d10f99c](https://github.com/Jaeiya/aniwatch/commit/d10f99c))
+- Color configuration incorrectly defaulted to false ([c9072fe](https://github.com/Jaeiya/aniwatch/commit/c9072fe))
+
 # [4.0.0](https://github.com/jaeiya/wakitsu/compare/v3.0.0...v4.0.0) (3/6/2023)
 
 ### Breaking Changes ([dd0fd42](https://github.com/Jaeiya/aniwatch/commit/dd0fd42))

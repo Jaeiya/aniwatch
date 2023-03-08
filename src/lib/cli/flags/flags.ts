@@ -9,6 +9,7 @@ import { RSSFeedFlag } from './flag-rss-feed.js';
 import { CacheFlag } from './flag-cache.js';
 import { TokenFlag } from './flag-token.js';
 import { ColorFlag } from './flag-color.js';
+import { CleanFlag } from './flag-clean.js';
 
 export const Flags = [
     DefaultFlag,
@@ -19,6 +20,7 @@ export const Flags = [
     RebuildCacheFlag,
     ColorFlag,
     DirInfoFlag,
+    CleanFlag,
     TokenFlag,
     FindAnimeFlag,
     RSSFeedFlag,

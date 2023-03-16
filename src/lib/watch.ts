@@ -153,6 +153,28 @@ async function saveAnimeProgress(opt: ProgressOptions) {
     // will be at the beginning of a season, so we need to
     // make sure we keep up with those changes.
     anime.epCount = episodeCount ?? 0;
+
+    // If an anime is completed, remove it from cache
+    if (progress > 0 && progress == episodeCount) {
+        const [err] = Kitsu.removeAnimeFromCache(anime, { saveConfig: false });
+        if (err) {
+            _con.chainError([
+                ';br;Fatal Error',
+                `;bc;${err}`,
+                ';by;Aborting Configuration Save',
+            ]);
+            process.exit(1);
+        }
+        _con.chainInfo([
+            '',
+            `;bc;Jap Title: ;x;${anime.jpTitle}`,
+            `;bc;Eng Title: ;x;${anime.enTitle}`,
+            ';bc;Progress: ;bg;Completed',
+            '',
+        ]);
+        Config.save();
+        return;
+    }
     displayAnimeProgress(anime);
     Config.getKitsuProp('cache')[cacheIndex] = anime;
     Config.save();

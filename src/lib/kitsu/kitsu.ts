@@ -17,6 +17,7 @@ import {
     SerializedAnime,
     KitsuCache,
     KitsuSerializedTokenData,
+    KitsuCacheItem,
 } from './kitsu-types.js';
 import { Config } from '../config.js';
 
@@ -94,6 +95,20 @@ export class Kitsu {
             libPatchResp.data.attributes.progress,
             libPatchResp.included[0].attributes.episodeCount,
         ] as const;
+    }
+
+    static removeAnimeFromCache(cachedItem: KitsuCacheItem, opt = { saveConfig: true }) {
+        const cache = _gK('cache');
+        const cachedAnime = cache.find((anime) => anime.libID == cachedItem.libID);
+        if (!cachedAnime) {
+            return ['item not in cache', false] as const;
+        }
+        const animeIndex = cache.indexOf(cachedAnime);
+        cache.splice(animeIndex, 1);
+        if (opt.saveConfig) {
+            Config.save();
+        }
+        return [null, true] as const;
     }
 
     static async rebuildProfile() {

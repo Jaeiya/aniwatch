@@ -375,16 +375,18 @@ function serializeAnimeInfo(cacheList: KitsuCache, entries: LibraryEntries): Ser
     return cacheList.map((cache, i) => {
         const rating = entries.data[i].attributes.ratingTwenty;
         const avgRating = entries.included[i].attributes.averageRating;
-        return {
+        const anime: SerializedAnime = {
             title_jp: cache.jpTitle,
             title_en: cache.enTitle,
             progress: entries.data[i].attributes.progress,
             rating: rating ? `${(rating / 20) * 10}` : rating,
             totalEpisodes: entries.included[i].attributes.episodeCount,
+            link: `https://kitsu.io/anime/${cache.slug}`,
             avgRating: avgRating
                 ? `${(Number(avgRating) / 10).toFixed(2)}`
                 : 'Not Calculated Yet',
         };
+        return anime;
     });
 }
 

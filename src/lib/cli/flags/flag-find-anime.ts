@@ -74,6 +74,7 @@ function displayAnimeList(animeList: SerializedAnime[]) {
             `;bc;Progress: ;g;${anime.progress} ;by;/ ;m;${totalEps}`,
             `;bc;My Rating: ;g;${anime.rating ? anime.rating : 'Not Rated'}`,
             `;bc;Avg. Rating: ;g;${anime.avgRating}`,
+            `;bc;Link: ;x;${anime.link}`,
         ]);
     });
 }

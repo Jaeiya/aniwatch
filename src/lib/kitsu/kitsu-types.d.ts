@@ -35,6 +35,7 @@ export type SerializedAnime = {
     progress: number;
     rating: string | number | null;
     totalEpisodes: number | null;
+    link: string;
     avgRating: string;
 };
 

@@ -10,7 +10,20 @@ export class CleanFlag implements CLIFlag {
     name: CLIFlagName = ['cln', 'clean'];
     type: CLIFlagType = 'multiArg';
 
-    helpAliases: string[] = [...this.name];
+    helpAliases: string[] = [
+        ...this.name,
+        'delete',
+        'clean',
+        'clean files',
+        'delete shows',
+        'clean shows',
+        'clean watched dir',
+        'clean watch dir',
+        'clean watched directory',
+        'delete watched files',
+        'delete watch files',
+        'delete files',
+    ];
 
     shortHelpDisplay = 'Provides two methods to clean your "watched" directory.';
 

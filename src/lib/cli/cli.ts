@@ -85,10 +85,6 @@ function validateFlag(flag?: CLIFlag): flag is CLIFlag {
         : isValidSingleFlag(Infinity, flag) && isMultiArg(flag);
 }
 
-/**
- * Tests for a valid flag that can only be used by itself
- * with the specified number of arguments.
- */
 function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
     if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
         _con.chainError([

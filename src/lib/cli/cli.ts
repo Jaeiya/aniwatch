@@ -101,6 +101,7 @@ function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
 function isMultiArg(flag: CLIFlag) {
     if (!nonFlagArgs.length) {
         _con.chainError([
+            '',
             `;r;Missing Argument`,
             'Read the help below to learn the correct syntax:',
             '',

@@ -61,7 +61,7 @@ export class HelpFlag implements CLIFlag {
 
         const helpStrings = Help.findHelp(helpArg);
         if (!helpStrings) {
-            _con.error(`Could not find help using: ;by;${helpArg}`);
+            _con.chainError(['', `Could not find help using: ;by;${helpArg}`]);
             return;
         }
         Help.displayHelp(['', '', ...helpStrings]);

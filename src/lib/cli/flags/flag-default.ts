@@ -1,6 +1,5 @@
 import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import { Kitsu } from '../../kitsu/kitsu.js';
 import { watchAnime } from '../../watch.js';
 
 const { h1, h2, nl, i2 } = Help.display;

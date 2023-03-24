@@ -25,7 +25,7 @@ const workingDir = process.cwd();
 const userArgs = process.argv.slice(2);
 const flagArgs = userArgs.filter((arg: string) => arg.indexOf('-') == 0 && arg[2] != '-');
 const nonFlagArgs = userArgs.filter((arg) => !flagArgs.includes(arg)).map((arg) => arg.trim());
-const cleanFlagArgs = flagArgs.map(removeLeadingDash);
+const cleanFlagArgs = flagArgs.map(removeLeadingDashes);
 
 export class CLI {
     static execPath = execPath;
@@ -57,12 +57,12 @@ export class CLI {
 
     static async tryExecFlags() {
         if (!cleanFlagArgs[0]) {
-            const defaultFlag = _flags.find((rf) => rf.isDefault);
+            const defaultFlag = _flags.find((f) => f.isDefault);
             if (!defaultFlag) throw Error('missing default flag');
             defaultFlag.exec(CLI);
             return true;
         }
-        const flag = _flags.find((rf) => rf.name.includes(cleanFlagArgs[0]));
+        const flag = _flags.find((f) => f.name.includes(cleanFlagArgs[0]));
 
         if (!validateFlag(flag)) {
             process.exit(1);
@@ -121,9 +121,9 @@ function displayFlagHelp(flag: CLIFlag) {
     Help.displayHelp(flagHelp);
 }
 
-function removeLeadingDash(str: string): string {
+function removeLeadingDashes(str: string): string {
     if (str[0] == '-') {
-        return removeLeadingDash(str.substring(1));
+        return removeLeadingDashes(str.substring(1));
     }
     return str;
 }

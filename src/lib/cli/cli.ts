@@ -31,9 +31,13 @@ export class CLI {
     static execPath = execPath;
     static sourcePath = sourcePath;
     static workingDir = workingDir;
+    /** All arguments passed, including nodejs default args */
     static rawArgs = rawArgs;
+    /** Only the arguments input at the command line */
     static userArgs = userArgs;
+    /** Arguments that are flags (ex: `-f hello there => ['-f']`) */
     static flagArgs = flagArgs;
+    /** Arguments that are not flags (ex: `-f some args => ['some args']`) */
     static nonFlagArgs = nonFlagArgs;
 
     static addFlag(flag: CLIFlag) {

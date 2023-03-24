@@ -8,7 +8,7 @@ global._con = ConsoleLogger;
 
 await Config.init({
     setupNewConfig: async () => {
-        _con.info(`;bc;Working Directory: ;g;${process.cwd()}`);
+        _con.chainInfo(['', `;bc;Working Directory: ;g;${process.cwd()}`]);
         await Kitsu.init();
         Config.set('useColor', true);
     },

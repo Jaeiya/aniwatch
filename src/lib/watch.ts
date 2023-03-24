@@ -22,7 +22,7 @@ export async function watchAnime(
     workingDir: string
 ) {
     validateParams([epName, epNumStrings, workingDir]);
-    _con.info(`Working directory: ;bg;${workingDir}`);
+    _con.chainInfo(['', `;bc;Working directory: ;g;${workingDir}`]);
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
     tryCreateWatchedDir(workingDir);

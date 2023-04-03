@@ -3,12 +3,12 @@ import { HTTP } from './http.js';
 const _nyaaURLStr = 'https://nyaa.si';
 const _printLoader = _con.getLoadPrinter();
 
-export async function getFansubRSS(animeName: string) {
-    _printLoader.start(`Looking up "${animeName}"`);
+export async function getFansubRSS(searchString: string) {
+    _printLoader.start(`Looking up "${searchString}"`);
     const url = new URL(_nyaaURLStr);
-    url.searchParams.append('f', '2');
+    url.searchParams.append('f', '0');
     url.searchParams.append('c', '1_2');
-    url.searchParams.append('q', `subsplease 1080p ${animeName}`);
+    url.searchParams.append('q', searchString);
     const resp = await HTTP.get(url);
     if (!resp.ok) {
         _printLoader.stop();

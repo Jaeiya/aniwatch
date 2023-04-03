@@ -4,6 +4,7 @@ const _nyaaURLStr = 'https://nyaa.si';
 const _printLoader = _con.getLoadPrinter();
 
 export async function getFansubRSS(searchString: string) {
+    console.log('');
     _printLoader.start(`Looking up "${searchString}"`);
     const url = new URL(_nyaaURLStr);
     url.searchParams.append('f', '0');

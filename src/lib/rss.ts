@@ -27,8 +27,8 @@ export async function getFansubRSS(searchString: string) {
 async function getLatestAnimeEntry(html: string) {
     const cheerio = await import('cheerio');
     const $ = cheerio.load(html);
-    const els = $('.success td + td');
-    const numOfResults = $('.success').length;
+    const els = $('tr td + td');
+    const numOfResults = $('tr').length;
     const latestTitle =
         els.children('a.comments + a').eq(0).text().trim() || els.children('a').eq(0).text();
     _printLoader.stop();

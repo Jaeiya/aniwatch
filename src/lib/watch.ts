@@ -97,7 +97,7 @@ function filterFansubFilenames(workingDir: string, epName: string, epNum: string
             (name) =>
                 name.match(/^\[([\w|\d]+)\]/gi) &&
                 name.toLowerCase().includes(epName) &&
-                name.includes(epNum.length == 1 ? `0${epNum}` : epNum)
+                name.includes(epNum.length == 1 ? `- 0${epNum}` : `- ${epNum}`)
         );
 }
 

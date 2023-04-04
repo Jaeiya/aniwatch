@@ -39,7 +39,7 @@ async function getLatestAnimeEntry(html: string) {
     const cheerio = await import('cheerio');
     const $ = cheerio.load(html);
     const els = $('tr td + td');
-    const numOfResults = $('tr').length;
+    const numOfResults = $('tr').length - 1;
     const latestEntryName =
         els.children('a.comments + a').eq(0).text().trim() || els.children('a').eq(0).text();
     _printLoader.stop();

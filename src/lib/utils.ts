@@ -1,15 +1,15 @@
 import { resolve, join, basename } from 'path';
 import { z, ZodSchema } from 'zod';
 
+export type FansubFilenameData = {
+    fansub: string;
+    title: string;
+    epNum: number;
+    paddedEpNum: string;
+};
+
 export function isDev() {
     return process.env.NODE_ENV == 'development';
-}
-
-export function toEpisodeNumberStr(epNum: number) {
-    if (epNum < 10) {
-        return `0${epNum}`;
-    }
-    return `${epNum}`;
 }
 
 export function parseWithZod<T extends ZodSchema>(
@@ -77,10 +77,6 @@ export function truncateStr(str: string, length: number) {
     return substr.length < str.length ? `${substr}...` : str;
 }
 
-export function titleFromAnimeFileName(name: string, ep: string) {
-    return name.replace(`[subsplease]`, '').split(`- ${ep}`)[0].trim();
-}
-
 export function getColoredTimeWatchedStr(seconds: number) {
     const { hours, days, months } = getTimeUnits(seconds);
     const leftOverMinutes = (hours % 1) * 60;
@@ -127,8 +123,24 @@ export function createReadableBytesFunc() {
     };
 }
 
-export function stripFansubInfo(name: string) {
-    return name.replace('[subsplease]', '').split(' (1080p)')[0].trim();
+export function parseFansubFilename(name: string) {
+    // Finds Fansub group, anime title, and episode number (in that order)
+    const fansubRegEx = /^\[([\w|\d]+)\]\s([\w\s-]+)\s-\s([0-9]{2,4})\s\[/gi;
+    const parts = fansubRegEx.exec(name);
+    if (!parts) {
+        return [new Error(`Failed to parse file name: "${name}"`), null] as const;
+    }
+    if (parts.length < 3) {
+        return [new Error(`Missing one or more filename parts: "${name}"`), null] as const;
+    }
+    const [, fansub, title, epNum] = parts;
+    const animeData: FansubFilenameData = {
+        fansub,
+        title,
+        epNum: epNum[0] == '0' ? Number(epNum[1]) : Number(epNum),
+        paddedEpNum: epNum,
+    };
+    return [null, animeData] as const;
 }
 
 export const pathResolve = resolve;

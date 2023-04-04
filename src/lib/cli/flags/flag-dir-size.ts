@@ -1,12 +1,22 @@
 import { readdir } from 'fs/promises';
 import { Help } from '../../help.js';
-import { createReadableBytesFunc, pathJoin, stripFansubInfo } from '../../utils.js';
+import {
+    FansubFilenameData,
+    createReadableBytesFunc,
+    parseFansubFilename,
+    pathJoin,
+} from '../../utils.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { stat } from 'fs/promises';
 import { Dirent } from 'fs';
 import { fitStringEnd } from '../../utils.js';
 
-type FileStat = [bytes: number, modifiedTimeMs: number, fileName: string];
+type FileStat = [
+    bytes: number,
+    modifiedTimeMs: number,
+    fileName: string,
+    filenameData: FansubFilenameData
+];
 
 const { h1, h2, nl } = Help.display;
 const toReadableBytes = createReadableBytesFunc();
@@ -98,35 +108,36 @@ async function serializeFileStats(dirEntries: Dirent[]) {
     const avgFileSize = toReadableBytes(bytes / fileCount);
     return {
         size: toReadableBytes(bytes),
-        lastWatchedFile: stripFansubInfo(lastWatchedFileStat[2]),
+        lastWatchedFile: lastWatchedFileStat[3].title,
         lastWatchedFileSize: toReadableBytes(lastWatchedFileStat[0]),
         lastWatchedFileDate: new Date(lastWatchedFileStat[1]),
-        oldestFile: stripFansubInfo(oldestFileStat[2]),
+        oldestFile: oldestFileStat[3].title,
         oldestFileSize: toReadableBytes(oldestFileStat[0]),
         oldestFileDate: new Date(oldestFileStat[1]),
         fileCount,
         avgFileSize,
         largestFileSize: toReadableBytes(largestFileStat[0]),
-        largestFile: stripFansubInfo(largestFileStat[2]),
+        largestFile: largestFileStat[3].title,
         smallestFileSize: toReadableBytes(smallestFileStat[0]),
-        smallestFile: stripFansubInfo(smallestFileStat[2]),
+        smallestFile: smallestFileStat[3].title,
     };
 }
 
 function loadFileStats(dirEntries: Dirent[]) {
     const filePromises: Promise<FileStat>[] = [];
     for (const dent of dirEntries) {
-        filePromises.push(getFileStats(dent));
+        if (dent.isFile()) {
+            filePromises.push(getFileStats(dent));
+        }
     }
     return filePromises;
 }
 
 async function getFileStats(dirEnt: Dirent): Promise<FileStat> {
-    if (dirEnt.isFile()) {
-        const stats = await stat(pathJoin(process.cwd(), 'watched', dirEnt.name));
-        return [stats.size, stats.mtimeMs, dirEnt.name];
-    }
-    return [0, 0, dirEnt.name];
+    const [error, filenameData] = parseFansubFilename(dirEnt.name);
+    if (error) throw error;
+    const stats = await stat(pathJoin(process.cwd(), 'watched', dirEnt.name));
+    return [stats.size, stats.mtimeMs, dirEnt.name, filenameData];
 }
 
 function toLatestFileStat(lastStat: FileStat, currentStat: FileStat) {

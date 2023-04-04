@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import { Kitsu } from './kitsu/kitsu.js';
-import { pathJoin, titleFromAnimeFileName, toEpisodeNumberStr, truncateStr } from './utils.js';
+import { parseFansubFilename, pathJoin, truncateStr } from './utils.js';
 import { Help } from './help.js';
 import { KitsuCacheItem, KitsuCache } from './kitsu/kitsu-types.js';
 import { Config } from './config.js';
@@ -26,20 +26,29 @@ export async function watchAnime(
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
     tryCreateWatchedDir(workingDir);
-    const epNumStr = toEpisodeNumberStr(Number(fileEpNumStr));
-    const fansubFileNames = filterSubsPleaseFiles(workingDir, epName, `- ${epNumStr}`);
 
-    const cachedAnime = getCachedAnimeFromFiles(fansubFileNames, epName, epNumStr);
-    const [validAnime, cacheIndex] = validateCachedAnime(
-        cachedAnime,
-        fansubFileNames,
-        epNumStr
+    const fansubFileNames = filterFansubFilenames(workingDir, epName, fileEpNumStr);
+    if (!fansubFileNames.length) {
+        _con.error(`;by;${epName} ;x;episode ;by;${fileEpNumStr} ;x;does NOT exist`);
+        process.exit(1);
+    }
+    if (fansubFileNames.length > 1) {
+        displayErrorTooManyFiles(fansubFileNames);
+        process.exit(1);
+    }
+
+    const cachedAnime = Kitsu.animeCache.filter(
+        (anime) =>
+            anime.jpTitle.toLowerCase().includes(epName) ||
+            anime.enTitle.toLowerCase().includes(epName)
     );
+
+    const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime, fansubFileNames);
 
     await saveAnimeProgress({
         anime: validAnime,
         cacheIndex,
-        epNum: Number(epNumStr),
+        epNum: Number(fileEpNumStr),
         forcedEpNum: Number(forcedEpNumStr),
     });
     moveFileToWatchedDir(fansubFileNames[0], workingDir);
@@ -80,53 +89,38 @@ function tryCreateWatchedDir(workingDir: string) {
     }
 }
 
-function filterSubsPleaseFiles(workingDir: string, epName: string, epNumSyntax: string) {
+function filterFansubFilenames(workingDir: string, epName: string, epNum: string) {
     return readdirSync(workingDir, { withFileTypes: true })
         .filter((file) => file.isFile())
-        .map((file) => file.name.toLowerCase())
+        .map((file) => file.name)
         .filter(
             (name) =>
-                name.includes('[subsplease]') &&
-                name.includes(epName) &&
-                name.includes(epNumSyntax)
+                name.match(/^\[([\w|\d]+)\]/gi) &&
+                name.toLowerCase().includes(epName) &&
+                name.includes(epNum.length == 1 ? `0${epNum}` : epNum)
         );
 }
 
-function getCachedAnimeFromFiles(fileNames: string[], epName: string, epNumStr: string) {
-    if (!fileNames.length) {
-        _con.error(`;by;${epName} ;x;episode ;by;${epNumStr} ;x;does NOT exist`);
-        process.exit(1);
-    }
-
-    if (fileNames.length == 1) {
-        return Kitsu.animeCache.filter(
-            (anime) =>
-                anime.jpTitle.toLowerCase().includes(epName) ||
-                anime.enTitle.toLowerCase().includes(epName)
-        );
-    }
-    displayErrorTooManyFiles(fileNames, epName, epNumStr);
-    process.exit(1);
-}
-
-function displayErrorTooManyFiles(fileNames: string[], epName: string, epNumStr: string) {
+function displayErrorTooManyFiles(fileNames: string[]) {
     const errorChain = ['', `;r;More than one file name found`];
 
     for (const fileName of fileNames) {
-        const trimmedFileName = truncateStr(fileName.split('- ' + epNumStr)[0].trimEnd(), 60);
-        errorChain.push(`;by;${trimmedFileName} ;x;- ${epNumStr}`);
+        const [error, fileNameData] = parseFansubFilename(fileName);
+        if (error) throw error;
+        const { title, paddedEpNum } = fileNameData;
+        const saneFileName = truncateStr(title, 60);
+        errorChain.push(`;by;${saneFileName} ;x;- ${paddedEpNum}`);
     }
 
     _con.chainError(errorChain);
 }
 
-function validateCachedAnime(cache: KitsuCache, fileNames: string[], epNumStr: string) {
+function validateCachedAnime(cache: KitsuCache, fileNames: string[]) {
     if (!cache.length) {
-        _con.chainError([
-            '',
-            `;r;Watch List Incomplete`,
-            `;bc;Missing: ;g;${titleFromAnimeFileName(fileNames[0], epNumStr)}`,
-        ]);
+        const [error, filenameData] = parseFansubFilename(fileNames[0]);
+        if (error) throw error;
+        const { title } = filenameData;
+        _con.chainError(['', `;r;Watch List Incomplete`, `;bc;Missing: ;g;${title}`]);
         process.exit(1);
     }
 

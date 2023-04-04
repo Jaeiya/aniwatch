@@ -36,6 +36,7 @@ export async function watchAnime(
         displayErrorTooManyFiles(fansubFileNames);
         process.exit(1);
     }
+    const [foundFileName] = fansubFileNames;
 
     const cachedAnime = Kitsu.animeCache.filter(
         (anime) =>
@@ -43,7 +44,7 @@ export async function watchAnime(
             anime.enTitle.toLowerCase().includes(epName)
     );
 
-    const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime, fansubFileNames);
+    const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime, foundFileName);
 
     await saveAnimeProgress({
         anime: validAnime,
@@ -51,7 +52,7 @@ export async function watchAnime(
         epNum: Number(fileEpNumStr),
         forcedEpNum: Number(forcedEpNumStr),
     });
-    moveFileToWatchedDir(fansubFileNames[0], workingDir);
+    moveFileToWatchedDir(foundFileName, workingDir);
 }
 
 function validateParams(params: [string, string[], string]) {
@@ -105,9 +106,7 @@ function displayErrorTooManyFiles(fileNames: string[]) {
     const errorChain = ['', `;r;More than one file name found`];
 
     for (const fileName of fileNames) {
-        const [error, fileNameData] = parseFansubFilename(fileName);
-        if (error) throw error;
-        const { title, paddedEpNum } = fileNameData;
+        const { title, paddedEpNum } = parseFansubFilename(fileName);
         const saneFileName = truncateStr(title, 60);
         errorChain.push(`;by;${saneFileName} ;x;- ${paddedEpNum}`);
     }
@@ -115,11 +114,9 @@ function displayErrorTooManyFiles(fileNames: string[]) {
     _con.chainError(errorChain);
 }
 
-function validateCachedAnime(cache: KitsuCache, fileNames: string[]) {
+function validateCachedAnime(cache: KitsuCache, fileName: string) {
     if (!cache.length) {
-        const [error, filenameData] = parseFansubFilename(fileNames[0]);
-        if (error) throw error;
-        const { title } = filenameData;
+        const { title } = parseFansubFilename(fileName);
         _con.chainError(['', `;r;Watch List Incomplete`, `;bc;Missing: ;g;${title}`]);
         process.exit(1);
     }

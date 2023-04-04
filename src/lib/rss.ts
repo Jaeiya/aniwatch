@@ -1,8 +1,13 @@
 import { HTTP } from './http.js';
+import { parseFansubFilename } from './utils.js';
 
 const _nyaaURLStr = 'https://nyaa.si';
 const _printLoader = _con.getLoadPrinter();
 
+/**
+ * Gets a list of RSS entries matching the searchString
+ * and returns a breakdown of the latest entry.
+ */
 export async function getFansubRSS(searchString: string) {
     console.log('');
     _printLoader.start(`Looking up "${searchString}"`);
@@ -16,11 +21,13 @@ export async function getFansubRSS(searchString: string) {
         console.log(await resp.text());
         process.exit(1);
     }
-    const [entryCount, latestTitle] = await getLatestAnimeEntry(await resp.text());
+    const [entryCount, latestEntryName] = await getLatestAnimeEntry(await resp.text());
     url.searchParams.append('page', 'rss');
+    const { title, fansub, paddedEpNum, season, bitrate } =
+        parseFansubFilename(latestEntryName);
     return {
         entryCount,
-        latestTitle,
+        title,
         rss: url.toString(),
     };
 }
@@ -30,12 +37,12 @@ async function getLatestAnimeEntry(html: string) {
     const $ = cheerio.load(html);
     const els = $('tr td + td');
     const numOfResults = $('tr').length;
-    const latestTitle =
+    const latestEntryName =
         els.children('a.comments + a').eq(0).text().trim() || els.children('a').eq(0).text();
     _printLoader.stop();
     if (!els.length) {
         _con.error('Anime Not Found');
         process.exit(1);
     }
-    return [numOfResults, latestTitle];
+    return [numOfResults, latestEntryName] as const;
 }

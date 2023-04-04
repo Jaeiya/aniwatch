@@ -130,10 +130,13 @@ export function parseFansubFilename(name: string) {
         /^\[([\w|\d]+)\]\s(.+)(\sS[0-9]{1,2})?\s-\s([0-9]{2,4}|S([0-9]{2})E([0-9]{2,4}))\s[[(]([0-9]{3,4}p)?/gi;
     const parts = fansubRegEx.exec(name);
     if (!parts) {
-        return [new Error(`Failed to parse file name: "${name}"`), null] as const;
-    }
-    if (parts.length < 3) {
-        return [new Error(`Missing one or more filename parts: "${name}"`), null] as const;
+        _con.chainError([
+            '',
+            ';r;Unsupported File Name',
+            `;by;Failed to parse file name: "${name}"`,
+            ';bc;Try to find another fansub group.',
+        ]);
+        process.exit(1);
     }
     const [, fansub, title, season, epNum, seasonAlt, epNumAlt, bitrate] = parts;
     const realEpNum = epNumAlt ?? epNum;
@@ -145,7 +148,7 @@ export function parseFansubFilename(name: string) {
         season: seasonAlt ?? season ?? ';m;unspecified',
         bitrate: bitrate ?? ';m;unknown',
     };
-    return [null, animeData] as const;
+    return animeData;
 }
 
 export const pathResolve = resolve;

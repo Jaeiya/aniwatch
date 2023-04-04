@@ -125,7 +125,7 @@ export function createReadableBytesFunc() {
 
 export function parseFansubFilename(name: string) {
     // Finds Fansub group, anime title, and episode number (in that order)
-    const fansubRegEx = /^\[([\w|\d]+)\]\s([\w\s-]+)\s-\s([0-9]{2,4})\s\[/gi;
+    const fansubRegEx = /^\[([\w|\d]+)\]\s(.+)\s-\s([0-9]{2,4})\s[[(]/gi;
     const parts = fansubRegEx.exec(name);
     if (!parts) {
         return [new Error(`Failed to parse file name: "${name}"`), null] as const;

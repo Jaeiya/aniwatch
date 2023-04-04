@@ -1,6 +1,6 @@
 # About
 
-Wakitsu is a CLI application designed to find an anime episode on disk, at the working directory, filtered by SubsPlease Fansub group. If found, it will update your [Kitsu] watch list and move the file to a "watched" folder.
+Wakitsu is a CLI application designed to find an anime episode on disk, at the working directory. It will try to discover any FanSubbed file names. If found, it will update your [Kitsu] watch list and move the file to a "watched" folder. Not all FanSub file names are supported, since there is unfortunately, no standardized naming practice among the groups unfortunately.
 
 > This is a Hobby project created out of a need for both relaxation and organization.
 

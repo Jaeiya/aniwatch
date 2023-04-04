@@ -50,6 +50,7 @@ export class FindAnimeFlag implements CLIFlag {
 }
 
 async function getAnimeList(cli: typeof CLI) {
+    _con.chainInfo(['', ';bm;... Find Anime ...']);
     const stopLoader = _con.printLoader('Fetching Anime');
     const animeList = await Kitsu.findAnime(cli.nonFlagArgs.join(' '));
     stopLoader();
@@ -68,7 +69,6 @@ function displayAnimeList(animeList: SerializedAnime[]) {
     animeList.forEach((anime) => {
         const totalEps = anime.totalEpisodes ? anime.totalEpisodes : `;r;unknown`;
         _con.chainInfo([
-            '',
             `;bc;Title JP: ;x;${anime.title_jp}`,
             `;bc;Title EN: ;x;${anime.title_en}`,
             `;bc;Progress: ;g;${anime.progress} ;by;/ ;m;${totalEps}`,

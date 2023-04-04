@@ -79,7 +79,7 @@ export class Help {
         _simpleFlagSyntax.push(
             _simpleFlagSyntax.length == 1
                 ? nl(`;by;wak ;x;[ ${flagExample} ]`)
-                : i2(`[ ${flagExample} ]`)
+                : i2(` ;x;[ ${flagExample} ]`)
         );
 
         _simpleFlagDetails.push(nl(`;bc;-${fitStringEnd(flags[0], 4)} ;x;${shortHelp}`), '');

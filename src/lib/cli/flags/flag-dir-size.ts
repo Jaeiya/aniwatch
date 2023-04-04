@@ -100,14 +100,14 @@ function displayFolderInfo(fileStats: Awaited<ReturnType<typeof serializeFileSta
 async function serializeFileStats(dirEntries: Dirent[]) {
     const fileStats = await Promise.all(loadFileStats(dirEntries));
     const fileCount = fileStats.filter((f) => f[0] > 0).length;
-    const bytes = fileStats.reduce(toSumOfBytes, 0);
+    const totalFileBytes = fileStats.reduce(toSumOfBytes, 0);
     const lastWatchedFileStat = fileStats.reduce(toLatestFileStat);
     const largestFileStat = fileStats.reduce(toLargestFileStat);
     const smallestFileStat = fileStats.reduce(toSmallestFileStat);
     const oldestFileStat = fileStats.reduce(toOldestFileStat);
-    const avgFileSize = toReadableBytes(bytes / fileCount);
+    const avgFileSize = toReadableBytes(totalFileBytes / fileCount);
     return {
-        size: toReadableBytes(bytes),
+        size: toReadableBytes(totalFileBytes),
         lastWatchedFile: lastWatchedFileStat[3].title,
         lastWatchedFileSize: toReadableBytes(lastWatchedFileStat[0]),
         lastWatchedFileDate: new Date(lastWatchedFileStat[1]),

@@ -26,16 +26,15 @@ export class RSSFeedFlag implements CLIFlag {
         nl(`;y;name    ;x;The exact name or partial name of any anime.`),
         '',
         h2(`Examples`),
-        nl(`;by;wak ;bc;-rss ;y;"boku no hero"`),
-        nl(`;by;wak ;bc;--rss-feed ;y;berserk`),
+        nl(`;by;wak ;bc;-rss ;y;"subsplease boku no hero 1080p"`),
+        nl(`;by;wak ;bc;--rss-feed ;y;asw berserk 720p`),
     ];
 
     helpDisplay: string[] = [
         h1(`RSS Feed`),
-        nl(`Searches ;x;nyaa.si;bk; for an anime name filtered by`),
-        nl(`;x;SubsPlease ;bk;and ;x;1080p;bk;. This results in the number`),
-        nl(`of torrents found, file-name of latest torrent`),
-        nl(`and an RSS Feed link.`),
+        nl(`Searches ;x;nyaa.si;bk; using your provided search terms`),
+        nl(`This results in the number of torrents found,`),
+        nl(`file-name of latest torrent and an RSS Feed link.`),
         '',
         nl(`;m;NOTE: ;bk;This allows you to quickly set up RSS for your`),
         nl(`torrents to be downloaded automatically. The number`),

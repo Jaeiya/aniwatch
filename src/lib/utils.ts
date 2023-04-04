@@ -130,11 +130,15 @@ export function parseFansubFilename(name: string) {
         /^\[([\w|\d|\s]+)\]\s(.+)(\sS[0-9]{1,2})?\s-\s([0-9]{2,4}|S([0-9]{2})E([0-9]{2,4}))\s[[(]([0-9]{3,4}p)?/gi;
     const parts = fansubRegEx.exec(name);
     if (!parts) {
+        const errorMessage =
+            name.toLowerCase().includes('(batch)') || name.toLowerCase().includes('[batch]')
+                ? 'This is a batch file, which means the season is over.'
+                : 'Try to find another fansub group.';
         _con.chainError([
             '',
             ';r;Unsupported File Name',
             `;by;Failed to parse file name: "${name}"`,
-            ';bc;Try to find another fansub group.',
+            `;bc;${errorMessage}`,
         ]);
         process.exit(1);
     }

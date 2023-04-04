@@ -6,6 +6,8 @@ export type FansubFilenameData = {
     title: string;
     epNum: number;
     paddedEpNum: string;
+    season: string;
+    bitrate: string;
 };
 
 export function isDev() {
@@ -124,8 +126,8 @@ export function createReadableBytesFunc() {
 }
 
 export function parseFansubFilename(name: string) {
-    // Finds Fansub group, anime title, and episode number (in that order)
-    const fansubRegEx = /^\[([\w|\d]+)\]\s(.+)\s-\s([0-9]{2,4})\s[[(]/gi;
+    const fansubRegEx =
+        /^\[([\w|\d]+)\]\s(.+)(\sS[0-9]{1,2})?\s-\s([0-9]{2,4}|S([0-9]{2})E([0-9]{2,4}))\s[[(]([0-9]{3,4}p)?/gi;
     const parts = fansubRegEx.exec(name);
     if (!parts) {
         return [new Error(`Failed to parse file name: "${name}"`), null] as const;
@@ -133,12 +135,15 @@ export function parseFansubFilename(name: string) {
     if (parts.length < 3) {
         return [new Error(`Missing one or more filename parts: "${name}"`), null] as const;
     }
-    const [, fansub, title, epNum] = parts;
+    const [, fansub, title, season, epNum, seasonAlt, epNumAlt, bitrate] = parts;
+    const realEpNum = epNumAlt ?? epNum;
     const animeData: FansubFilenameData = {
         fansub,
         title,
-        epNum: epNum[0] == '0' ? Number(epNum[1]) : Number(epNum),
-        paddedEpNum: epNum,
+        epNum: realEpNum[0] == '0' ? Number(realEpNum[1]) : Number(realEpNum),
+        paddedEpNum: realEpNum,
+        season: seasonAlt ?? season ?? ';m;unspecified',
+        bitrate: bitrate ?? ';m;unknown',
     };
     return [null, animeData] as const;
 }

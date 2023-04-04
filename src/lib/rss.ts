@@ -9,7 +9,6 @@ const _printLoader = _con.getLoadPrinter();
  * and returns a breakdown of the latest entry.
  */
 export async function getFansubRSS(searchString: string) {
-    console.log('');
     _printLoader.start(`Looking up "${searchString}"`);
     const url = new URL(_nyaaURLStr);
     url.searchParams.append('f', '0');
@@ -27,7 +26,11 @@ export async function getFansubRSS(searchString: string) {
         parseFansubFilename(latestEntryName);
     return {
         entryCount,
+        fansub: `[${fansub}]`,
         title,
+        episode: paddedEpNum,
+        season,
+        bitrate,
         rss: url.toString(),
     };
 }

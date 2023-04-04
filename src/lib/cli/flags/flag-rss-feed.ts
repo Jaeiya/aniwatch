@@ -46,12 +46,18 @@ export class RSSFeedFlag implements CLIFlag {
     ];
 
     async exec(cli: typeof CLI) {
+        _con.chainInfo(['', ';bm;... RSS Lookup ...']);
         const result = await rss.getFansubRSS(cli.nonFlagArgs.join(' '));
         _con.chainInfo([
             `;bc;Entries Found: ;g;${result.entryCount}`,
             `;bc;RSS: ;x;${result.rss}`,
+            '',
             `;bm;... Latest Entry ...`,
             `;bc;  Title: ;y;${truncateStr(result.title, 60)}`,
+            `;bc; FanSub: ;y;${result.fansub}`,
+            `;bc;Episode: ;y;${result.episode}`,
+            `;bc; Season: ;y;${result.season}`,
+            `;bc;BitRate: ;y;${result.bitrate}`,
         ]);
     }
 }

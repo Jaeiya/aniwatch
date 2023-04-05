@@ -2,6 +2,7 @@ import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
 import { SerializedAnime } from '../../kitsu/kitsu-types.js';
+import { truncateStr } from '../../utils.js';
 
 const { h1, h2, nl, i2 } = Help.display;
 
@@ -68,13 +69,16 @@ async function getAnimeList(cli: typeof CLI) {
 function displayAnimeList(animeList: SerializedAnime[]) {
     animeList.forEach((anime) => {
         const totalEps = anime.totalEpisodes ? anime.totalEpisodes : `;r;unknown`;
+        const synonyms = anime.synonyms.map((s) => `;bc;Alt Title: ;bb;${s}`);
         _con.chainInfo([
             `;bc;Title JP: ;x;${anime.title_jp}`,
             `;bc;Title EN: ;x;${anime.title_en}`,
+            ...synonyms,
             `;bc;Progress: ;g;${anime.progress} ;by;/ ;m;${totalEps}`,
             `;bc;My Rating: ;g;${anime.rating ? anime.rating : 'Not Rated'}`,
             `;bc;Avg. Rating: ;g;${anime.avgRating}`,
             `;bc;Link: ;x;${anime.link}`,
+            `;bc;Synopsis: ;x;${truncateStr(anime.synopsis, 300)}`,
         ]);
     });
 }

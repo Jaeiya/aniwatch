@@ -368,7 +368,10 @@ function buildLibraryAnimeURL(libraryIds: string[]) {
         libraryIds.reduce((pv, cv) => (pv ? `${pv},${cv}` : cv), '')
     );
     url.searchParams.append('include', 'anime');
-    url.searchParams.append('fields[anime]', 'episodeCount,averageRating,endDate,startDate');
+    url.searchParams.append(
+        'fields[anime]',
+        'episodeCount,averageRating,endDate,startDate,synopsis'
+    );
     url.searchParams.append('page[limit]', '200');
     return url;
 }
@@ -380,9 +383,11 @@ function serializeAnimeInfo(cacheList: KitsuCache, entries: LibraryEntries): Ser
         const anime: SerializedAnime = {
             title_jp: cache.jpTitle,
             title_en: cache.enTitle,
+            synonyms: cache.synonyms,
             progress: entries.data[i].attributes.progress,
             rating: rating ? `${(rating / 20) * 10}` : rating,
             totalEpisodes: entries.included[i].attributes.episodeCount,
+            synopsis: entries.included[i].attributes.synopsis,
             link: `https://kitsu.io/anime/${cache.slug}`,
             avgRating: avgRating
                 ? `${(Number(avgRating) / 10).toFixed(2)}`

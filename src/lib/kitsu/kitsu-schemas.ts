@@ -78,6 +78,7 @@ export const LibraryEntriesSchema = z.object({
             attributes: z.object({
                 episodeCount: z.number().nullable(),
                 averageRating: z.string().nullable(),
+                synopsis: z.string(),
                 endDate: z.string().nullable(),
                 startDate: z.string(),
             }),

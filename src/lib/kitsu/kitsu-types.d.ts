@@ -32,9 +32,11 @@ export type LibraryPatchData = {
 export type SerializedAnime = {
     title_jp: string;
     title_en: string;
+    synonyms: string[];
     progress: number;
     rating: string | number | null;
     totalEpisodes: number | null;
+    synopsis: string;
     link: string;
     avgRating: string;
 };

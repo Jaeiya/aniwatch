@@ -1,6 +1,6 @@
 {
     "name": "wakitsu",
-    "version": "4.0.1",
+    "version": "4.1.0",
     "description": "Hobby project for managing anime watch list on Kitsu through CLI",
     "type": "module",
     "main": "bin/main.js",

@@ -40,7 +40,6 @@ export const KitsuCacheSchema = z.object({
     epCount: z.number(),
     epProgress: z.number(),
     slug: z.string(),
-    synopsis: z.string(),
 });
 export const zodKitsuConfigData = {
     id: z.string(),
@@ -101,7 +100,6 @@ export const LibraryInfoSchema = z.object({
             attributes: z.object({
                 episodeCount: z.number().nullable(),
                 slug: z.string(),
-                synopsis: z.string(),
                 titles: z.object({
                     en: z.string(),
                     en_jp: z.string(),

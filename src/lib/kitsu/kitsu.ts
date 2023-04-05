@@ -347,7 +347,6 @@ async function getAnimeCache() {
             synonyms: anime.attributes.abbreviatedTitles,
             // There's a flaw in Kitsu's slugging algorithm
             slug: anime.attributes.slug.replaceAll(' ', '%20'),
-            synopsis: anime.attributes.synopsis,
         });
     });
     return cache;

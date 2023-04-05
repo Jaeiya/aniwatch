@@ -20,5 +20,8 @@ export class RebuildCacheFlag implements CLIFlag {
         '',
     ];
 
-    exec = Kitsu.rebuildCache;
+    exec() {
+        _con.chainInfo(['', ';bm;... Rebuild Cache ...']);
+        Kitsu.rebuildCache();
+    }
 }

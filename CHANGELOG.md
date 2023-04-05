@@ -1,3 +1,24 @@
+# [4.1.0](https://github.com/jaeiya/wakitsu/compare/v4.0.1...v4.1.0) (4/4/2023)
+
+### Features
+
+- **flags**: add `clean` flag to delete files in watched directory ([d08bc6e](https://github.com/Jaeiya/aniwatch/commit/d08bc6e))
+- **watch**: remove "subsplease" file restrictions ([bab48ee](https://github.com/Jaeiya/aniwatch/commit/bab48ee))
+- **rss**: remove "subsplease" search restrictions ([dfa5bb1](https://github.com/Jaeiya/aniwatch/commit/dfa5bb1))
+- **flags**: `rss` flag now displays all relevant file name information and truncates title ([f68aadb](https://github.com/Jaeiya/aniwatch/commit/f68aadb))
+- **utils**: strict fansub file name parsing ([bab48ee](https://github.com/Jaeiya/aniwatch/commit/bab48ee), [edfd27a](https://github.com/Jaeiya/aniwatch/commit/edfd27a))
+- **watch**: delete anime from cache when last episode is watched ([a1ac244](https://github.com/Jaeiya/aniwatch/commit/a1ac244))
+- **flags**: when using the `find anime` flag, it now displays the Kitsu anime profile link ([de0e27e](https://github.com/Jaeiya/aniwatch/commit/de0e27e))
+
+### Minor Changes
+
+- **flags**: added header to various flag display methods
+
+### Fixes
+
+- **kitsu**: there's a flaw in Kitsu's slug algorithm so we have to manually replace chars ([98328ef](https://github.com/Jaeiya/aniwatch/commit/98328ef))
+- **rss**: entry count off by 1 (this is probably not the correct solution) ([c0ba302](https://github.com/Jaeiya/aniwatch/commit/c0ba302))
+
 # [4.0.1](https://github.com/jaeiya/wakitsu/compare/v4.0.0...v4.0.1) (3/6/2023)
 
 #### Fixes

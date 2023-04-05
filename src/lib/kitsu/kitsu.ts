@@ -131,7 +131,8 @@ export class Kitsu {
         const filteredCache = _gK('cache').filter((anime) => {
             const hasCanonTitle = anime.jpTitle.toLowerCase().includes(name.toLowerCase());
             const hasEnglishTitle = anime.enTitle.toLowerCase().includes(name.toLowerCase());
-            return hasCanonTitle || hasEnglishTitle;
+            const hasAltTitle = anime.synonyms.some((s) => s.toLowerCase().includes(name));
+            return hasCanonTitle || hasEnglishTitle || hasAltTitle;
         });
         if (!filteredCache.length) return [];
         const libraryAnimeURL = buildLibraryAnimeURL(filteredCache.map((a) => a.libID));

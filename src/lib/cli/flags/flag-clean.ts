@@ -52,6 +52,7 @@ export class CleanFlag implements CLIFlag {
         '',
         ...this.helpSyntax,
     ];
+
     exec: (cli: typeof CLI) => void | Promise<void> = async (cli) => {
         const [arg] = cli.nonFlagArgs;
         if (arg == 'old') {

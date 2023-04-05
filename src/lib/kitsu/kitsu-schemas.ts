@@ -36,6 +36,7 @@ export const KitsuCacheSchema = z.object({
     libID: z.string(),
     jpTitle: z.string(),
     enTitle: z.string(),
+    synonyms: z.array(z.string()),
     epCount: z.number(),
     epProgress: z.number(),
     slug: z.string(),
@@ -105,6 +106,7 @@ export const LibraryInfoSchema = z.object({
                     en_jp: z.string(),
                 }),
                 canonicalTitle: z.string(),
+                abbreviatedTitles: z.array(z.string()),
             }),
         })
     ),

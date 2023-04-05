@@ -343,6 +343,7 @@ async function getAnimeCache() {
             enTitle: anime.attributes.titles.en.trim(),
             epCount: anime.attributes.episodeCount || 0,
             epProgress: library.data[i].attributes.progress || 0,
+            synonyms: anime.attributes.abbreviatedTitles,
             // There's a flaw in Kitsu's slugging algorithm
             slug: anime.attributes.slug.replaceAll(' ', '%20'),
             synopsis: anime.attributes.synopsis,

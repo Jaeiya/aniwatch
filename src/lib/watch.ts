@@ -41,7 +41,8 @@ export async function watchAnime(
     const cachedAnime = Kitsu.animeCache.filter(
         (anime) =>
             anime.jpTitle.toLowerCase().includes(epName) ||
-            anime.enTitle.toLowerCase().includes(epName)
+            anime.enTitle.toLowerCase().includes(epName) ||
+            anime.synonyms.some((s) => s.toLowerCase().includes(epName))
     );
 
     const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime, foundFileName);

@@ -1,3 +1,19 @@
+# [5.0.0](https://github.com/jaeiya/wakitsu/compare/v4.1.0...v5.0.0) (4/4/2023)
+
+### Breaking Changes ([5fcd844](https://github.com/Jaeiya/aniwatch/commit/5fcd844))
+
+Unfortunately, yes, we're here again with some breaking changes, but there was absolutely no getting around it this time; title synonyms (alternative titles) could potentially be used as file names. Those titles are not always words or phrases within the official title, which means we had to add this property into Kitsu's cache, which always requires a deleting of the config file 🥺.
+
+### Features
+
+- **flags**: `--find-anime` now displays synonyms (alt titles) and partial synopsis ([c229256](https://github.com/Jaeiya/aniwatch/commit/c229256))
+- **flags**: `--find-anime` supports finding an anime by its synonym (alt title) ([75bfa4a](https://github.com/Jaeiya/aniwatch/commit/75bfa4a))
+- **watch**: support finding an anime file name by its synonym (alt title) ([5fcd844](https://github.com/Jaeiya/aniwatch/commit/5fcd844))
+
+### Minor Changes
+
+- **kitsu**: no longer store synopsis in cache ([206ff5c](https://github.com/Jaeiya/aniwatch/commit/206ff5c))
+
 # [4.1.0](https://github.com/jaeiya/wakitsu/compare/v4.0.1...v4.1.0) (4/4/2023)
 
 ### Features

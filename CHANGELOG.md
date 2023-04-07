@@ -1,3 +1,9 @@
+# [5.1.0](https://github.com/jaeiya/wakitsu/compare/v5.0.0...v5.1.0) (4/5/2023)
+
+### Minor Changes
+
+- **utils**: support dashes in fansub filenames
+
 # [5.0.0](https://github.com/jaeiya/wakitsu/compare/v4.1.0...v5.0.0) (4/5/2023)
 
 ### Breaking Changes ([5fcd844](https://github.com/Jaeiya/aniwatch/commit/5fcd844))

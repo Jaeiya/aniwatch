@@ -1,4 +1,4 @@
-# [5.0.0](https://github.com/jaeiya/wakitsu/compare/v4.1.0...v5.0.0) (4/4/2023)
+# [5.0.0](https://github.com/jaeiya/wakitsu/compare/v4.1.0...v5.0.0) (4/5/2023)
 
 ### Breaking Changes ([5fcd844](https://github.com/Jaeiya/aniwatch/commit/5fcd844))
 

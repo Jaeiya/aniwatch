@@ -13,6 +13,7 @@ Unfortunately, yes, we're here again with some breaking changes, but there was a
 ### Minor Changes
 
 - **kitsu**: no longer store synopsis in cache ([206ff5c](https://github.com/Jaeiya/aniwatch/commit/206ff5c))
+- **utils**: support `v2` in fansub file names ([8e192ff](https://github.com/Jaeiya/aniwatch/commit/8e192ff))
 
 # [4.1.0](https://github.com/jaeiya/wakitsu/compare/v4.0.1...v4.1.0) (4/4/2023)
 

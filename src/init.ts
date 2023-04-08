@@ -17,6 +17,9 @@ await Config.init({
         if (config.kitsu) {
             config.kitsu.cache ??= [];
         }
+        if (config.kitsu && !config.kitsu.fileBindings) {
+            config.kitsu.fileBindings = [];
+        }
         if (config.kitsu?.stats) {
             config.kitsu.stats.secondsSpentWatching ??= 0;
             config.kitsu.stats.completedSeries ??= 0;

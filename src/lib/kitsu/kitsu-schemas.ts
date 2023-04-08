@@ -56,6 +56,12 @@ export const zodKitsuConfigData = {
     access_token: z.string(),
     refresh_token: z.string(),
     token_expiration: z.number(),
+    fileBindings: z.array(
+        z.object({
+            id: z.string(),
+            name: z.string(),
+        })
+    ),
     cache: z.array(KitsuCacheSchema),
 };
 export const KitsuDataSchema = z.object(zodKitsuConfigData);

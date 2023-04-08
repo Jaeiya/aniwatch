@@ -63,6 +63,24 @@ export class Kitsu {
         Config.setKitsuProp('cache', animeCache);
     }
 
+    static getFileBinding(libID: string) {
+        return _gK('fileBindings').find((f) => f.id == libID)?.name;
+    }
+
+    static setFileBinding(libID: string, name: string) {
+        _gK('fileBindings').push({
+            id: libID,
+            name,
+        });
+    }
+
+    static removeFileBinding(libID: string) {
+        _sK(
+            'fileBindings',
+            _gK('fileBindings').filter((fb) => fb.id != libID)
+        );
+    }
+
     static async updateAnime(url: string, data: LibraryPatchData): UpdatedProgress {
         const urlObj = new URL(url);
         urlObj.searchParams.append('include', 'anime');
@@ -98,13 +116,11 @@ export class Kitsu {
     }
 
     static removeAnimeFromCache(cachedItem: KitsuCacheItem, opt = { saveConfig: true }) {
-        const cache = _gK('cache');
-        const cachedAnime = cache.find((anime) => anime.libID == cachedItem.libID);
-        if (!cachedAnime) {
-            return ['item not in cache', false] as const;
-        }
-        const animeIndex = cache.indexOf(cachedAnime);
-        cache.splice(animeIndex, 1);
+        _sK(
+            'cache',
+            _gK('cache').filter((anime) => anime.libID != cachedItem.libID)
+        );
+        this.removeFileBinding(cachedItem.libID);
         if (opt.saveConfig) {
             Config.save();
         }
@@ -311,6 +327,7 @@ function serializeKitsuData(
         about: user.attributes.about,
         username: user.attributes.name,
         ...serializedTokenData,
+        fileBindings: [],
         cache: [],
     };
 }

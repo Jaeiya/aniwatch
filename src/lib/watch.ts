@@ -14,6 +14,8 @@ type ProgressOptions = {
     epNum: number;
     /** Override episode number to set as progress */
     forcedEpNum: number;
+    /** File name of the anime to update */
+    fileName: string;
 };
 
 export async function watchAnime(
@@ -27,9 +29,20 @@ export async function watchAnime(
 
     tryCreateWatchedDir(workingDir);
 
-    const fansubFileNames = filterFansubFilenames(workingDir, epName, fileEpNumStr);
+    const cachedAnime = Kitsu.animeCache.filter(
+        (anime) =>
+            anime.jpTitle.toLowerCase().includes(epName) ||
+            anime.enTitle.toLowerCase().includes(epName) ||
+            anime.synonyms.some((s) => s.toLowerCase().includes(epName))
+    );
+
+    const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime);
+
+    const fileTitle = Kitsu.getFileBinding(validAnime.libID) ?? epName;
+
+    const fansubFileNames = filterFansubFilenames(workingDir, fileTitle, fileEpNumStr);
     if (!fansubFileNames.length) {
-        _con.error(`;by;${epName} ;x;episode ;by;${fileEpNumStr} ;x;does NOT exist`);
+        _con.error(`;by;${fileTitle} ;x;episode ;by;${fileEpNumStr} ;x;does NOT exist`);
         process.exit(1);
     }
     if (fansubFileNames.length > 1) {
@@ -38,20 +51,12 @@ export async function watchAnime(
     }
     const [foundFileName] = fansubFileNames;
 
-    const cachedAnime = Kitsu.animeCache.filter(
-        (anime) =>
-            anime.jpTitle.toLowerCase().includes(epName) ||
-            anime.enTitle.toLowerCase().includes(epName) ||
-            anime.synonyms.some((s) => s.toLowerCase().includes(epName))
-    );
-
-    const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime, foundFileName);
-
     await saveAnimeProgress({
         anime: validAnime,
         cacheIndex,
         epNum: Number(fileEpNumStr),
         forcedEpNum: Number(forcedEpNumStr),
+        fileName: foundFileName,
     });
     moveFileToWatchedDir(foundFileName, workingDir);
 }
@@ -115,10 +120,15 @@ function displayErrorTooManyFiles(fileNames: string[]) {
     _con.chainError(errorChain);
 }
 
-function validateCachedAnime(cache: KitsuCache, fileName: string) {
+function validateCachedAnime(cache: KitsuCache) {
     if (!cache.length) {
-        const { title } = parseFansubFilename(fileName);
-        _con.chainError(['', `;r;Watch List Incomplete`, `;bc;Missing: ;g;${title}`]);
+        _con.chainError([
+            '',
+            `;r;Anime Not Found -- for 3 possible reasons`,
+            `;bc;(1) The Anime is not in your ;by;Kitsu ;bc;watch list`,
+            `;bc;(2) You forgot to ;by;-rc ;bc;after updating ;by;Kitsu ;bc;watch list`,
+            `;bc;(3) File name of the Anime has not been bound to the cache yet`,
+        ]);
         process.exit(1);
     }
 
@@ -135,7 +145,7 @@ function validateCachedAnime(cache: KitsuCache, fileName: string) {
 }
 
 async function saveAnimeProgress(opt: ProgressOptions) {
-    const { anime, cacheIndex, forcedEpNum, epNum } = opt;
+    const { anime, cacheIndex, forcedEpNum, epNum, fileName } = opt;
 
     const [progress, episodeCount] = await Kitsu.updateAnime(
         ...buildLibPatchReqArgs(anime.libID, forcedEpNum || epNum)
@@ -168,6 +178,9 @@ async function saveAnimeProgress(opt: ProgressOptions) {
         return;
     }
     displayAnimeProgress(anime);
+    if (!Kitsu.getFileBinding(anime.libID)) {
+        Kitsu.setFileBinding(anime.libID, parseFansubFilename(fileName).title.toLowerCase());
+    }
     Config.getKitsuProp('cache')[cacheIndex] = anime;
     Config.save();
 }

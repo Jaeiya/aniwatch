@@ -38,14 +38,19 @@ export async function getFansubRSS(searchString: string) {
 async function getLatestAnimeEntry(html: string) {
     const cheerio = await import('cheerio');
     const $ = cheerio.load(html);
-    const els = $('tr td + td');
-    const numOfResults = $('tr').length - 1;
-    const latestEntryName =
-        els.children('a.comments + a').eq(0).text().trim() || els.children('a').eq(0).text();
+    const els = $('tr td + td > a');
+    const torrents = [];
+    for (let i = 0; i < els.length; i++) {
+        const elementText = els.eq(i).text().trim();
+        if (elementText.length > 10) {
+            torrents.push(elementText);
+        }
+    }
+    const latestEntryName = torrents[0];
     _printLoader.stop();
-    if (!els.length) {
+    if (!torrents.length) {
         _con.error('Anime Not Found');
         process.exit(1);
     }
-    return [numOfResults, latestEntryName] as const;
+    return [torrents.length, latestEntryName] as const;
 }

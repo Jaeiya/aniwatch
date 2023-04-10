@@ -6,8 +6,8 @@ export type FansubFilenameData = {
     title: string;
     epNum: number;
     paddedEpNum: string;
-    season: string;
-    bitrate: string;
+    season: string | undefined;
+    bitrate: string | undefined;
 };
 
 export function isDev() {
@@ -142,17 +142,35 @@ export function parseFansubFilename(name: string) {
         ]);
         process.exit(1);
     }
-    const [, fansub, title, season, epNum, seasonAlt, epNumAlt, bitrate] = parts;
-    const realEpNum = epNum.includes('v') ? epNum.split('v')[0] : epNumAlt ?? epNum;
-    const animeData: FansubFilenameData = {
+    return serializeFansubFilename(parts);
+}
+
+function serializeFansubFilename(filenameParts: string[]) {
+    const [, fansub, title, seasonP, epNumP, seasonAlt, epNumAlt, bitrate] = filenameParts;
+
+    let epNum = 0;
+    let paddedEpNum = '';
+    let season = '';
+
+    if (seasonAlt) {
+        epNum = Number(epNumAlt);
+        paddedEpNum = epNumAlt;
+        season = seasonAlt;
+    } else {
+        epNum = Number(epNumP);
+        paddedEpNum = epNumP.includes('v') ? epNumP.split('v')[0] : epNumP;
+        season = seasonP;
+    }
+
+    const filenameData: FansubFilenameData = {
         fansub,
         title,
-        epNum: realEpNum[0] == '0' ? Number(realEpNum[1]) : Number(realEpNum),
-        paddedEpNum: realEpNum,
-        season: seasonAlt ?? season ?? ';m;unspecified',
-        bitrate: bitrate ?? ';m;unknown',
+        epNum,
+        paddedEpNum,
+        season,
+        bitrate,
     };
-    return animeData;
+    return filenameData;
 }
 
 export const pathResolve = resolve;

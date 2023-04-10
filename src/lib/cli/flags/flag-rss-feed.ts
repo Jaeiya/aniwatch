@@ -56,8 +56,8 @@ export class RSSFeedFlag implements CLIFlag {
             `;bc;  Title: ;y;${truncateStr(result.title, 60)}`,
             `;bc; FanSub: ;y;${result.fansub}`,
             `;bc;Episode: ;y;${result.episode}`,
-            `;bc; Season: ;y;${result.season}`,
-            `;bc;BitRate: ;y;${result.bitrate}`,
+            `;bc; Season: ;y;${result.season ?? ';m;unspecified'}`,
+            `;bc;BitRate: ;y;${result.bitrate ?? ';m;unknown'}`,
         ]);
     }
 }

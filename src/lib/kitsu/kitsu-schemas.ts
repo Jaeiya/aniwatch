@@ -107,7 +107,7 @@ export const LibraryInfoSchema = z.object({
                 episodeCount: z.number().nullable(),
                 slug: z.string(),
                 titles: z.object({
-                    en: z.string(),
+                    en: z.string().default(''),
                     en_jp: z.string(),
                 }),
                 canonicalTitle: z.string(),

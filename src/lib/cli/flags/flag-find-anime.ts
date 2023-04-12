@@ -72,7 +72,7 @@ function displayAnimeList(animeList: SerializedAnime[]) {
         const synonyms = anime.synonyms.map((s) => `;bc;Alt Title: ;bb;${s}`);
         _con.chainInfo([
             `;bc;Title JP: ;x;${anime.title_jp}`,
-            `;bc;Title EN: ;x;${anime.title_en}`,
+            `;bc;Title EN: ;x;${anime.title_en || ';m;None'}`,
             ...synonyms,
             `;bc;Progress: ;g;${anime.progress} ;by;/ ;m;${totalEps}`,
             `;bc;My Rating: ;g;${anime.rating ? anime.rating : 'Not Rated'}`,

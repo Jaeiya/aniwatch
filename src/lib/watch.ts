@@ -204,7 +204,7 @@ function displayAnimeProgress(anime: KitsuCacheItem) {
     _con.chainInfo([
         '',
         `;bc;Jap Title: ;g;${anime.jpTitle}`,
-        `;bc;Eng Title: ;g;${anime.enTitle}`,
+        `;bc;Eng Title: ;g;${anime.enTitle || ';m;None'}`,
         `;bc;Progress Set: ;g;${anime.epProgress} ;by;/ ;m;${anime.epCount || 'unknown'}`,
     ]);
 }

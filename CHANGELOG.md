@@ -1,8 +1,22 @@
-# [5.1.0](https://github.com/jaeiya/wakitsu/compare/v5.0.0...v5.1.0) (4/5/2023)
+# [5.1.0](https://github.com/jaeiya/wakitsu/compare/v5.0.0...v5.1.0) (4/12/2023)
+
+### Features
+
+- **watch**: support searching for an anime by any words either japanese or english ([e777aeb](https://github.com/Jaeiya/aniwatch/commit/e777aeb))
+- **watch**: support watching an anime using its synonym (alt title) ([5fcd844](https://github.com/Jaeiya/aniwatch/commit/5fcd844))
+- **flag**: `--find-anime` can find anime using synonyms (alt title) ([75bfa4a](https://github.com/Jaeiya/aniwatch/commit/75bfa4a))
 
 ### Minor Changes
 
 - **utils**: support dashes in fansub filenames
+- **flag**: `--find-anime` now includes synonym (alt title) and synopsis display ([c229256](https://github.com/Jaeiya/aniwatch/commit/c229256))
+- **kitsu**: no longer store synopsis in cache ([206ff5c](https://github.com/Jaeiya/aniwatch/commit/206ff5c))
+
+### Fixes
+
+- **watch**: support dashes and spaces in fansub group names ([d5547b4](https://github.com/Jaeiya/aniwatch/commit/d5547b4), [f74b377](https://github.com/Jaeiya/aniwatch/commit/f74b377))
+- **rss**: the "latest entry" was not always the latest entry ([534ac77](https://github.com/Jaeiya/aniwatch/commit/534ac77))
+- **kitsu**: set the default English title to empty string if the API returned undefined ([0444913](https://github.com/Jaeiya/aniwatch/commit/0444913))
 
 # [5.0.0](https://github.com/jaeiya/wakitsu/compare/v4.1.0...v5.0.0) (4/5/2023)
 

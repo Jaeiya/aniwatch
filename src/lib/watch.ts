@@ -170,7 +170,7 @@ async function saveAnimeProgress(opt: ProgressOptions) {
         _con.chainInfo([
             '',
             `;bc;Jap Title: ;x;${anime.jpTitle}`,
-            `;bc;Eng Title: ;x;${anime.enTitle}`,
+            `;bc;Eng Title: ;x;${anime.enTitle || ';m;None'}`,
             ';bc;Progress: ;bg;Completed',
             '',
         ]);

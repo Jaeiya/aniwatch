@@ -79,6 +79,7 @@ function displayAnimeList(animeList: SerializedAnime[]) {
             `;bc;Avg. Rating: ;g;${anime.avgRating}`,
             `;bc;Link: ;x;${anime.link}`,
             `;bc;Synopsis: ;x;${truncateStr(anime.synopsis, 300)}`,
+            '',
         ]);
     });
 }

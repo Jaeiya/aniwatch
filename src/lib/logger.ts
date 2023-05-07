@@ -76,12 +76,20 @@ export class ConsoleLogger {
         log('info', msg, 'g');
     }
 
+    static warn(msg: string) {
+        log('warn', msg, 'y');
+    }
+
     static error(msg: string) {
         log('error', msg, 'r');
     }
 
     static chainInfo(msgs: string[]) {
         chainLogs(msgs, 'info');
+    }
+
+    static chainWarn(msgs: string[]) {
+        chainLogs(msgs, 'warn');
     }
 
     static chainError(msgs: string[]) {
@@ -177,8 +185,8 @@ function getLoaderStr(color = 'by') {
     return `${' '.repeat(_maxTagLength - spinCount)};bm;[;${color};${spins};bm;]:`;
 }
 
-function chainLogs(logs: string[], type: 'error' | 'info') {
-    const print = type == 'info' ? ConsoleLogger.info : ConsoleLogger.error;
+function chainLogs(logs: string[], type: 'error' | 'info' | 'warn') {
+    const print = ConsoleLogger[type];
     logs.forEach((log) => {
         if (log) print(log);
         else console.log('');

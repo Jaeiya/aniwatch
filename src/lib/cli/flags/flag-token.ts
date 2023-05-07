@@ -97,7 +97,7 @@ function showTokenInfo(title: string, description: string[] = []) {
         ...description,
         nl(`;bc; Access Token: ;bk;${tokenInfo.accessToken}`),
         nl(`;bc;Refresh Token: ;bk;${tokenInfo.refreshToken}`),
-        nl(`;bc;   Expires In: ${getTokenExpirationStr(tokenInfo.expires)}`),
+        nl(`;bc;   Expires In: ${getTokenExpirationStr(tokenInfo.expiresSec)}`),
     ]);
 }
 

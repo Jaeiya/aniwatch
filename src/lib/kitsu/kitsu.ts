@@ -42,7 +42,7 @@ export class Kitsu {
         return {
             accessToken: _gK('access_token'),
             refreshToken: _gK('refresh_token'),
-            expires: _gK('token_expiration'),
+            expiresSec: _gK('token_expiration'),
         };
     }
 

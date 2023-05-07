@@ -52,6 +52,23 @@ export class CLI {
               ])
             : Help.addAdvancedFlagHelp(flag.helpAliases, flag.helpDisplay);
 
+        const existingFlag = _flags.find((f) => {
+            for (const name of f.name) {
+                if (flag.name.includes(name)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        if (existingFlag) {
+            throw Error(
+                `One or more of these flag names already exists: ${flag.name
+                    .map((f) => `"${f}"`)
+                    .join(', ')}`
+            );
+        }
+
         _flags.push(flag);
     }
 

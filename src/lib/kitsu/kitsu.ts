@@ -85,7 +85,12 @@ export class Kitsu {
         const urlObj = new URL(url);
         urlObj.searchParams.append('include', 'anime');
         urlObj.searchParams.append('fields[anime]', 'episodeCount');
-
+        const tokenExpiresIn = Math.floor(
+            getTimeUnits(Kitsu.tokenInfo.expiresSec - Date.now() / 1000).days
+        );
+        if (tokenExpiresIn > 1 && tokenExpiresIn < 7) {
+            _con.warn(`Your ;bm;token ;x;expires in ;by;${tokenExpiresIn} ;x;days`);
+        }
         const resp = await HTTP.patch(urlObj, JSON.stringify(data), _gK('access_token'));
         const resolvedData = await resp.json();
         if (!resp.ok) {

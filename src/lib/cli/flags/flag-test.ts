@@ -4,7 +4,7 @@ import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 const { h1, nl } = Help.display;
 
 export class TestFlag implements CLIFlag {
-    name: CLIFlagName = ['!', ''];
+    name: CLIFlagName = ['!', '!'];
     type: CLIFlagType = 'simple';
 
     helpAliases: string[] = [...this.name];

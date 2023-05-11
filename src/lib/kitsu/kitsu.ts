@@ -148,7 +148,7 @@ export class Kitsu {
         Config.save();
     }
 
-    static async findAnime(name: string) {
+    static async findLibraryAnime(name: string) {
         const filteredCache = _gK('cache').filter((anime) => {
             const hasCanonTitle = anime.jpTitle.toLowerCase().includes(name.toLowerCase());
             const hasEnglishTitle = anime.enTitle.toLowerCase().includes(name.toLowerCase());

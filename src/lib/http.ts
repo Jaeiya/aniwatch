@@ -1,14 +1,18 @@
 import { tryCatchAsync } from './utils.js';
 
 export class HTTP {
-    static async post(url: string, body: string) {
+    static async post(url: string, body: string, token?: string) {
+        const headers: { [key: string]: string } = {
+            'Content-Type': 'application/json',
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
         const asyncRes = await tryCatchAsync(
             fetch(url, {
                 method: 'POST',
                 body,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers,
             })
         );
         if (!asyncRes.success) {

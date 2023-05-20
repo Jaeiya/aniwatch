@@ -1,9 +1,17 @@
 import { tryCatchAsync } from './utils.js';
 
 export class HTTP {
-    static async post(url: string, body: string, token?: string) {
+    static async post(url: string, body: string) {
+        return this.rawPost(url, 'application/json', body);
+    }
+
+    static async postAPI(url: string, body: string, token: string) {
+        return this.rawPost(url, 'application/vnd.api+json', body, token);
+    }
+
+    static async rawPost(url: string, contentType: string, body: string, token?: string) {
         const headers: { [key: string]: string } = {
-            'Content-Type': 'application/json',
+            'Content-Type': contentType,
         };
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;

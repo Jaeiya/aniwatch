@@ -22,6 +22,7 @@ import {
     KitsuCacheItem,
 } from './kitsu-types.js';
 import { Config } from '../config.js';
+import { z } from 'zod';
 import { KitsuURLs } from './kitsu-urls.js';
 
 type KitsuError = {
@@ -84,18 +85,69 @@ export class Kitsu {
         );
     }
 
+    /**
+     * Add anime to Kitsu watch list.
+     */
+    static async trackAnime(animeID: string) {
+        const resp = await HTTP.postAPI(
+            'https://kitsu.io/api/edge/library-entries',
+            JSON.stringify({
+                data: {
+                    type: 'library-entries',
+                    attributes: { status: 'current' },
+                    relationships: {
+                        anime: {
+                            data: {
+                                id: animeID,
+                                type: 'anime',
+                            },
+                        },
+                        user: {
+                            data: {
+                                id: _gK('id'),
+                                type: 'users',
+                            },
+                        },
+                    },
+                },
+            }),
+            Config.getKitsuProp('access_token')
+        );
+
+        const [error, jsonResp] = parseWithZod(
+            z.object({
+                data: z.object({
+                    id: z.string(),
+                }),
+            }),
+            await resp.json(),
+            'AddAnimeScheme'
+        );
+
+        if (error) {
+            _con.chainError(['', ...error]);
+            process.exit(1);
+        }
+
+        return jsonResp;
+    }
+
     static async updateAnime(url: string, data: LibraryPatchData): UpdatedProgress {
         const urlObj = new URL(url);
         urlObj.searchParams.append('include', 'anime');
         urlObj.searchParams.append('fields[anime]', 'episodeCount');
+
         const tokenExpiresIn = Math.floor(
             getTimeUnits(Kitsu.tokenInfo.expiresSec - Date.now() / 1000).days
         );
+
         if (tokenExpiresIn > 1 && tokenExpiresIn < 7) {
             _con.warn(`Your ;bm;token ;x;expires in ;by;${tokenExpiresIn} ;x;days`);
         }
+
         const resp = await HTTP.patch(urlObj, JSON.stringify(data), _gK('access_token'));
         const resolvedData = await resp.json();
+
         if (!resp.ok) {
             const errData = resolvedData as KitsuError;
             if (errData.errors[0].title == 'Invalid token') {
@@ -108,15 +160,18 @@ export class Kitsu {
             _con.chainError(['', `;r;Kitsu API Error`, errMessage]);
             process.exit(1);
         }
+
         const [error, libPatchResp] = parseWithZod(
             LibraryPatchRespSchema,
             resolvedData,
             'LibraryPatchResponse'
         );
+
         if (error) {
             _con.chainError(error);
             process.exit(1);
         }
+
         return [
             libPatchResp.data.attributes.progress,
             libPatchResp.included[0].attributes.episodeCount,

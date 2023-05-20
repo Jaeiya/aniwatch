@@ -91,6 +91,27 @@ export const LibraryEntriesSchema = z.object({
     ),
 });
 
+export type KitsuAnimeInfoEntry = z.infer<typeof KitsuAnimeDataSchema>;
+export type KitsuAnimeEntries = z.infer<typeof KitsuAnimeEntriesSchema>;
+const KitsuAnimeDataSchema = z.object({
+    id: z.string(),
+    attributes: z.object({
+        episodeCount: z.number().nullable(),
+        slug: z.string(),
+        titles: z.object({
+            en: z.string().default(''),
+            en_jp: z.string(),
+        }),
+        averageRating: z.string().nullable(),
+        canonicalTitle: z.string(),
+        abbreviatedTitles: z.array(z.string()),
+        synopsis: z.string().nullable(),
+    }),
+});
+export const KitsuAnimeEntriesSchema = z.object({
+    data: z.array(KitsuAnimeDataSchema),
+});
+
 export const LibraryInfoSchema = z.object({
     data: z.array(
         z.object({
@@ -100,21 +121,7 @@ export const LibraryInfoSchema = z.object({
             }),
         })
     ),
-    included: z.array(
-        z.object({
-            id: z.string(),
-            attributes: z.object({
-                episodeCount: z.number().nullable(),
-                slug: z.string(),
-                titles: z.object({
-                    en: z.string().default(''),
-                    en_jp: z.string(),
-                }),
-                canonicalTitle: z.string(),
-                abbreviatedTitles: z.array(z.string()),
-            }),
-        })
-    ),
+    included: z.array(KitsuAnimeDataSchema),
 });
 
 export const LibraryPatchRespSchema = z.object({

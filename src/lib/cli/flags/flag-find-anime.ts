@@ -68,13 +68,13 @@ async function getAnimeList(cli: typeof CLI) {
 
 function displayAnimeList(animeList: SerializedAnime[]) {
     animeList.forEach((anime) => {
-        const totalEps = anime.totalEpisodes ? anime.totalEpisodes : `;r;unknown`;
+        const totalEps = anime.epCount ? anime.epCount : `;r;unknown`;
         const synonyms = anime.synonyms.map((s) => `;bc;Alt Title: ;bb;${s}`);
         _con.chainInfo([
             `;bc;Title JP: ;x;${anime.title_jp}`,
             `;bc;Title EN: ;x;${anime.title_en || ';m;None'}`,
             ...synonyms,
-            `;bc;Progress: ;g;${anime.progress} ;by;/ ;m;${totalEps}`,
+            `;bc;Progress: ;g;${anime.epProgress} ;by;/ ;m;${totalEps}`,
             `;bc;My Rating: ;g;${anime.rating ? anime.rating : 'Not Rated'}`,
             `;bc;Avg. Rating: ;g;${anime.avgRating}`,
             `;bc;Link: ;x;${anime.link}`,

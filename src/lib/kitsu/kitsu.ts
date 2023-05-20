@@ -476,9 +476,9 @@ function serializeLibraryAnimeInfo(
             title_jp: cache.jpTitle,
             title_en: cache.enTitle,
             synonyms: cache.synonyms,
-            progress: entries.data[i].attributes.progress,
+            epProgress: entries.data[i].attributes.progress,
             rating: rating ? `${(rating / 20) * 10}` : rating,
-            totalEpisodes: entries.included[i].attributes.episodeCount,
+            epCount: entries.included[i].attributes.episodeCount,
             synopsis: entries.included[i].attributes.synopsis,
             link: `https://kitsu.io/anime/${cache.slug}`,
             avgRating: avgRating

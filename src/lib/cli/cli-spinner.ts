@@ -9,8 +9,8 @@ export function createSpinner(text: string) {
     let interval: NodeJS.Timer;
 
     function start(fps: number) {
-        if (!text.includes('@spin')) {
-            throw Error('missing "@spin" placeholder');
+        if (!text.includes('@@')) {
+            throw Error('missing "@@" placeholder');
         }
         let framePos = 0;
         writeSpinnerFrame(framePos++, text);
@@ -36,7 +36,7 @@ export function createSpinner(text: string) {
 function writeSpinnerFrame(framePos: number, msg: string) {
     clearStdout();
     if (framePos == _dotFrames.length) framePos = 0;
-    const str = msg.replaceAll('@spin', _dotFrames[framePos]);
+    const str = msg.replaceAll('@@', _dotFrames[framePos]);
     stdout.write(`${str}${_hideCursorChar}`);
     return ++framePos;
 }

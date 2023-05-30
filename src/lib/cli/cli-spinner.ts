@@ -34,14 +34,15 @@ export function createSpinner(text: string) {
  * and returns the next frame position.
  */
 function writeSpinnerFrame(framePos: number, msg: string) {
-    clearStdout();
+    if (framePos > 0) clearStdout();
     if (framePos == _dotFrames.length) framePos = 0;
     const str = msg.replaceAll('@@', _dotFrames[framePos]);
-    stdout.write(`${str}${_hideCursorChar}`);
+    stdout.write(`${str}${_hideCursorChar}\n`);
     return ++framePos;
 }
 
 function clearStdout() {
+    stdout.moveCursor(0, -1);
     stdout.clearLine(0);
     stdout.cursorTo(0);
 }

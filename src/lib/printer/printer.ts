@@ -32,6 +32,31 @@ const _maxLogLength = 70;
 const _colorText = PrinterColor.colorText;
 
 export class Printer {
+    static printInfo(messages: string[], header?: string) {
+        this.printBlock({ headColor: 'g', msgColor: 'x' }, header ?? 'INFO', messages);
+    }
+
+    static printError(messages: string[], header?: string) {
+        this.printBlock({ headColor: 'r', msgColor: 'y' }, header ?? 'ERROR', messages);
+    }
+
+    static printWarning(messages: string[], header?: string) {
+        this.printBlock({ headColor: 'y', msgColor: 'c' }, header ?? 'WARNING', messages);
+    }
+
+    static printBlock(
+        colorCodes: { headColor: string; msgColor: string },
+        header: string,
+        messages: string[]
+    ) {
+        const { headColor, msgColor } = colorCodes;
+        const border = '─'.repeat(_maxLogLength + _leftLogMargin * 2);
+        const logs: Log[] = [null, null, ['', `;${headColor};${header}:`], ['', `${border}`]];
+        messages.forEach((m) => logs.push(['p', `;${msgColor};${m}`]));
+        logs.push(['', `;${headColor};${border};x;`], null);
+        this.print(logs);
+    }
+
     static print(logs: Log[]) {
         logs.forEach((log) => {
             printLog(log);

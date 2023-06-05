@@ -121,15 +121,15 @@ function printLog(log: Log) {
 
     if (kind == 's') {
         const [commands, args] = message;
+
+        const resolvedMessage = commands
+            ? `;by;wak ;bk;[${commands
+                  .map((c) => `;c;${c ? ` -${c}` : ''};x;`)
+                  .join(' ;bk;|')} ;bk;] ;y;${args};x;`
+            : `;by;wak ;y;${args}`;
+
         return console.log(
-            applyLogMargin(
-                _colorText(
-                    `;by;wak ;bk;[${commands
-                        .map((c) => `;c;-${c};x;`)
-                        .join(' ;bk;| ')};bk;] ;y;${args};x;`
-                ),
-                _leftLogMargin + _defaultIndent
-            )
+            applyLogMargin(_colorText(resolvedMessage), _leftLogMargin + _defaultIndent)
         );
     }
 

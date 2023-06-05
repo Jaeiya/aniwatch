@@ -113,7 +113,7 @@ function printLog(log: Log) {
         const [command, example] = message;
         return console.log(
             applyLogMargin(
-                _colorText(`;by;wak ;c;-${command} ;y;${example}`),
+                _colorText(`;by;wak;c;${command ? ` -${command}` : ''} ;y;${example}`),
                 _leftLogMargin + _defaultIndent
             )
         );

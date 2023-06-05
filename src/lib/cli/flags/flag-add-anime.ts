@@ -1,12 +1,11 @@
 import { Config } from '../../config.js';
-import { Help } from '../../help.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
-import type { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
+import { Log } from '../../printer/printer.js';
+import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 
-const { h1, h2, nl, i3 } = Help.display;
 type AnimeResults = Awaited<ReturnType<typeof Kitsu.findAnime>>;
 
-export class AddAnime implements CLIFlag {
+export class AddAnime extends CLIFlag {
     name: CLIFlagName = ['a', 'add'];
     type: CLIFlagType = 'multiArg';
 
@@ -20,28 +19,40 @@ export class AddAnime implements CLIFlag {
 
     shortHelpDisplay = `Allows you to add an anime to your watch list.`;
 
-    helpSyntax: string[] = [
-        h2(`Syntax`),
-        nl(`;by;wak ;x;[;bc;-a ;x;| ;bc;--add-anime;x;] ;y;<query>`),
-        '',
-        h2(`Details`),
-        nl(`;y;query  ;x;Any terms that you want to use to search`),
-        i3(` ;x;for an anime: ;m;title name;x;, ;m;keyword;x;, etc...`),
-        '',
-        h2(`Examples`),
-        nl(`;by;wak ;bc;-a ;y;boku no hero`),
-        nl(`;by;wak ;bc;--add-anime ;y;boku no hero`),
-        nl(`;by;wak ;bc;-a ;y;heros have quirks`),
-        nl(`;by;wak ;bc;--add-anime ;y;heros have quirks`),
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Add Anime']],
+            [
+                'p',
+                'This flag allows you to lookup an anime from Kitsu and add it to your ' +
+                    'watch list.',
+            ],
+            null,
+        ];
+    }
 
-    helpDisplay: string[] = [
-        h1(`Add Anime`),
-        nl(`This flag allows you to lookup an anime from`),
-        nl(`Kitsu and add it to your watch list.`),
-        '',
-        ...this.helpSyntax,
-    ];
+    getSyntaxHelpLogs(): Log[] {
+        return [
+            ['h2', ['Syntax']],
+            ['s', [['a', 'add-anime'], '<query>']],
+            null,
+            ['h2', ['Details']],
+            [
+                'd',
+                [
+                    'query',
+                    'Any term that you want to use to search for an anime: ' +
+                        ';m;title name;x;, ;m;keyword;x;, etc...',
+                ],
+            ],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['a', 'boku no hero']],
+            ['e', ['add-anime', 'boku no hero']],
+            ['e', ['a', 'heros have quirks']],
+            ['e', ['add-anime', 'heros have quirks']],
+        ];
+    }
 
     async exec(cli: typeof CLI) {
         const loader = _con.getLoadPrinter();

@@ -1,20 +1,7 @@
-import { Help } from '../help.js';
+import { Log, Printer } from '../printer/printer.js';
 
 export type CLIFlagType = 'multiArg' | 'simple';
 export type CLIFlagName = [short: string, long: string];
-
-export interface CLIFlag {
-    /** Short and Long Flag Names */
-    name: CLIFlagName;
-    type: CLIFlagType;
-    isDefault?: boolean;
-    helpAliases: string[];
-    shortHelpDisplay?: string;
-    helpDisplay: string[];
-    helpSyntax?: string[];
-    /** Execute flag function */
-    exec: (cli: typeof CLI) => void | Promise<void>;
-}
 
 const _flags: CLIFlag[] = [];
 
@@ -40,17 +27,14 @@ export class CLI {
     /** Arguments that are not flags (ex: `-f some args => ['some', 'args']`) */
     static nonFlagArgs = nonFlagArgs;
 
+    static get flags() {
+        return _flags.slice(0);
+    }
+
     static addFlag(flag: CLIFlag) {
         if (flag.type == 'simple' && flag.shortHelpDisplay == undefined) {
             throw Error(`"--${flag.name[1]}" flag must have a "shortHelpDisplay"`);
         }
-
-        flag.type == 'simple'
-            ? Help.addSimpleHelp(flag.helpAliases, flag.name, [
-                  flag.shortHelpDisplay ?? '',
-                  flag.helpDisplay,
-              ])
-            : Help.addAdvancedFlagHelp(flag.helpAliases, flag.helpDisplay);
 
         const existingFlag = _flags.find((f) => {
             for (const name of f.name) {
@@ -109,7 +93,7 @@ function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
             'Read the help below to learn the correct syntax',
             '',
         ]);
-        displayFlagHelp(flag);
+        flag.printHelp();
         return false;
     }
     return true;
@@ -123,20 +107,10 @@ function isMultiArg(flag: CLIFlag) {
             'Read the help below to learn the correct syntax:',
             '',
         ]);
-        displayFlagHelp(flag);
+        flag.printSyntax();
         return false;
     }
     return true;
-}
-
-function displayFlagHelp(flag: CLIFlag) {
-    if (flag.type == 'multiArg' && flag.helpSyntax) {
-        Help.displayHelp(flag.helpSyntax);
-        return;
-    }
-    const flagHelp = Help.findHelp(flag.helpAliases[0]);
-    if (!flagHelp) throw Error(`missing "${flag.name[1]}" flag help`);
-    Help.displayHelp(flagHelp);
 }
 
 function removeLeadingDashes(str: string): string {
@@ -144,4 +118,37 @@ function removeLeadingDashes(str: string): string {
         return removeLeadingDashes(str.substring(1));
     }
     return str;
+}
+
+export abstract class CLIFlag {
+    isDefault = false;
+    shortHelpDisplay = '';
+
+    /**
+     * Print syntax by itself if it exists, otherwise print default
+     * help.
+     */
+    printSyntax() {
+        Printer.print(this.getSyntaxHelpLogs() || this.getHelpLogs());
+    }
+
+    printHelp() {
+        const syntaxLogs = this.getSyntaxHelpLogs();
+        if (syntaxLogs) {
+            Printer.print([...this.getHelpLogs(), ...syntaxLogs]);
+        } else {
+            Printer.print(this.getHelpLogs());
+        }
+    }
+
+    getSyntaxHelpLogs(): Log[] | null {
+        return null;
+    }
+
+    /** Short and Long flag name */
+    abstract readonly name: CLIFlagName;
+    abstract readonly type: CLIFlagType;
+    abstract readonly helpAliases: string[];
+    abstract getHelpLogs(): Log[];
+    abstract exec(cli: typeof CLI): void | Promise<void>;
 }

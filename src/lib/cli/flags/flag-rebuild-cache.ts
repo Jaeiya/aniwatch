@@ -1,10 +1,8 @@
-import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
+import { Log } from '../../printer/printer.js';
 
-const { h1, nl } = Help.display;
-
-export class RebuildCacheFlag implements CLIFlag {
+export class RebuildCacheFlag extends CLIFlag {
     name: CLIFlagName = ['rc', 'rebuild-cache'];
     type: CLIFlagType = 'simple';
 
@@ -12,13 +10,17 @@ export class RebuildCacheFlag implements CLIFlag {
 
     shortHelpDisplay = 'Rebuilds your cache data from Kitsu.';
 
-    helpDisplay: string[] = [
-        h1(`Rebuild Cache`),
-        nl(`Rebuilds your cache data from Kitsu. This is`),
-        nl(`;m;necessary ;bk;whenever you update your Kitsu watch`),
-        nl(`list, using the https://kitsu.io website.`),
-        '',
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Rebuild Cache']],
+            [
+                'p',
+                'Rebuilds your cache data from Kitsu. This is ;m;necessary ;bk;whenever ' +
+                    'you update your Kitsu watch list, using the https://kitsu.io website',
+            ],
+            null,
+        ];
+    }
 
     exec() {
         _con.chainInfo(['', ';bm;... Rebuild Cache ...']);

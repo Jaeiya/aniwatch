@@ -10,6 +10,7 @@ import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { stat } from 'fs/promises';
 import { Dirent } from 'fs';
 import { fitStringEnd } from '../../utils.js';
+import { Log } from '../../printer/printer.js';
 
 type FileStat = [
     bytes: number,
@@ -18,10 +19,10 @@ type FileStat = [
     filenameData: FansubFilenameData
 ];
 
-const { h1, h2, nl } = Help.display;
+const { h2, nl } = Help.display;
 const toReadableBytes = createReadableBytesFunc();
 
-export class DirInfoFlag implements CLIFlag {
+export class DirInfoFlag extends CLIFlag {
     name: CLIFlagName = ['dir', 'dir-info'];
     type: CLIFlagType = 'simple';
 
@@ -36,12 +37,17 @@ export class DirInfoFlag implements CLIFlag {
 
     shortHelpDisplay = 'Analyzes the "watched" folder and displays breakdown.';
 
-    helpDisplay: string[] = [
-        h1('Display Watched Folder Info'),
-        `Breaks down various details about the "watch" folder`,
-        `that may or may not be relevant.`,
-        '',
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Display Watched Folder Info']],
+            [
+                'p',
+                'Breaks down various details about the "watch" folder that may or may ' +
+                    'not be relevant.',
+            ],
+            null,
+        ];
+    }
 
     async exec() {
         const watchPath = pathJoin(process.cwd(), 'watched');

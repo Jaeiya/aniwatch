@@ -1,10 +1,8 @@
-import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { watchAnime } from '../../watch.js';
+import { Log } from '../../printer/printer.js';
 
-const { h1, h2, nl, i2 } = Help.display;
-
-export class DefaultFlag implements CLIFlag {
+export class DefaultFlag extends CLIFlag {
     name: CLIFlagName = ['', 'default'];
     type: CLIFlagType = 'multiArg';
     isDefault = true;
@@ -22,44 +20,59 @@ export class DefaultFlag implements CLIFlag {
         'how do I update kitsu',
     ];
 
-    helpSyntax: string[] = [
-        h2(`Default Syntax`),
-        nl(`;by;wak ;y;<name> <ep> <fep>`),
-        '',
-        h2(`Details`),
-        nl(`;y;name   ;x;Full or partial name of an existing anime on disk.`),
-        ' ',
-        nl(`;y;ep     ;x;Episode number of anime ;y;<name> ;x;on disk.`),
-        ' ',
-        nl(`;y;fep    ;m;(Optional) ;x;Update Kitsu progress with ;y;<fep>`),
-        nl(i2(`;x;instead of ;y;<ep>;bk;.`)),
-        '',
-        h2(`Examples`),
-        nl(`;by;wak ;y;"boku no hero" 10`),
-        nl(`;by;wak ;y;berserk 3`),
-        nl(`;by;wak ;y;bleach 367 1`),
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Default Usage']],
+            [
+                'p',
+                'Scan the current working directory for the specified anime ;y;name ;bk;and ' +
+                    ';y;ep;bk;isode number, then updates your progress on Kitsu for that anime ' +
+                    'at the ;y;ep;bk;isode number you specified.',
+            ],
+            null,
+            [
+                'p',
+                'If the anime file on disk is using a different numbering schema than ' +
+                    'Kitsu, then you can use the ;y;f;bk;orced ;y;ep;bk;isode number: ' +
+                    ';y;fep;bk;, to set episode progress manually.  This will force Kitsu ' +
+                    'to update your progress to ;y;fep;bk;.',
+            ],
+            null,
+            [
+                'p',
+                ';m;NOTE: ;bk;If the ;y;name ;bk;you use returns multiple results, the program ' +
+                    'will display them and exit. This allows you to try again with a more ' +
+                    'specific ;y;name;bk;.',
+            ],
+            null,
+        ];
+    }
 
-    helpDisplay: string[] = [
-        h1(`Default Usage`),
-        nl(`Scan the current working directory for the`),
-        nl(`specified anime ;y;name ;bk;and ;y;ep;bk;isode number, then`),
-        nl(`updates your progress on Kitsu for that anime`),
-        nl(`at the ;y;ep;bk;isode number you specified.`),
-        '',
-        nl(`If the anime file on disk is using a different`),
-        nl(`numbering schema than Kitsu, then you can use`),
-        nl(`the ;y;f;bk;orced ;y;ep;bk;isode number: ;y;fep;bk;, to set episode`),
-        nl(`progress manually. This will force Kitsu to update `),
-        nl(`your progress to ;y;fep;bk;.`),
-        '',
-        nl(`;m;NOTE:;bk; If the ;y;name ;bk;you use returns multiple`),
-        nl(`results, the program will display them and exit.`),
-        nl(`This allows you to try again with a more specific`),
-        nl(`;y;name;bk;.`),
-        '',
-        ...this.helpSyntax,
-    ];
+    getSyntaxHelpLogs(): Log[] {
+        return [
+            ['h2', ['Default Syntax']],
+            ['s', [null, '<name> <ep> <fep>']],
+            null,
+            ['h2', ['Details']],
+            ['d', ['name', 'Full or partial name of an existing anime on disk.']],
+            null,
+            ['d', ['ep', 'Episode number of anime ;y;<name> ;x;on disk.'], 2],
+            null,
+            [
+                'd',
+                [
+                    'fep',
+                    ';m;(optional) ;x;Update Kitsu progress with ;y;<fep> instead of ;y;<ep>;bk;.',
+                ],
+                1,
+            ],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['', `"boku no hero" 10`]],
+            ['e', ['', 'berserk 3']],
+            ['e', ['', 'bleach 367 1']],
+        ];
+    }
 
     exec(cli: typeof CLI) {
         const flagArgs = cli.nonFlagArgs;
@@ -74,7 +87,7 @@ export class DefaultFlag implements CLIFlag {
                 'Read the help below to learn the correct syntax:',
                 '',
             ]);
-            Help.displayHelp(this.helpSyntax);
+            this.printSyntax();
             process.exit(1);
         }
 

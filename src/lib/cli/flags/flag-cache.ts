@@ -1,10 +1,8 @@
-import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
+import { Log } from '../../printer/printer.js';
 
-const { h1, nl } = Help.display;
-
-export class CacheFlag implements CLIFlag {
+export class CacheFlag extends CLIFlag {
     name: CLIFlagName = ['c', 'cache'];
     type: CLIFlagType = 'simple';
 
@@ -19,12 +17,13 @@ export class CacheFlag implements CLIFlag {
 
     shortHelpDisplay = 'Displays all currently Cached information.';
 
-    helpDisplay: string[] = [
-        h1(`Display Cache`),
-        nl(`This flag allows you to display the currently saved`),
-        nl(`cache information.`),
-        '',
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Display Cache']],
+            ['p', 'This flag allows you to display the currently saved cache information.'],
+            null,
+        ];
+    }
 
     exec = Kitsu.displayCacheInfo;
 }

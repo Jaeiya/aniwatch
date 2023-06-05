@@ -23,7 +23,7 @@ type LogParagraph =
 type LogCommandDefinition =
     | [kind: 'd' | 'cd', message: [word: string, definition: string], marginOffset: number]
     | [kind: 'd' | 'cd', message: [word: string, definition: string]];
-type LogSyntax = [kind: 's', message: [commands: string[], args: string]];
+type LogSyntax = [kind: 's', message: [commands: string[] | null, args: string]];
 type LogCommandExample = [kind: 'e', message: [command: string, example: string]];
 
 const _leftLogMargin = 3;

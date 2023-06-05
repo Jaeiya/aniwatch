@@ -1,12 +1,10 @@
 import { readdir, stat, unlink } from 'node:fs/promises';
-import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { pathJoin } from '../../utils.js';
 import { Dirent } from 'node:fs';
+import { Log } from '../../printer/printer.js';
 
-const { h1, h2, nl, i2 } = Help.display;
-
-export class CleanFlag implements CLIFlag {
+export class CleanFlag extends CLIFlag {
     name: CLIFlagName = ['cln', 'clean'];
     type: CLIFlagType = 'multiArg';
 
@@ -27,31 +25,43 @@ export class CleanFlag implements CLIFlag {
 
     shortHelpDisplay = 'Provides two methods to clean your "watched" directory.';
 
-    helpSyntax: string[] = [
-        h2(`Syntax`),
-        nl(`;by;wak ;x;[;bc;-cln ;x;| ;bc;--clean;x;] ;y;<all|old>`),
-        '',
-        h2(`Details`),
-        nl(`;y;all  ;x;Deletes all files within the ;m;watched ;x;directory.`),
-        '',
-        nl(';y;old  ;x;Keeps ;m;only ;x;the latest watched file from each'),
-        i2('  ;x;anime series; deleting the rest.'),
-        '',
-        h2(`Examples`),
-        nl(`;by;wak ;bc;-cln ;y;all`),
-        nl(`;by;wak ;bc;--clean ;y;all`),
-        nl(`;by;wak ;bc;-cln ;y;old`),
-        nl(`;by;wak ;bc;--clean ;y;old`),
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Clean']],
+            [
+                'p',
+                'This flag allows you to clean your watched directory using two different ' +
+                    'methods: removing ;x;all ;bk;files or keeping the ;x;latest ' +
+                    ';bk;files only.',
+            ],
+            null,
+        ];
+    }
 
-    helpDisplay: string[] = [
-        h1(`Clean`),
-        nl(`This flag allows you to clean your watched directory`),
-        nl(`using two different methods: removing ;x;all ;bk;files or`),
-        nl(`keeping the ;x;latest ;bk;files only.`),
-        '',
-        ...this.helpSyntax,
-    ];
+    getSyntaxHelpLogs(): Log[] {
+        return [
+            ['h2', ['Syntax']],
+            ['s', [['cln', 'clean'], '<all|old>']],
+            null,
+            ['h2', ['Details']],
+            ['d', ['all', 'Deletes all files within the ;m;watched ;x;directory.']],
+            null,
+            [
+                'd',
+                [
+                    'old',
+                    'Keeps ;m;only ;x;the latest watched file from each anime ' +
+                        'series; deleting the rest.',
+                ],
+            ],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['cln', 'all']],
+            ['e', ['clean', 'all']],
+            ['e', ['cln', 'old']],
+            ['e', ['clean', 'old']],
+        ];
+    }
 
     exec: (cli: typeof CLI) => void | Promise<void> = async (cli) => {
         const [arg] = cli.nonFlagArgs;

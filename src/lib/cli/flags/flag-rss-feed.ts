@@ -1,11 +1,9 @@
-import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import * as rss from '../../rss.js';
 import { truncateStr } from '../../utils.js';
+import { Log } from '../../printer/printer.js';
 
-const { h1, h2, nl } = Help.display;
-
-export class RSSFeedFlag implements CLIFlag {
+export class RSSFeedFlag extends CLIFlag {
     name: CLIFlagName = ['rss', 'rss-feed'];
     type: CLIFlagType = 'multiArg';
 
@@ -19,31 +17,39 @@ export class RSSFeedFlag implements CLIFlag {
         'lookup rss',
     ];
 
-    helpSyntax: string[] = [
-        h2(`Syntax`),
-        nl(`;by;wak ;x;[;bc;-rss ;x;| ;bc;--rss-feed;x;] ;y;<name>`),
-        '',
-        h2(`Details`),
-        nl(`;y;name    ;x;The exact name or partial name of any anime.`),
-        '',
-        h2(`Examples`),
-        nl(`;by;wak ;bc;-rss ;y;"subsplease boku no hero 1080p"`),
-        nl(`;by;wak ;bc;--rss-feed ;y;asw berserk 720p`),
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['RSS Feed']],
+            [
+                'p',
+                'Searches ;x;nyaa.si ;bk;using your provided search terms. This results ' +
+                    'in the number of torrents found, file-name of the latest torrent and ' +
+                    'an RSS feed link.',
+            ],
+            null,
+            [
+                'p',
+                ';m;NOTE: ;bk;This allows you to quickly set up RSS for your torrents to be ' +
+                    'downloaded automatically. The number of entries should clue you in on ' +
+                    'whether or not you need to refine your search.',
+            ],
+            null,
+        ];
+    }
 
-    helpDisplay: string[] = [
-        h1(`RSS Feed`),
-        nl(`Searches ;x;nyaa.si;bk; using your provided search terms`),
-        nl(`This results in the number of torrents found,`),
-        nl(`file-name of latest torrent and an RSS Feed link.`),
-        '',
-        nl(`;m;NOTE: ;bk;This allows you to quickly set up RSS for your`),
-        nl(`torrents to be downloaded automatically. The number`),
-        nl(`of entries should clue you in on whether or not you`),
-        nl(`need to refine your search.`),
-        '',
-        ...this.helpSyntax,
-    ];
+    getSyntaxHelpLogs(): Log[] {
+        return [
+            ['h2', ['Syntax']],
+            ['s', [['rss', 'rss-feed'], '<name>']],
+            null,
+            ['h2', ['Details']],
+            ['d', ['name', 'The exact name or partial name of any anime.']],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['rss', 'subsplease bou no hero 1080p']],
+            ['e', ['rss-feed', 'asw berserk 720p']],
+        ];
+    }
 
     async exec(cli: typeof CLI) {
         _con.chainInfo(['', ';bm;... RSS Lookup ...']);

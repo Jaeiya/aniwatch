@@ -1,12 +1,10 @@
-import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
 import { SerializedAnime } from '../../kitsu/kitsu-types.js';
 import { truncateStr } from '../../utils.js';
+import { Log } from '../../printer/printer.js';
 
-const { h1, h2, nl, i2 } = Help.display;
-
-export class FindAnimeFlag implements CLIFlag {
+export class FindAnimeFlag extends CLIFlag {
     name: CLIFlagName = ['f', 'find-anime'];
     type: CLIFlagType = 'multiArg';
 
@@ -18,32 +16,42 @@ export class FindAnimeFlag implements CLIFlag {
         'search anime',
     ];
 
-    helpSyntax: string[] = [
-        h2(`Syntax`),
-        nl(`;by;wak ;x;[;bc;-f ;x;| ;bc;--find-anime;x;] ;y;<name>`),
-        '',
-        h2(`Details`),
-        nl(`;y;name   ;x;The name of any anime in your "currently watching"`),
-        i2(`    list on Kitsu.`),
-        '',
-        h2(`Examples`),
-        nl(`;by;wak ;bc;-f ;y;"boku no hero"`),
-        nl(`;by;wak ;bc;--find-anime ;y;berserk`),
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Find Anime']],
+            [
+                'p',
+                'This flag allows you to lookup an anime that already exists in your ' +
+                    'Kitsu ;x;Currently Watching ;bk;list, which is cached on your disk.',
+            ],
+            null,
+            [
+                'p',
+                ';m;NOTE: ;bk;If the anime is not found, either it was typed incorrectly ' +
+                    'or it needs to be added to your watch list. If you add it to your watch ' +
+                    `list, you'll need to rebuild the cache with ;c;-rc ;bk;or ` +
+                    `;c;--rebuild-cache;bk;.`,
+            ],
+            null,
+        ];
+    }
 
-    helpDisplay: string[] = [
-        h1(`Find Anime`),
-        nl(`This flag allows you to lookup an anime that already`),
-        nl(`exists in your "currently watching" list, which is`),
-        nl(`cached on your disk.`),
-        '',
-        nl(`;m;NOTE: ;bk;If the anime is not found, either it was typed`),
-        nl(`incorrectly or it needs to be added to your watch`),
-        nl(`list. If you add it to your watch list, you'll need`),
-        nl(`to rebuild the cache with ;bc;-rc ;bk;or ;bc;--rebuild-cache;bk;.`),
-        '',
-        ...this.helpSyntax,
-    ];
+    getSyntaxHelpLogs(): Log[] {
+        return [
+            ['h2', ['Syntax']],
+            ['s', [['f', 'find-anime'], '<name>']],
+            null,
+            ['h2', ['Details']],
+            [
+                'd',
+                ['name', 'The name of any anime in your "currently watching" list on Kitsu.'],
+            ],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['f', 'boku no hero']],
+            ['e', ['find-anime', 'boku no hero']],
+        ];
+    }
 
     async exec(cli: typeof CLI) {
         displayAnimeList(await getAnimeList(cli));

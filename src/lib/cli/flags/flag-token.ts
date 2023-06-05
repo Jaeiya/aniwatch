@@ -2,10 +2,11 @@ import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
 import { getTimeUnits } from '../../utils.js';
+import { Log } from '../../printer/printer.js';
 
-const { h1, h2, i3, i4, nl } = Help.display;
+const { nl } = Help.display;
 
-export class TokenFlag implements CLIFlag {
+export class TokenFlag extends CLIFlag {
     name: CLIFlagName = ['t', 'token'];
     type: CLIFlagType = 'multiArg';
 
@@ -22,42 +23,60 @@ export class TokenFlag implements CLIFlag {
     ];
 
     shortHelpDisplay = 'Displays info about your access Token.';
-    helpSyntax: string[] = [
-        h2(`Syntax`),
-        nl(`;by;wak ;x;[;bc;-t ;x;| ;bc;--token;x;] ;y;<info|reset|refresh>`),
-        '',
-        h2(`Details`),
-        nl(`   ;y;info  ;x;Displays your tokens and their expiration.`),
-        '',
-        nl(`  ;y;reset  ;x;Prompts you to log in again with your password`),
-        i3(`   ;x;to grant a brand new access token.`),
-        '',
-        nl(`;y;refresh  ;x;Refreshes your access token, which resets`),
-        i3(`   ;x;its expiration date.`),
-        '',
-        h2(`Examples`),
-        nl(`;by;wak ;bc;-t ;y;info`),
-        nl(`;by;wak ;bc;--token ;y;info`),
-        nl(`;by;wak ;bc;-t ;y;reset`),
-        nl(`;by;wak ;bc;--token ;y;reset`),
-        nl(`;by;wak ;bc;-t ;y;refresh`),
-        nl(`;by;wak ;bc;--token ;y;refresh`),
-    ];
 
-    helpDisplay: string[] = [
-        h1(`Control and Display Token`),
-        nl(`Your access token is what allows you to connect to`),
-        nl(`the Kitsu API and update your watch list. This command lets`),
-        nl(`you know the expiration of that token and how to ;x;refresh`),
-        nl(`;bk;or ;x;reset ;bk;it.`),
-        ' ',
-        nl(`;m;Resetting: ;bk;This is only necessary if your token ;x;expires;bk;.`),
-        '',
-        nl(`;m;Refreshing: ;bk;This is only necessary when your token is`),
-        i4(`   ;x;about ;bk;to ;x;expire;bk;.`),
-        '',
-        ...this.helpSyntax,
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Control and Displays Token']],
+            [
+                'p',
+                'Your access token is what allows you to connect to the Kitsu API and ' +
+                    'update your watch list. This command lets you know the expiration of ' +
+                    'that token and how to ;x;refresh ;bk;or ;x;reset ;bk;it.',
+            ],
+            null,
+            ['p', ';m;Resetting: ;bk;This is only necessary if your token ;x;expires;bk;.'],
+            null,
+            [
+                'p',
+                ';m;Refreshing: ;bk;This is only necessary when your token is ;x;about ' +
+                    ';bk;to ;x;expire;bk;.',
+            ],
+            null,
+        ];
+    }
+
+    getSyntaxHelpLogs(): Log[] {
+        return [
+            ['h2', ['Syntax']],
+            ['s', [['t', 'token'], '<info|reset|refresh>']],
+            null,
+            ['h2', ['Details']],
+            ['d', ['info', 'Displays your tokens and their expiration'], 3],
+            null,
+            [
+                'd',
+                [
+                    'reset',
+                    'Prompts you to log in again with your password to grant ' +
+                        'a brand new access token.',
+                ],
+                2,
+            ],
+            null,
+            [
+                'd',
+                ['refresh', 'Refreshes your access token, which resets its expiration date.'],
+            ],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['t', 'info']],
+            ['e', ['token', 'info']],
+            ['e', ['t', 'reset']],
+            ['e', ['token', 'reset']],
+            ['e', ['t', 'refresh']],
+            ['e', ['token', 'refresh']],
+        ];
+    }
 
     readonly longTokenDesc = [
         nl(`Your access token grants you access to the Kitsu `),

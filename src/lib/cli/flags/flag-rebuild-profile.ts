@@ -1,10 +1,8 @@
-import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
+import { Log } from '../../printer/printer.js';
 
-const { h1, nl } = Help.display;
-
-export class RebuildProfileFlag implements CLIFlag {
+export class RebuildProfileFlag extends CLIFlag {
     name: CLIFlagName = ['rp', 'rebuild-profile'];
     type: CLIFlagType = 'simple';
 
@@ -12,13 +10,17 @@ export class RebuildProfileFlag implements CLIFlag {
 
     shortHelpDisplay = 'Rebuilds your profile data from Kitsu.';
 
-    helpDisplay: string[] = [
-        h1(`Rebuild Profile`),
-        nl(`Rebuilds your profile data from Kitsu. This is`),
-        nl(`useful if you want up-to-date watch time info`),
-        nl(`after you've watched an episode.`),
-        '',
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Rebuild Profile']],
+            [
+                'p',
+                'Rebuilds your profile data from Kitsu. This is useful if you want up-to-date ' +
+                    `watch time info after you've watched an episode.`,
+            ],
+            null,
+        ];
+    }
 
     exec = Kitsu.rebuildProfile;
 }

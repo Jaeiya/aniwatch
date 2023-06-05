@@ -1,69 +1,126 @@
-import { Help } from '../../help.js';
+import { Log, Printer } from '../../printer/printer.js';
+import { fitStringEnd } from '../../utils.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 
-const { h1, h2, nl, i2 } = Help.display;
-
-export class HelpFlag implements CLIFlag {
+export class HelpFlag extends CLIFlag {
     name: CLIFlagName = ['h', 'help'];
     type: CLIFlagType = 'multiArg';
 
-    helpAliases: string[] = [...this.name, 'need help', 'how to use help'];
+    helpAliases = [...this.name, 'need help', 'how to use help'];
 
-    helpDisplay: string[] = [
-        h1(`Help`),
-        nl(`Allows you to discover all functionality about`),
-        nl(`this application.`),
-        '',
-        h2(`Syntax`),
-        nl(`;by;wak ;x;[;bc;-h ;x;| ;bc;--help;x;] ;y;<all|simple|flag|desc>`),
-        '',
-        h2(`Details`),
-        nl(`;y;all    ;x;Displays all available help entries (Huge List).`),
-        '',
-        nl(`;y;simple ;x;Displays help for all basic commands.`),
-        '',
-        nl(`;y;flag   ;x;The name of an existing flag that you want more`),
-        i2(`    help with.`),
-        '',
-        nl(`;y;desc   ;x;Description of the action you want help for.`),
-        '',
-        h2(`Examples`),
-        nl(`;by;wak ;bc;-h ;y;all           ;bk;(Displays all default help)`),
-        nl(`;by;wak ;bc;-h ;y;f             ;bk;(Displays --find-anime help)`),
-        nl(`;by;wak ;bc;-h ;y;c             ;bk;(Displays --cache help)`),
-        nl(`;by;wak ;bc;-h ;y;basic usage   ;bk;(Displays how to watch anime)`),
-        nl(`;by;wak ;bc;-h ;y;show profile  ;bk;(Displays --profile help)`),
-        nl(`;by;wak ;bc;-h ;y;reload cache  ;bk;(Displays --rebuild-cache help)`),
-        '',
-        h2(`Broad Explanation`),
-        nl(`When using the ;y;desc ;bk;argument, think of the event`),
-        nl(`you're trying to get help with. If you want to know how`),
-        nl(`to lookup an existing anime, you could type something`),
-        nl(`like ;x;search anime ;bk;or ;x;lookup anime ;bk;as a ;y;desc ;bk;argument.`),
-        '',
-        nl(`There's still a possibility that you type in an unknown`),
-        nl(`description, but if you think about it long enough, you`),
-        nl(`should be able to figure out a known description for`),
-        nl(`the functionality you're looking for.`),
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Help']],
+            [
+                'p',
+                'Allows you to discover, learn, or find command flags. Detailed ' +
+                    'documentation has been created for every flag, including common aliases. ',
+            ],
+            null,
+        ];
+    }
+
+    getSyntaxHelpLogs(): Log[] {
+        return [
+            ['h2', ['Syntax']],
+            ['s', [['h', 'help'], '<all|simple|flag|desc>']],
+            null,
+            ['h2', ['Details']],
+            ['d', ['all', 'Displays all available help entries (Huge List).'], 3],
+            null,
+            ['d', ['simple', 'Displays help for all basic commands.']],
+            null,
+            ['d', ['flag', 'The name of an existing flag that you want more help with'], 2],
+            null,
+            ['d', ['desc', 'Description of the action you want help for.'], 2],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['h', 'all']],
+            ['e', ['h', 'find anime']],
+            ['e', ['h', 'cache']],
+            ['e', ['h', 'basic usage']],
+            ['e', ['h', 'show profile']],
+            ['e', ['h', 'reload cache']],
+            null,
+            ['h2', ['Broad Explanation']],
+            [
+                'p',
+                'When using the ;y;desc ;bk;argument, think of the event ' +
+                    `you're trying to get help with. If you want to know how ` +
+                    `to lookup an existing anime, you could type something like ` +
+                    `;x;search anime ;bk;or ;x;lookup anime ;bk;as a ;y;desc ;bk;argument.`,
+            ],
+            null,
+            [
+                'p',
+                `There's still a possibility that you type in an unknown description, ` +
+                    `but if you think about it long enough, you should be able to figure ` +
+                    `out a known description for the functionality you're lacking.`,
+            ],
+        ];
+    }
 
     exec(cli: typeof CLI) {
         const helpArg = cli.nonFlagArgs.join(' ');
         if (helpArg == 'simple') {
-            Help.displaySimpleHelp();
+            // Help.displaySimpleHelp();
+            Printer.print(getSimpleFlagHelp(cli.flags));
             return;
         }
 
         if (helpArg == 'all') {
-            Help.displayAllHelp();
+            cli.flags.forEach((f) => {
+                Printer.print([null, null]);
+                f.printHelp();
+                Printer.print([null, null]);
+            });
             return;
         }
 
-        const helpStrings = Help.findHelp(helpArg);
-        if (!helpStrings) {
-            _con.chainError(['', `Could not find help using: ;by;${helpArg}`]);
-            return;
+        const flag = cli.flags.find((f) => f.helpAliases.includes(helpArg));
+        if (!flag) {
+            Printer.printWarning(
+                ['Try searching with broader search terms or using a specific flag name.'],
+                'Flag Not Found'
+            );
+        } else {
+            Printer.print([null, null]);
+            flag.printHelp();
         }
-        Help.displayHelp(['', '', ...helpStrings]);
     }
+}
+
+function getSimpleFlagHelp(flags: CLIFlag[]) {
+    const flagsDescription: Log[] = [
+        null,
+        ['h1', ['Simple Flag Usage']],
+        [
+            'p',
+            'These are flags that can only be used by themselves without arguments. ' +
+                'If an attempt is made to use them with other flags or arguments, an error ' +
+                'will occur.',
+        ],
+    ];
+    const flagSyntax: Log[] = [null, ['h2', ['Syntax']]];
+    const flagDetails: Log[] = [null, ['h2', ['Details']]];
+    for (const flag of flags) {
+        if (flag.type == 'simple') {
+            const [shortName, longName] = flag.name;
+            const syntax = `;x;[ ;c;-${fitStringEnd(shortName, 3)} | -${fitStringEnd(
+                longName,
+                15
+            )} ;x;]`;
+            if (flagSyntax.length == 2) {
+                flagSyntax.push(['p', `;by;wak ${syntax}`]);
+            } else {
+                flagSyntax.push(['p', `${syntax}`, 4]);
+            }
+
+            flagDetails.push(
+                ['cd', [`${shortName}`, flag.shortHelpDisplay], 3 - shortName.length],
+                null
+            );
+        }
+    }
+    return [...flagsDescription, ...flagSyntax, ...flagDetails];
 }

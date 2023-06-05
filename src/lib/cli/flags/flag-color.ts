@@ -1,10 +1,8 @@
-import { Help } from '../../help.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Config } from '../../config.js';
+import { Log } from '../../printer/printer.js';
 
-const { h1, nl } = Help.display;
-
-export class ColorFlag implements CLIFlag {
+export class ColorFlag extends CLIFlag {
     name: CLIFlagName = ['cl', 'color'];
     type: CLIFlagType = 'simple';
 
@@ -18,17 +16,20 @@ export class ColorFlag implements CLIFlag {
 
     shortHelpDisplay = 'Toggle the console colors ;bg;On ;x;or ;r;Off;bk;.';
 
-    helpDisplay: string[] = [
-        h1(`Toggle Console Color`),
-        nl(`Turns ;bg;On ;bk;or ;r;Off ;bk;the console colors. `),
-        ' ',
-        nl(`If the color is currently ;bg;On ;bk;then executing the`),
-        nl(`command will turn ;r;Off ;bk;the color.`),
-        ' ',
-        nl(`Likewise, if the color is currently ;r;Off;bk;, `),
-        nl(`executing the command will turn ;bg;On ;bk;the color.`),
-        '',
-    ];
+    getHelpLogs(): Log[] {
+        return [
+            ['h1', ['Toggle Console Color']],
+            ['p', 'Turns ;g;On ;bk;or ;r;Off ;bk;the console colors.'],
+            null,
+            [
+                'p',
+                'If the color is currently ;g;On;bk;, then executing the command will turn ' +
+                    ';r;Off ;bk;the color. Likewise, if the color is currently ;r;Off;bk;, ' +
+                    'executing the command will turn ;g;On ;bk;the color.',
+            ],
+            null,
+        ];
+    }
 
     exec = () => {
         const colorState = Config.get('useColor');

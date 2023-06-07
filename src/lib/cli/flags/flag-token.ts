@@ -1,10 +1,7 @@
-import { Help } from '../../help.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
 import { getTimeUnits } from '../../utils.js';
-import { Log } from '../../printer/printer.js';
-
-const { nl } = Help.display;
+import { Log, Printer } from '../../printer/printer.js';
 
 export class TokenFlag extends CLIFlag {
     name: CLIFlagName = ['t', 'token'];
@@ -78,15 +75,20 @@ export class TokenFlag extends CLIFlag {
         ];
     }
 
-    readonly longTokenDesc = [
-        nl(`Your access token grants you access to the Kitsu `),
-        nl(`API, so if it expires, you no longer have access.`),
-        ' ',
-        nl(`Shown below, is an expiration timer that goes from`),
-        nl(`;bg;Green ;bk;to ;by;Yellow ;bk;to ;br;Red;bk;. The closer you get to Red,`),
-        nl(`the closer the token is to expiring. You should`),
-        nl(`refresh the token ;x;as soon as ;bk;it turns Red.`),
-        '',
+    readonly longTokenDesc: Log[] = [
+        [
+            'p',
+            'Your access token grants you access to the Kitsu API, so if it expires, you ' +
+                'no longer have access.',
+        ],
+        null,
+        [
+            'p',
+            'Shown below, is an expiration timer that goes from ;bg;Green ;bk;to ;by;Yellow ' +
+                ';bk;to ;br;Red;bk;. The closer you get to Red, the closer the token is to ' +
+                'expiring.. You should refresh the token ;x;as soon as ;k;it turns Red.',
+        ],
+        null,
     ];
 
     exec: (cli: typeof CLI) => void | Promise<void> = async (cli) => {
@@ -108,15 +110,16 @@ export class TokenFlag extends CLIFlag {
     };
 }
 
-function showTokenInfo(title: string, description: string[] = []) {
+function showTokenInfo(title: string, description: Log[] = []) {
     const tokenInfo = Kitsu.tokenInfo;
-    _con.chainInfo([
-        '',
-        `;by;${title}`,
+    Printer.print([
+        null,
+        null,
+        ['h1', [title]],
         ...description,
-        nl(`;bc; Access Token: ;bk;${tokenInfo.accessToken}`),
-        nl(`;bc;Refresh Token: ;bk;${tokenInfo.refreshToken}`),
-        nl(`;bc;   Expires In: ${getTokenExpirationStr(tokenInfo.expiresSec)}`),
+        ['p', `;bc;Access Token: ;bk;${tokenInfo.accessToken}`, 1],
+        ['p', `;bc;Refresh Token: ;bk;${tokenInfo.refreshToken}`],
+        ['p', `;bc;Expires In: ;bk;${getTokenExpirationStr(tokenInfo.expiresSec)}`, 3],
     ]);
 }
 

@@ -1,5 +1,4 @@
 import { readdir } from 'fs/promises';
-import { Help } from '../../help.js';
 import {
     FansubFilenameData,
     createReadableBytesFunc,
@@ -10,7 +9,7 @@ import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { stat } from 'fs/promises';
 import { Dirent } from 'fs';
 import { fitStringEnd } from '../../utils.js';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 
 type FileStat = [
     bytes: number,
@@ -19,7 +18,6 @@ type FileStat = [
     filenameData: FansubFilenameData
 ];
 
-const { h2, nl } = Help.display;
 const toReadableBytes = createReadableBytesFunc();
 
 export class DirInfoFlag extends CLIFlag {
@@ -59,7 +57,6 @@ export class DirInfoFlag extends CLIFlag {
 }
 
 function displayFolderInfo(fileStats: Awaited<ReturnType<typeof serializeFileStats>>) {
-    const indent = ' '.repeat(8);
     const {
         size,
         fileCount,
@@ -76,30 +73,34 @@ function displayFolderInfo(fileStats: Awaited<ReturnType<typeof serializeFileSta
         smallestFileSize,
     } = fileStats;
 
-    _con.chainInfo([
-        `;by;Watched Folder Info`,
-        nl(`The following is a detailed analysis of the "watched"`),
-        nl(`folder on your disk.`),
-        '',
-        h2(`Folder Details`),
-        nl(`;bc;${fitStringEnd('Size', 15)} ;bk;: ;y;${size}`),
-        nl(`;bc;${fitStringEnd('File Count', 15)} ;bk;: ;y;${fileCount}`),
-        nl(`;bc;${fitStringEnd('Avg. File Size', 15)} ;bk;: ;y;${avgFileSize}`),
-        '',
-        h2(`File Details`),
-        nl(`;bc;${fitStringEnd('Newest', 8)} ;bk;: ;x;${lastWatchedFile}`),
-        nl(`${indent} ;bk;: ;y;${lastWatchedFileDate.toLocaleString()}`),
-        nl(`${indent} ;bk;: ;y;${lastWatchedFileSize}`),
-        ' ',
-        nl(`;bc;${fitStringEnd('Oldest', 8)} ;bk;: ;x;${oldestFile}`),
-        nl(`${indent} ;bk;: ;y;${oldestFileDate.toLocaleString()}`),
-        nl(`${indent} ;bk;: ;y;${oldestFileSize}`),
-        ' ',
-        nl(`;bc;${fitStringEnd('Largest', 8)} ;bk;: ;x;${largestFile}`),
-        nl(`${indent} ;bk;: ;y;${largestFileSize}`),
-        ' ',
-        nl(`;bc;${fitStringEnd('Smallest', 8)} ;bk;: ;x;${smallestFile}`),
-        nl(`${indent} ;bk;: ;y;${smallestFileSize}`),
+    const indent = 9;
+
+    Printer.print([
+        null,
+        null,
+        ['h2', ['Directory Details']],
+        [
+            'p',
+            `;c;${fitStringEnd('Location', 15)} ;x;: ;g;${pathJoin(process.cwd(), 'watched')}`,
+        ],
+        ['p', `;c;${fitStringEnd('Size', 15)} ;x;: ;y;${size}`],
+        ['p', `;c;${fitStringEnd('File Count', 15)} ;x;: ;y;${fileCount}`],
+        ['p', `;c;${fitStringEnd('Avg. File Size', 15)} ;x;: ;y;${avgFileSize}`],
+        null,
+        ['h2', ['File Details']],
+        ['p', `;c;${fitStringEnd('Newest', 8)} ;bk;: ;x;${lastWatchedFile}`],
+        ['p', `: ;y;${lastWatchedFileDate.toLocaleString()}`, indent],
+        ['p', `: ;y;${lastWatchedFileSize}`, indent],
+        null,
+        ['p', `;c;${fitStringEnd('Oldest', 8)} ;bk;: ;x;${oldestFile}`],
+        ['p', `: ;y;${oldestFileDate.toLocaleString()}`, indent],
+        ['p', `: ;y;${oldestFileSize}`, indent],
+        null,
+        ['p', `;c;${fitStringEnd('Largest', 8)} ;bk;: ;x;${largestFile}`],
+        ['p', `: ;y;${largestFileSize}`, indent],
+        null,
+        ['p', `;c;${fitStringEnd('Smallest', 8)} ;bk;: ;x;${smallestFile}`],
+        ['p', `: ;y;${smallestFileSize}`, indent],
     ]);
 }
 

@@ -13,8 +13,17 @@ export class HelpFlag extends CLIFlag {
             ['h1', ['Help']],
             [
                 'p',
-                'Allows you to discover, learn, or find command flags. Detailed ' +
-                    'documentation has been created for every flag, including common aliases. ',
+                ';m;About: ;bk;This is Wakitsu, which is just a combination of the words ' +
+                    ';x;watch ;bk;and ;x;kitsu;bk;; a command line utility for ' +
+                    'interacting with Kitsu.io. It allows you to update your watch list, ' +
+                    'find anime, or add anime to your watch list, to name a few of its ' +
+                    'functions.',
+            ],
+            null,
+            [
+                'p',
+                ';m;Usage: ;bk;The best place to start is to look at the examples below and ' +
+                    'test out the described command behavior.',
             ],
             null,
         ];

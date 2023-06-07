@@ -33,14 +33,15 @@ const _colorText = PrinterColor.colorText;
 
 export class Printer {
     static printInfo(messages: string[], header?: string) {
+    static printInfoBlock(messages: string[], header?: string) {
         this.printBlock({ headColor: 'g', msgColor: 'x' }, header ?? 'INFO', messages);
     }
 
-    static printError(messages: string[], header?: string) {
+    static printErrorBlock(messages: string[], header?: string) {
         this.printBlock({ headColor: 'r', msgColor: 'y' }, header ?? 'ERROR', messages);
     }
 
-    static printWarning(messages: string[], header?: string) {
+    static printWarningBlock(messages: string[], header?: string) {
         this.printBlock({ headColor: 'y', msgColor: 'c' }, header ?? 'WARNING', messages);
     }
 

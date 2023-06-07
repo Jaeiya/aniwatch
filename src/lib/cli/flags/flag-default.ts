@@ -1,6 +1,6 @@
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { watchAnime } from '../../watch.js';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 
 export class DefaultFlag extends CLIFlag {
     name: CLIFlagName = ['', 'default'];
@@ -91,6 +91,36 @@ export class DefaultFlag extends CLIFlag {
             process.exit(1);
         }
 
-        watchAnime(flagArgs[0], [flagArgs[1], flagArgs[2] || ''], process.cwd());
+        const [epName, epNumber, epForcedNum] = flagArgs;
+
+        if (epName.length < 3) {
+            Printer.printWarning(
+                'Episode names must be longer than 2 characters.',
+                'Invalid Name'
+            );
+            return;
+        }
+
+        if (isNaN(parseInt(epNumber))) {
+            Printer.printError(
+                `You entered an invalid Episode Number: ;x;${epNumber}`,
+                'Invalid Number'
+            );
+            Printer.print([null, null]);
+            this.printSyntax();
+            return;
+        }
+
+        if (epForcedNum && isNaN(parseInt(epForcedNum))) {
+            Printer.printError(
+                `You entered an invalid ;bw;Forced ;y;Episode Number: ;x;${epForcedNum}`,
+                'Invalid Number'
+            );
+            Printer.print([null, null]);
+            this.printSyntax();
+            return;
+        }
+
+        watchAnime(epName, [epNumber, epNumber || '0'], process.cwd());
     }
 }

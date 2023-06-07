@@ -23,7 +23,6 @@ export async function watchAnime(
     epNumStrings: [string, string],
     workingDir: string
 ) {
-    validateParams([epName, epNumStrings, workingDir]);
     _con.chainInfo(['', `;bc;Working directory: ;g;${workingDir}`]);
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
@@ -59,32 +58,6 @@ export async function watchAnime(
         fileName: foundFileName,
     });
     moveFileToWatchedDir(foundFileName, workingDir);
-}
-
-function validateParams(params: [string, string[], string]) {
-    const [epName, epNumbers, workingDir] = params;
-
-    if (!existsSync(workingDir)) {
-        _con.error(`Working directory invalid: ;y;${workingDir}`);
-        process.exit(1);
-    }
-
-    const hasInvalidArgs =
-        !epName ||
-        !epNumbers.length ||
-        isNaN(Number(epNumbers[0])) ||
-        isNaN(Number(epNumbers[1]));
-
-    if (hasInvalidArgs) {
-        _con.chainError([
-            'Incorrect Argument Syntax',
-            `;by;Read the syntax below and try again`,
-            '',
-        ]);
-        const defaultHelp = Help.findHelp('default');
-        if (defaultHelp) Help.displayHelp(defaultHelp);
-        process.exit(1);
-    }
 }
 
 function tryCreateWatchedDir(workingDir: string) {

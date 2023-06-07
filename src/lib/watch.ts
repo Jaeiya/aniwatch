@@ -1,7 +1,6 @@
 import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import { Kitsu } from './kitsu/kitsu.js';
 import { parseFansubFilename, pathJoin, truncateStr } from './utils.js';
-import { Help } from './help.js';
 import { KitsuCacheItem, KitsuCache } from './kitsu/kitsu-types.js';
 import { Config } from './config.js';
 

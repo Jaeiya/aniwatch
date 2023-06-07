@@ -78,6 +78,11 @@ export class DefaultFlag extends CLIFlag {
         const flagArgs = cli.nonFlagArgs;
 
         if (!cli.userArgs.length) {
+            const helpFlag = cli.flags.find((f) => f.name.includes('help'));
+            if (helpFlag) {
+                Printer.print([null, null]);
+                helpFlag.printHelp();
+            }
             return;
         }
 

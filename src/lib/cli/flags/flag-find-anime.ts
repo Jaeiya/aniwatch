@@ -73,6 +73,14 @@ async function getAnimeList(cli: typeof CLI) {
         );
         process.exit(0);
     }
+    Printer.print([
+        null,
+        ['py', ['Query', cli.nonFlagArgs.join(' ')], 1],
+        ['py', ['Status', `;m;${animeList.length} ;g;Anime Found`]],
+        null,
+        ['h3', ['Anime']],
+        ['hl', ';c;', 70],
+    ]);
     return animeList;
 }
 
@@ -81,7 +89,6 @@ function displayAnimeList(animeList: SerializedAnime[]) {
         const totalEps = anime.epCount ? anime.epCount : `;r;unknown`;
         const synonyms: Log[] = anime.synonyms.map((s) => ['py', [';b;Alt Title', s], 2]);
         Printer.print([
-            null,
             ['py', ['Title JP', anime.title_jp], 3],
             ['py', ['Title EN', anime.title_en || ';r;undefined'], 3],
             ...synonyms,
@@ -90,6 +97,7 @@ function displayAnimeList(animeList: SerializedAnime[]) {
             ['py', ['Avg. Rating', `;g;${anime.avgRating}`]],
             ['py', ['Synopsis', `${anime.synopsis.trim()}`], 3],
             ['', `;b;Link: ;x;${anime.link}`, 10],
+            ['hl', ';c;', 70],
         ]);
     });
 }

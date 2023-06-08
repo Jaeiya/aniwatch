@@ -83,7 +83,7 @@ function displayAnimeList(animeList: SerializedAnime[]) {
         Printer.print([
             null,
             ['py', ['Title JP', anime.title_jp], 3],
-            ['py', ['Title EN', anime.title_en], 3],
+            ['py', ['Title EN', anime.title_en || ';r;undefined'], 3],
             ...synonyms,
             ['py', ['Progress', `;g;${anime.epProgress} ;by;/ ;m;${totalEps}`], 3],
             ['py', ['My Rating', `;g;${anime.rating ? anime.rating : ';y;Not Rated'}`], 2],

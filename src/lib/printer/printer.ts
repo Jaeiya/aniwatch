@@ -7,19 +7,26 @@ export type Log =
     | LogBasic
     | LogHeader
     | LogParagraph
+    | LogProperty
     | LogCommandDefinition
     | LogSyntax
     | LogCommandExample
     | null;
 
-type LogBasic = [kind: '', message: string];
-type LogHeader = [
-    kind: 'h1' | 'h2',
-    message: [header: string] | [header: string, message: string]
-];
+type LogBasic = [kind: '', message: string] | [kind: '', message: string, marginOffset: number];
+type LogHeader =
+    | [kind: 'h1' | 'h2' | 'h3', message: [header: string] | [header: string, message: string]]
+    | [
+          kind: 'h1' | 'h2' | 'h3',
+          message: [header: string] | [header: string, message: string],
+          marginOffset: number
+      ];
 type LogParagraph =
     | [kind: 'p', message: string, marginOffset: number]
     | [kind: 'p', message: string];
+type LogProperty =
+    | [kind: 'py', message: [property: string, value: string], marginOffset: number]
+    | [kind: 'py', message: [property: string, value: string]];
 type LogCommandDefinition =
     | [kind: 'd' | 'cd', message: [word: string, definition: string], marginOffset: number]
     | [kind: 'd' | 'cd', message: [word: string, definition: string]];
@@ -114,14 +121,14 @@ export class Printer {
 function printLog(log: Log) {
     if (log == null) return console.log('');
 
-    const [kind, message, padding] = log;
-    const realPadding = padding ?? 0;
+    const [kind, message, margin] = log;
+    const marginOffset = margin ?? 0;
 
     if (kind == '') {
-        return console.log(applyLogMargin(_colorText(message)));
+        return console.log(applyLogMargin(_colorText(message), _defaultIndent + marginOffset));
     }
 
-    if (kind == 'h1' || kind == 'h2') {
+    if (kind == 'h1' || kind == 'h2' || kind == 'h3') {
         const [header, headerMsg] = message;
         if (
             header.length > _maxLogLength ||
@@ -129,20 +136,39 @@ function printLog(log: Log) {
         ) {
             throw Error('headers cannot be larger than max log length');
         }
+        const headerColor = kind == 'h1' ? ';bw;' : ';b;';
+        const styledHeader =
+            kind == 'h1' || kind == 'h2'
+                ? `${headerColor}${header}:;x; ${headerMsg ?? ''}`
+                : `;bg;... ;bb;${header} ;bg;...;x;`;
+
         return console.log(
-            _colorText(
-                applyLogMargin(
-                    `${kind == 'h1' ? ';bw;' : ';b;'}${header}:;x; ` + (headerMsg ?? '')
-                )
-            )
+            _colorText(applyLogMargin(styledHeader, _leftLogMargin + marginOffset))
         );
     }
 
     if (kind == 'p') {
         return console.log(
             _colorText(
-                createFixedWidthSentences(`;bk;${message}`, _defaultIndent + realPadding).join(
+                createFixedWidthSentences(`;bk;${message}`, _defaultIndent + marginOffset).join(
                     '\n'
+                )
+            )
+        );
+    }
+
+    if (kind == 'py') {
+        const [prop, val] = message;
+        const sentences = createFixedWidthSentences(
+            `;bk;${val}`,
+            prop.length + 2 + marginOffset + _leftLogMargin
+        );
+        sentences[0] = `;c;${prop}: ${sentences[0].trimStart()}`;
+        return console.log(
+            _colorText(
+                applyLogMargin(
+                    sentences.join('\n'),
+                    _leftLogMargin + _defaultIndent + marginOffset
                 )
             )
         );
@@ -174,10 +200,6 @@ function printLog(log: Log) {
 
     if (kind == 'd' || kind == 'cd') {
         return printDefinitionLog(log);
-    }
-
-    if (kind == '') {
-        return console.log(_colorText(applyLogMargin(message)));
     }
 
     throw Error('invalid log');

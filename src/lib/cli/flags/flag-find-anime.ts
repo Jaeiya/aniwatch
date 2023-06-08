@@ -2,7 +2,7 @@ import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
 import { SerializedAnime } from '../../kitsu/kitsu-types.js';
 import { truncateStr } from '../../utils.js';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 
 export class FindAnimeFlag extends CLIFlag {
     name: CLIFlagName = ['f', 'find-anime'];
@@ -59,16 +59,18 @@ export class FindAnimeFlag extends CLIFlag {
 }
 
 async function getAnimeList(cli: typeof CLI) {
-    _con.chainInfo(['', ';bm;... Find Anime ...']);
+    Printer.print([null, null, ['h3', ['Find Anime']]]);
     const stopLoader = _con.printLoader('Fetching Anime');
     const animeList = await Kitsu.findLibraryAnime(cli.nonFlagArgs.join(' '));
     stopLoader();
     if (!animeList.length) {
-        _con.chainInfo([
-            `;by;No Entries Found`,
-            'The anime is either not in your cache or your search',
-            'terms were incorrectly spelled.',
-        ]);
+        Printer.print([null]);
+        Printer.printWarning(
+            'The anime is either not in your cache or your search terms were ' +
+                'incorrectly spelled',
+            'No Entries Found',
+            3
+        );
         process.exit(0);
     }
     return animeList;
@@ -77,17 +79,17 @@ async function getAnimeList(cli: typeof CLI) {
 function displayAnimeList(animeList: SerializedAnime[]) {
     animeList.forEach((anime) => {
         const totalEps = anime.epCount ? anime.epCount : `;r;unknown`;
-        const synonyms = anime.synonyms.map((s) => `;bc;Alt Title: ;bb;${s}`);
-        _con.chainInfo([
-            `;bc;Title JP: ;x;${anime.title_jp}`,
-            `;bc;Title EN: ;x;${anime.title_en || ';m;None'}`,
+        const synonyms: Log[] = anime.synonyms.map((s) => ['py', [';b;Alt Title', s], 2]);
+        Printer.print([
+            null,
+            ['py', ['Title JP', anime.title_jp], 3],
+            ['py', ['Title EN', anime.title_en], 3],
             ...synonyms,
-            `;bc;Progress: ;g;${anime.epProgress} ;by;/ ;m;${totalEps}`,
-            `;bc;My Rating: ;g;${anime.rating ? anime.rating : 'Not Rated'}`,
-            `;bc;Avg. Rating: ;g;${anime.avgRating}`,
-            `;bc;Link: ;x;${anime.link}`,
-            `;bc;Synopsis: ;x;${truncateStr(anime.synopsis, 300)}`,
-            '',
+            ['py', ['Progress', `;g;${anime.epProgress} ;by;/ ;m;${totalEps}`], 3],
+            ['py', ['My Rating', `;g;${anime.rating ? anime.rating : ';y;Not Rated'}`], 2],
+            ['py', ['Avg. Rating', `;g;${anime.avgRating}`]],
+            ['py', ['Synopsis', `${anime.synopsis.trim()}`], 3],
+            ['', `;b;Link: ;x;${anime.link}`, 10],
         ]);
     });
 }

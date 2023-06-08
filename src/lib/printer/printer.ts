@@ -11,6 +11,7 @@ export type Log =
     | LogCommandDefinition
     | LogSyntax
     | LogCommandExample
+    | LogBorder
     | null;
 
 type LogBasic = [kind: '', message: string] | [kind: '', message: string, marginOffset: number];
@@ -32,6 +33,7 @@ type LogCommandDefinition =
     | [kind: 'd' | 'cd', message: [word: string, definition: string]];
 type LogSyntax = [kind: 's', message: [commands: string[] | null, args: string]];
 type LogCommandExample = [kind: 'e', message: [command: string, example: string]];
+type LogBorder = [kind: 'hl', message: string, length: number, marginOffset?: number];
 
 const _leftLogMargin = 3;
 const _defaultIndent = 3;
@@ -126,6 +128,16 @@ function printLog(log: Log) {
 
     if (kind == '') {
         return console.log(applyLogMargin(_colorText(message), _defaultIndent + marginOffset));
+    }
+
+    if (kind == 'hl') {
+        const [, , borderLength, extraMargin] = log;
+        return console.log(
+            applyLogMargin(
+                _colorText(`${message}${'─'.repeat(borderLength)}`),
+                _leftLogMargin + (extraMargin || 0)
+            )
+        );
     }
 
     if (kind == 'h1' || kind == 'h2' || kind == 'h3') {

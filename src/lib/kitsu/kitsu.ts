@@ -268,20 +268,6 @@ export class Kitsu {
         saveTokenData(serializeTokenData(tokenResp));
     }
 
-    static async displayCacheInfo() {
-        const cache = _gK('cache');
-        _con.chainInfo([`;by;Anime Cache Info`, `;bc;Cached Anime: ;g;${cache.length}`]);
-        cache.forEach((c) => {
-            _con.chainInfo([
-                '',
-                `;bc;id: ;y;${c.libID}`,
-                `;bc;title_jp: ;x;${c.jpTitle}`,
-                `;bc;title_en: ;x;${c.enTitle}`,
-                `;bc;link: ;x;https://kitsu.io/anime/${c.slug}`,
-            ]);
-        });
-    }
-
     static displayUserProfile() {
         const stats = _gK('stats');
         const { allTimeStr, hoursAndMinutesLeft } = getColoredTimeWatchedStr(

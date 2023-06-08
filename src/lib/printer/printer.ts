@@ -231,7 +231,7 @@ function printDefinitionLog(log: LogCommandDefinition) {
 }
 
 function createFixedWidthSentences(text: string, margin = 0, logLength = _maxLogLength) {
-    const words = text.split(' ');
+    const words = text.replaceAll('\n', ' ').split(' ');
 
     const paragraph = [];
     const stripColors = PrinterColor.stripColorCodes;

@@ -215,6 +215,9 @@ function createFixedWidthSentences(text: string, margin = 0, logLength = _maxLog
     let sentence = '';
 
     while (words.length) {
+        if (words[0].length > logLength) {
+            throw Error(`Cannot paragraph a word longer than line length: "${words[0]}"`);
+        }
         const word = stripColors(words[0]);
         if (word.length + stripColors(sentence).length <= logLength) {
             sentence += `${words[0]} `;

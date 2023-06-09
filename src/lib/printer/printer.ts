@@ -25,7 +25,7 @@ type LogCommandDefinition =
     | [kind: 'd' | 'cd', message: [word: string, definition: string], marginOffset: number]
     | [kind: 'd' | 'cd', message: [word: string, definition: string]];
 type LogSyntax = [kind: 's', message: [commands: string[] | null, args: string]];
-type LogCommandExample = [kind: 'e', message: [command: string, example: string]];
+type LogCommandExample = [kind: 'e', command: [name: string, example: string]];
 type LogBorder = [kind: 'hl', colorCode: string, length: number, marginOffset?: number];
 
 const _leftLogMargin = 3;
@@ -202,10 +202,10 @@ function getPropertyLog(log: LogProperty) {
 }
 
 function getExampleLog(log: LogCommandExample) {
-    const [, message] = log;
-    const [command, example] = message;
+    const [, command] = log;
+    const [cmdName, example] = command;
     return applyLogMargin(
-        _colorText(`;by;wak;c;${command ? ` -${command}` : ''} ;y;${example}`),
+        _colorText(`;by;wak;c;${cmdName ? ` -${cmdName}` : ''} ;y;${example}`),
         _leftLogMargin + _defaultIndent
     );
 }

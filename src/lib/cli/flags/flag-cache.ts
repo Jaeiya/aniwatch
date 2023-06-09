@@ -39,7 +39,7 @@ export class CacheFlag extends CLIFlag {
             ['py', ['File Bindings', `;m;${fileBindingCount}`]],
             null,
             ['h3', ['Cached Anime']],
-            ['hl', ';bk;', 70],
+            ['hl', 'bk', 70],
         ]);
 
         for (const c of cache) {
@@ -48,7 +48,7 @@ export class CacheFlag extends CLIFlag {
                 ['py', ['title_jp', `${c.jpTitle}`]],
                 ['py', ['title_en', `${c.enTitle}`]],
                 ['', `;c;link: ;x;https://kitsu.io/anime/${c.slug}`, 7],
-                ['hl', ';bk;', 70],
+                ['hl', 'bk', 70],
             ]);
         }
     }

@@ -79,7 +79,7 @@ async function getAnimeList(cli: typeof CLI) {
         ['py', ['Status', `;m;${animeList.length} ;g;Anime Found`]],
         null,
         ['h3', ['Anime']],
-        ['hl', ';c;', 70],
+        ['hl', 'c', 70],
     ]);
     return animeList;
 }
@@ -97,7 +97,7 @@ function displayAnimeList(animeList: SerializedAnime[]) {
             ['py', ['Avg. Rating', `;g;${anime.avgRating}`]],
             ['py', ['Synopsis', `${anime.synopsis.trim()}`], 3],
             ['', `;b;Link: ;x;${anime.link}`, 10],
-            ['hl', ';c;', 70],
+            ['hl', 'c', 70],
         ]);
     });
 }

@@ -33,7 +33,7 @@ type LogCommandDefinition =
     | [kind: 'd' | 'cd', message: [word: string, definition: string]];
 type LogSyntax = [kind: 's', message: [commands: string[] | null, args: string]];
 type LogCommandExample = [kind: 'e', message: [command: string, example: string]];
-type LogBorder = [kind: 'hl', message: string, length: number, marginOffset?: number];
+type LogBorder = [kind: 'hl', colorCode: string, length: number, marginOffset?: number];
 
 const _leftLogMargin = 3;
 const _defaultIndent = 3;
@@ -161,9 +161,9 @@ function printLog(log: Log) {
 }
 
 function getBorderLog(log: LogBorder) {
-    const [, message, borderLength, extraMargin] = log;
+    const [, colorCode, borderLength, extraMargin] = log;
     return applyLogMargin(
-        _colorText(`${message}${'─'.repeat(borderLength)}`),
+        _colorText(`;${colorCode};${'─'.repeat(borderLength)}`),
         _leftLogMargin + (extraMargin || 0)
     );
 }

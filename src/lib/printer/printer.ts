@@ -126,98 +126,113 @@ function printLog(log: Log) {
     const [kind, message, margin] = log;
     const marginOffset = margin ?? 0;
 
-    if (kind == '') {
-        return console.log(applyLogMargin(_colorText(message), _defaultIndent + marginOffset));
+    switch (kind) {
+        case '':
+            return console.log(
+                applyLogMargin(_colorText(message), _defaultIndent + marginOffset)
+            );
+
+        case 'hl':
+            return console.log(getBorderLog(log));
+
+        case 'h1':
+        case 'h2':
+        case 'h3':
+            return console.log(getHeaderLog(log));
+
+        case 'p':
+            return console.log(getParagraphLog(log));
+
+        case 'py':
+            return console.log(getPropertyLog(log));
+
+        case 'e':
+            return console.log(getExampleLog(log));
+
+        case 's':
+            return console.log(getSyntaxLog(log));
+
+        case 'd':
+            return console.log(getDefinitionLog(log));
+
+        default:
+            throw Error(`Invalid Log Kind: "${kind}"`);
     }
-
-    if (kind == 'hl') {
-        const [, , borderLength, extraMargin] = log;
-        return console.log(
-            applyLogMargin(
-                _colorText(`${message}${'─'.repeat(borderLength)}`),
-                _leftLogMargin + (extraMargin || 0)
-            )
-        );
-    }
-
-    if (kind == 'h1' || kind == 'h2' || kind == 'h3') {
-        const [header, headerMsg] = message;
-        if (
-            header.length > _maxLogLength ||
-            (headerMsg && headerMsg.length + header.length > _maxLogLength)
-        ) {
-            throw Error('headers cannot be larger than max log length');
-        }
-        const headerColor = kind == 'h1' ? ';bw;' : ';b;';
-        const styledHeader =
-            kind == 'h1' || kind == 'h2'
-                ? `${headerColor}${header}:;x; ${headerMsg ?? ''}`
-                : `;bg;... ;bb;${header} ;bg;...;x;`;
-
-        return console.log(
-            _colorText(applyLogMargin(styledHeader, _leftLogMargin + marginOffset))
-        );
-    }
-
-    if (kind == 'p') {
-        return console.log(
-            _colorText(
-                createFixedWidthSentences(`;bk;${message}`, _defaultIndent + marginOffset).join(
-                    '\n'
-                )
-            )
-        );
-    }
-
-    if (kind == 'py') {
-        const [prop, val] = message;
-        const sentences = createFixedWidthSentences(
-            `;bk;${val}`,
-            prop.length + 2 + marginOffset + _leftLogMargin
-        );
-        sentences[0] = `;c;${prop}: ${sentences[0].trimStart()}`;
-        return console.log(
-            _colorText(
-                applyLogMargin(
-                    sentences.join('\n'),
-                    _leftLogMargin + _defaultIndent + marginOffset
-                )
-            )
-        );
-    }
-
-    if (kind == 'e') {
-        const [command, example] = message;
-        return console.log(
-            applyLogMargin(
-                _colorText(`;by;wak;c;${command ? ` -${command}` : ''} ;y;${example}`),
-                _leftLogMargin + _defaultIndent
-            )
-        );
-    }
-
-    if (kind == 's') {
-        const [commands, args] = message;
-
-        const resolvedMessage = commands
-            ? `;by;wak ;bk;[${commands
-                  .map((c) => `;c;${c ? ` -${c}` : ''};x;`)
-                  .join(' ;bk;|')} ;bk;] ;y;${args};x;`
-            : `;by;wak ;y;${args}`;
-
-        return console.log(
-            applyLogMargin(_colorText(resolvedMessage), _leftLogMargin + _defaultIndent)
-        );
-    }
-
-    if (kind == 'd' || kind == 'cd') {
-        return printDefinitionLog(log);
-    }
-
-    throw Error('invalid log');
 }
 
-function printDefinitionLog(log: LogCommandDefinition) {
+function getBorderLog(log: LogBorder) {
+    const [, message, borderLength, extraMargin] = log;
+    return applyLogMargin(
+        _colorText(`${message}${'─'.repeat(borderLength)}`),
+        _leftLogMargin + (extraMargin || 0)
+    );
+}
+
+function getHeaderLog(log: LogHeader) {
+    const [kind, headerData, marginOffset] = log;
+    const [header, text] = headerData;
+
+    if (
+        header.length > _maxLogLength ||
+        (text && text.length + header.length > _maxLogLength)
+    ) {
+        throw Error('headers cannot be larger than max log length');
+    }
+
+    const headerColor = kind == 'h1' ? ';bw;' : ';b;';
+    const styledHeader =
+        kind == 'h1' || kind == 'h2'
+            ? `${headerColor}${header}:;x; ${text ?? ''}`
+            : `;bg;... ;bb;${header} ;bg;...;x;`;
+
+    return _colorText(applyLogMargin(styledHeader, _leftLogMargin + (marginOffset ?? 0)));
+}
+
+function getParagraphLog(log: LogParagraph) {
+    const [, message, marginOffset] = log;
+    return _colorText(
+        createFixedWidthSentences(`;bk;${message}`, _defaultIndent + (marginOffset ?? 0)).join(
+            '\n'
+        )
+    );
+}
+
+function getPropertyLog(log: LogProperty) {
+    const [, message, margin] = log;
+    const marginOffset = margin ?? 0;
+    const [prop, val] = message;
+    const sentences = createFixedWidthSentences(
+        `;bk;${val}`,
+        prop.length + 2 + marginOffset + _leftLogMargin
+    );
+    sentences[0] = `;c;${prop}: ${sentences[0].trimStart()}`;
+    return _colorText(
+        applyLogMargin(sentences.join('\n'), _leftLogMargin + _defaultIndent + marginOffset)
+    );
+}
+
+function getExampleLog(log: LogCommandExample) {
+    const [, message] = log;
+    const [command, example] = message;
+    return applyLogMargin(
+        _colorText(`;by;wak;c;${command ? ` -${command}` : ''} ;y;${example}`),
+        _leftLogMargin + _defaultIndent
+    );
+}
+
+function getSyntaxLog(log: LogSyntax) {
+    const [, message] = log;
+    const [commands, args] = message;
+    const resolvedMessage = commands
+        ? `;by;wak ;bk;[${commands
+              .map((c) => `;c;${c ? ` -${c}` : ''};x;`)
+              .join(' ;bk;|')} ;bk;] ;y;${args};x;`
+        : `;by;wak ;y;${args}`;
+
+    return applyLogMargin(_colorText(resolvedMessage), _leftLogMargin + _defaultIndent);
+}
+
+function getDefinitionLog(log: LogCommandDefinition) {
     const [kind, message, offset] = log;
     const [word, definition] = message;
     const defaultOffset = offset ?? 0;
@@ -239,7 +254,7 @@ function printDefinitionLog(log: LogCommandDefinition) {
         )
     );
 
-    console.log(_colorText([newFirst, ...paddedSentences].join('\n')));
+    return _colorText([newFirst, ...paddedSentences].join('\n'));
 }
 
 function createFixedWidthSentences(text: string, margin = 0, logLength = _maxLogLength) {

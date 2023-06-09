@@ -1,7 +1,6 @@
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
 import { SerializedAnime } from '../../kitsu/kitsu-types.js';
-import { truncateStr } from '../../utils.js';
 import { Log, Printer } from '../../printer/printer.js';
 
 export class FindAnimeFlag extends CLIFlag {

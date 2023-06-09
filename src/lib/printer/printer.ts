@@ -114,16 +114,15 @@ export class Printer {
 }
 
 function printLog(log: Log) {
-    if (log == null) return console.log('');
+    if (log == null) {
+        return console.log('');
+    }
 
-    const [kind, message, margin] = log;
-    const marginOffset = margin ?? 0;
+    const [kind] = log;
 
     switch (kind) {
         case '':
-            return console.log(
-                applyLogMargin(_colorText(message), _defaultIndent + marginOffset)
-            );
+            return console.log(getBasicLog(log));
 
         case 'hl':
             return console.log(getBorderLog(log));
@@ -151,6 +150,11 @@ function printLog(log: Log) {
         default:
             throw Error(`Invalid Log Kind: "${kind}"`);
     }
+}
+
+function getBasicLog(log: LogBasic) {
+    const [, message, marginOffset] = log;
+    return applyLogMargin(_colorText(message), _defaultIndent + (marginOffset ?? 0));
 }
 
 function getBorderLog(log: LogBorder) {

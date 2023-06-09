@@ -16,12 +16,7 @@ export type Log =
 
 type LogBasic = [kind: '', message: string] | [kind: '', message: string, marginOffset: number];
 type LogHeader =
-    | [kind: 'h1' | 'h2' | 'h3', message: [header: string] | [header: string, message: string]]
-    | [
-          kind: 'h1' | 'h2' | 'h3',
-          message: [header: string] | [header: string, message: string],
-          marginOffset: number
-      ];
+    | [kind: 'h1' | 'h2' | 'h3', header: [title: string, text?: string], marginOffset?: number];
 type LogParagraph =
     | [kind: 'p', message: string, marginOffset: number]
     | [kind: 'p', message: string];
@@ -169,21 +164,18 @@ function getBorderLog(log: LogBorder) {
 }
 
 function getHeaderLog(log: LogHeader) {
-    const [kind, headerData, marginOffset] = log;
-    const [header, text] = headerData;
+    const [kind, header, marginOffset] = log;
+    const [title, text] = header;
 
-    if (
-        header.length > _maxLogLength ||
-        (text && text.length + header.length > _maxLogLength)
-    ) {
+    if (title.length > _maxLogLength || (text && text.length + title.length > _maxLogLength)) {
         throw Error('headers cannot be larger than max log length');
     }
 
     const headerColor = kind == 'h1' ? ';bw;' : ';b;';
     const styledHeader =
         kind == 'h1' || kind == 'h2'
-            ? `${headerColor}${header}:;x; ${text ?? ''}`
-            : `;bg;... ;bb;${header} ;bg;...;x;`;
+            ? `${headerColor}${title}:;x; ${text ?? ''}`
+            : `;bg;... ;bb;${title} ;bg;...;x;`;
 
     return _colorText(applyLogMargin(styledHeader, _leftLogMargin + (marginOffset ?? 0)));
 }

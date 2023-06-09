@@ -32,7 +32,7 @@ export class HelpFlag extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Syntax']],
-            ['s', [['h', 'help'], '<all|simple|flag|desc>']],
+            ['s', ['h', 'help'], '<all|simple|flag|desc>'],
             null,
             ['h2', ['Details']],
             ['d', ['all', 'Displays all available help entries (Huge List).'], 3],

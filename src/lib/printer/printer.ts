@@ -24,7 +24,7 @@ type LogProperty = [kind: 'py', property: [name: string, value: string], marginO
 type LogCommandDefinition =
     | [kind: 'd' | 'cd', message: [word: string, definition: string], marginOffset: number]
     | [kind: 'd' | 'cd', message: [word: string, definition: string]];
-type LogSyntax = [kind: 's', message: [commands: string[] | null, args: string]];
+type LogSyntax = [kind: 's', commands: string[] | null, args: string];
 type LogCommandExample = [kind: 'e', command: [name: string, example: string]];
 type LogBorder = [kind: 'hl', colorCode: string, length: number, marginOffset?: number];
 
@@ -211,8 +211,7 @@ function getExampleLog(log: LogCommandExample) {
 }
 
 function getSyntaxLog(log: LogSyntax) {
-    const [, message] = log;
-    const [commands, args] = message;
+    const [, commands, args] = log;
     const resolvedMessage = commands
         ? `;by;wak ;bk;[${commands
               .map((c) => `;c;${c ? ` -${c}` : ''};x;`)

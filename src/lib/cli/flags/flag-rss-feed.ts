@@ -40,7 +40,7 @@ export class RSSFeedFlag extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Syntax']],
-            ['s', [['rss', 'rss-feed'], '<name>']],
+            ['s', ['rss', 'rss-feed'], '<name>'],
             null,
             ['h2', ['Details']],
             ['d', ['name', 'The exact name or partial name of any anime.']],

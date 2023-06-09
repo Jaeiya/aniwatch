@@ -34,7 +34,7 @@ export class AddAnime extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Syntax']],
-            ['s', [['a', 'add-anime'], '<query>']],
+            ['s', ['a', 'add-anime'], '<query>'],
             null,
             ['h2', ['Details']],
             [

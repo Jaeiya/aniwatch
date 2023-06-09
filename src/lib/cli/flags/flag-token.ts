@@ -45,7 +45,7 @@ export class TokenFlag extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Syntax']],
-            ['s', [['t', 'token'], '<info|reset|refresh>']],
+            ['s', ['t', 'token'], '<info|reset|refresh>'],
             null,
             ['h2', ['Details']],
             ['d', ['info', 'Displays your tokens and their expiration'], 3],

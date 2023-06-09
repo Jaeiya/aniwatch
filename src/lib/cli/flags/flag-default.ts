@@ -51,7 +51,7 @@ export class DefaultFlag extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Default Syntax']],
-            ['s', [null, '<name> <ep> <fep>']],
+            ['s', null, '<name> <ep> <fep>'],
             null,
             ['h2', ['Details']],
             ['d', ['name', 'Full or partial name of an existing anime on disk.']],

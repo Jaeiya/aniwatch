@@ -39,7 +39,7 @@ export class FindAnimeFlag extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Syntax']],
-            ['s', [['f', 'find-anime'], '<name>']],
+            ['s', ['f', 'find-anime'], '<name>'],
             null,
             ['h2', ['Details']],
             [

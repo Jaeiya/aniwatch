@@ -41,7 +41,7 @@ export class CleanFlag extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Syntax']],
-            ['s', [['cln', 'clean'], '<all|old>']],
+            ['s', ['cln', 'clean'], '<all|old>'],
             null,
             ['h2', ['Details']],
             ['d', ['all', 'Deletes all files within the ;m;watched ;x;directory.']],

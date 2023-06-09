@@ -20,9 +20,7 @@ type LogHeader =
 type LogParagraph =
     | [kind: 'p', message: string, marginOffset: number]
     | [kind: 'p', message: string];
-type LogProperty =
-    | [kind: 'py', message: [property: string, value: string], marginOffset: number]
-    | [kind: 'py', message: [property: string, value: string]];
+type LogProperty = [kind: 'py', property: [name: string, value: string], marginOffset?: number];
 type LogCommandDefinition =
     | [kind: 'd' | 'cd', message: [word: string, definition: string], marginOffset: number]
     | [kind: 'd' | 'cd', message: [word: string, definition: string]];
@@ -190,14 +188,14 @@ function getParagraphLog(log: LogParagraph) {
 }
 
 function getPropertyLog(log: LogProperty) {
-    const [, message, margin] = log;
+    const [, property, margin] = log;
     const marginOffset = margin ?? 0;
-    const [prop, val] = message;
+    const [name, value] = property;
     const sentences = createFixedWidthSentences(
-        `;bk;${val}`,
-        prop.length + 2 + marginOffset + _leftLogMargin
+        `;bk;${value}`,
+        name.length + 2 + marginOffset + _leftLogMargin
     );
-    sentences[0] = `;c;${prop}: ${sentences[0].trimStart()}`;
+    sentences[0] = `;c;${name}: ${sentences[0].trimStart()}`;
     return _colorText(
         applyLogMargin(sentences.join('\n'), _leftLogMargin + _defaultIndent + marginOffset)
     );

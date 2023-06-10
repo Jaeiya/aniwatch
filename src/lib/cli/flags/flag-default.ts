@@ -126,6 +126,6 @@ export class DefaultFlag extends CLIFlag {
             return;
         }
 
-        watchAnime(epName, [epNumber, epNumber || '0'], process.cwd());
+        watchAnime(epName, [epNumber, epForcedNum || '0'], process.cwd());
     }
 }

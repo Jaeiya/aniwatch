@@ -1,6 +1,6 @@
 import { Config } from '../../config.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 
 type AnimeResults = Awaited<ReturnType<typeof Kitsu.findAnime>>;
@@ -56,20 +56,27 @@ export class AddAnime extends CLIFlag {
 
     async exec(cli: typeof CLI) {
         const loader = _con.getLoadPrinter();
-        _con.chainInfo(['', ';bm;... Generating Anime Selection ...']);
+        Printer.print([null, ['h3', ['Generating Anime Selection']]]);
         loader.start('Looking up Anime');
         const animeResults = await Kitsu.findAnime(cli.nonFlagArgs.join(' '));
         loader.stop();
         if (!animeResults.length) {
-            _con.chainInfo([';bc;Status: ;y;No Anime Found']);
+            Printer.print([null]);
+            Printer.printWarning(
+                'Try using a different query strategy like an alternate title, if ' +
+                    `you don't know the exact Japanese name. You could also try describing ` +
+                    'the anime in a short phrase which might be in its description.',
+                'Anime Not Found',
+                3
+            );
             process.exit(0);
         }
         displayAnimeSelection(animeResults);
         const userChoice = await promptAnimeSelection(animeResults.length);
 
-        _con.chainInfo(['', ';bm;... Adding Anime ...']);
+        Printer.print([null, ['h3', ['Adding Anime']], null]);
         if (!userChoice) {
-            _con.chainInfo([';bc;Status: ;y;Aborted by User']);
+            Printer.printWarning('Operation cancelled manually', 'Aborted', 3);
             process.exit(0);
         }
 
@@ -79,7 +86,7 @@ export class AddAnime extends CLIFlag {
                 (a) => anime.enTitle == a.enTitle
             );
             if (foundAnime) {
-                _con.chainInfo([';bc;Status: ;r;Aborted => ;y;Anime Already Exists']);
+                Printer.printWarning('Anime already added to watch list', 'Aborted', 3);
                 process.exit(0);
             }
             const resp = await Kitsu.trackAnime(anime.id);
@@ -89,25 +96,22 @@ export class AddAnime extends CLIFlag {
                 ...cacheAnime,
                 epProgress: 0,
             });
-            _con.chainInfo([
-                `;bc;Title: ;x;${anime.enTitle}`,
-                `;bc;Status: ;bg;Success => ;g;Added to Watch List`,
-            ]);
             Config.save();
+            Printer.printInfo(`Added ;b;${anime.jpTitle};g; to Watch List`, 'Success', 3);
         }
     }
 }
 
 function displayAnimeSelection(animeArray: AnimeResults) {
     animeArray.forEach((anime, i) => {
-        const synonyms = anime.synonyms.map((s) => `;bc;Alt Title: ;bb;${s}`);
-        _con.chainInfo([
-            `;bw;${i + 1}.`,
-            `;bc;Title JP: ;x;${anime.jpTitle}`,
-            `;bc;Title EN: ;x;${anime.enTitle || ';m;None'}`,
+        const synonyms: Log[] = anime.synonyms.map((s) => ['py', ['Alias', `;b;${s}`], 3]);
+        Printer.print([
+            ['h1', [`${i + 1}`]],
+            ['py', ['Title JP', `;y;${anime.jpTitle}`]],
+            ['py', ['Title EN', anime.enTitle || ';m;None']],
             ...synonyms,
-            `;bc;Link: ;x;${anime.slug}`,
-            '',
+            ['', `;c;Link: ;x;https://kitsu.io/anime/${anime.slug}`, 7],
+            null,
         ]);
     });
 }
@@ -125,9 +129,12 @@ async function promptAnimeSelection(animeResultsLength: number) {
             possibleNumChoice > animeResultsLength ||
             possibleNumChoice < 0
         ) {
-            _con.chainError([
-                'Invalid choice, pick a number between ;bw;1 ;x;and ;bw;5 ;x;or hit enter to skip',
-            ]);
+            Printer.print([null]);
+            Printer.printError(
+                'Pick a number between ;bw;1 ;y;and ;bw;5 ;y;or hit enter to skip',
+                'Invalid Choice',
+                3
+            );
             continue;
         }
         userNumber = possibleNumChoice;

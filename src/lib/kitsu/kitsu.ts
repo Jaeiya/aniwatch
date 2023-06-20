@@ -187,7 +187,7 @@ export class Kitsu {
         if (opt.saveConfig) {
             Config.save();
         }
-        return [null, true] as const;
+        return true;
     }
 
     static async rebuildProfile() {

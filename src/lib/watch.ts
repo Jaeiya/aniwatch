@@ -3,6 +3,7 @@ import { Kitsu } from './kitsu/kitsu.js';
 import { parseFansubFilename, pathJoin, truncateStr } from './utils.js';
 import { KitsuCacheItem, KitsuCache } from './kitsu/kitsu-types.js';
 import { Config } from './config.js';
+import { Log, Printer } from './printer/printer.js';
 
 type ProgressOptions = {
     /** Anime being updated */
@@ -22,7 +23,6 @@ export async function watchAnime(
     epNumStrings: [string, string],
     workingDir: string
 ) {
-    _con.chainInfo(['', `;bc;Working directory: ;g;${workingDir}`]);
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
     tryCreateWatchedDir(workingDir);
@@ -123,6 +123,13 @@ async function saveAnimeProgress(opt: ProgressOptions) {
         ...buildLibPatchReqArgs(anime.libID, forcedEpNum || epNum)
     );
     anime.epProgress = progress;
+
+    const titleLogs: Log[] = [
+        null,
+        ['py', ['JP Title', anime.jpTitle]],
+        ['py', ['EN Title', anime.enTitle || ';m;None']],
+    ];
+
     // Kitsu may or may not know how many episodes an anime
     // will be at the beginning of a season, so we need to
     // make sure we keep up with those changes.
@@ -130,30 +137,21 @@ async function saveAnimeProgress(opt: ProgressOptions) {
 
     // If an anime is completed, remove it from cache
     if (progress > 0 && progress == episodeCount) {
-        const [err] = Kitsu.removeAnimeFromCache(anime, { saveConfig: false });
-        if (err) {
-            _con.chainError([
-                ';br;Fatal Error',
-                `;bc;${err}`,
-                ';by;Aborting Configuration Save',
-            ]);
-            process.exit(1);
-        }
-        _con.chainInfo([
-            '',
-            `;bc;Jap Title: ;x;${anime.jpTitle}`,
-            `;bc;Eng Title: ;x;${anime.enTitle || ';m;None'}`,
-            ';bc;Progress: ;bg;Completed',
-            '',
-        ]);
-        Config.save();
-        return;
+        Kitsu.removeAnimeFromCache(anime, { saveConfig: false });
+        Printer.print([...titleLogs, ['py', ['Progress', ';bg;Completed']], null]);
+        return Config.save();
     }
-    displayAnimeProgress(anime);
+
     if (!Kitsu.getFileBinding(anime.libID)) {
         Kitsu.setFileBinding(anime.libID, parseFansubFilename(fileName).title.toLowerCase());
     }
+
     Config.getKitsuProp('cache')[cacheIndex] = anime;
+    Printer.print([
+        ...titleLogs,
+        ['py', ['Progress', `;g;${anime.epProgress} ;by;/ ;m;${anime.epCount || 'unknown'}`]],
+        null,
+    ]);
     Config.save();
 }
 
@@ -172,16 +170,6 @@ function buildLibPatchReqArgs(id: string, progress: number) {
     ] as const;
 }
 
-function displayAnimeProgress(anime: KitsuCacheItem) {
-    _con.chainInfo([
-        '',
-        `;bc;Jap Title: ;g;${anime.jpTitle}`,
-        `;bc;Eng Title: ;g;${anime.enTitle || ';m;None'}`,
-        `;bc;Progress Set: ;g;${anime.epProgress} ;by;/ ;m;${anime.epCount || 'unknown'}`,
-    ]);
-}
-
 function moveFileToWatchedDir(fileName: string, workingDir: string) {
     renameSync(pathJoin(workingDir, fileName), pathJoin(workingDir, 'watched', fileName));
-    _con.info(`;bc;Moved To: ;by;${pathJoin(workingDir, 'watched')}`);
 }

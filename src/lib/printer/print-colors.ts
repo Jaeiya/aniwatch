@@ -1,3 +1,5 @@
+import { Config } from '../config.js';
+
 type ColorCode = keyof typeof _consoleColors;
 type HexColor = string;
 
@@ -40,8 +42,6 @@ const _consoleColors = {
     xx: '\u001B[0m',
 };
 
-let _disableColor = false;
-
 const _colorCodeMap = (function () {
     const map = new Map<string, string>();
     for (const key in _consoleColors) {
@@ -52,16 +52,8 @@ const _colorCodeMap = (function () {
 })();
 
 export class PrinterColor {
-    static disableColor() {
-        _disableColor = true;
-    }
-
-    static enableColor() {
-        _disableColor = false;
-    }
-
     static colorText(text: string) {
-        return replaceColorCodes(text, _disableColor ? '' : undefined);
+        return replaceColorCodes(text, Config.get('useColor') ? undefined : '');
     }
 
     static stripColorCodes(text: string) {

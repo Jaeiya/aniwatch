@@ -24,6 +24,7 @@ import {
 import { Config } from '../config.js';
 import { z } from 'zod';
 import { KitsuURLs } from './kitsu-urls.js';
+import { Printer } from '../printer/printer.js';
 
 type KitsuError = {
     errors: { title: string; detail?: string; status: number }[];
@@ -142,7 +143,10 @@ export class Kitsu {
         );
 
         if (tokenExpiresIn > 1 && tokenExpiresIn < 7) {
-            _con.warn(`Your ;bm;token ;x;expires in ;by;${tokenExpiresIn} ;x;days`);
+            Printer.printWarningBlock(
+                [`Your ;bm;auth token ;x;expires in ;by;${tokenExpiresIn} ;x;days`],
+                'Token Needs Attention'
+            );
         }
 
         const resp = await HTTP.patch(urlObj, JSON.stringify(data), _gK('access_token'));
@@ -273,21 +277,34 @@ export class Kitsu {
         const { allTimeStr, hoursAndMinutesLeft } = getColoredTimeWatchedStr(
             stats.secondsSpentWatching
         );
-        _con.chainInfo([
-            '',
-            `;by;Current User Profile`,
-            `;bc;Name: ;g;${_gK('username')}`,
-            `;bc;About: ;x;${_gK('about')}`,
-            `;bc;Link: ;g;${_gK('urls').profile}`,
-            `;bc;Watch Time: ;g;${allTimeStr} ;m;or ${hoursAndMinutesLeft}`,
-            `;bc;Watching: ;by;${_gK('cache').length} ;g;Series`,
-            `;bc;Watch Time Left: ;by;${toWatchTimeLeft(_gK('cache'))}`,
-            `;bc;Completed: ;by;${stats.completedSeries} ;g;Series`,
+        Printer.print([
+            null,
+            ['h3', ['Current User Profile']],
+            ['py', ['Name', `${_gK('username')}`], 6],
+            ['py', ['About', `${_gK('about')}`], 5],
+            ['', `;c;Link: ;g;${_gK('urls').profile}`, 9],
+            ['py', ['Watch Time', `${allTimeStr} ;m;or ${hoursAndMinutesLeft}`]],
+            ['py', ['Watching', `${_gK('cache').length} ;g;Series`], 2],
+            ['py', ['Time Left', `;by;${toWatchTimeLeft(_gK('cache'))}`], 1],
+            ['py', ['Completed', `;by;${stats.completedSeries} ;g;Series`], 1],
         ]);
     }
 
     static async resetToken() {
-        _con.chainInfo(['', ';bg;Resetting Access Token']);
+        Printer.print([
+            null,
+            null,
+            [
+                'p',
+                'You will need to provide your ;x;Kitsu.io ;bk;password so that we can ' +
+                    'reset your ;x;Access Token;bk;. You only need to do this if your ' +
+                    ';x;Access Token ;bk;is about to ;m;expire;bk;. You can check this\n' +
+                    'by typing the following command:',
+            ],
+            null,
+            ['p', ';by;wak ;bc;-t ;y;info'],
+            null,
+        ]);
         const password = await promptPassword();
         const tokenData = await grantTokenData(_gK('username'), password);
         saveTokenData(tokenData);
@@ -305,7 +322,8 @@ async function tryGetSetupConsent() {
     const hasCreationConsent =
         (await _con.prompt(`;y;Proceed with setup? ;bw;(y/n);x;: ;by;`)) == 'y';
     if (!hasCreationConsent) {
-        _con.chainInfo(['', `;by;Setup Aborted`]);
+        Printer.print([null]);
+        Printer.printWarning('You have decided not to consent', 'Setup Aborted');
         process.exit(0);
     }
 }
@@ -313,11 +331,12 @@ async function tryGetSetupConsent() {
 async function promptUser(): Promise<UserData> {
     const username = await _con.prompt(`;y;Enter Kitsu username: ;by;`);
     const user = await getUserData(username);
-    _con.chainInfo([
-        '',
-        `;bc;Name: ;g;${user.attributes.name}`,
-        `;bc;Profile: ;g;https://kitsu.io/users/${user.attributes.name}`,
-        `;bc;About: ;x;${user.attributes.about}`,
+    Printer.print([
+        null,
+        ['py', ['Name', `${user.attributes.name}`]],
+        ['', `;c;Profile: ;g;https://kitsu.io/users/${user.attributes.name}`],
+        ['py', ['About', `${user.attributes.about}`]],
+        null,
     ]);
     const isVerifiedUser = (await _con.prompt(`;y;Is this you? ;bw;(y/n): ;by;`)) == 'y';
     if (!isVerifiedUser) {

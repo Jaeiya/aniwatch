@@ -1,6 +1,6 @@
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 
 export class RebuildProfileFlag extends CLIFlag {
     name: CLIFlagName = ['rp', 'rebuild-profile'];
@@ -22,5 +22,13 @@ export class RebuildProfileFlag extends CLIFlag {
         ];
     }
 
-    exec = Kitsu.rebuildProfile;
+    async exec(): Promise<void> {
+        if (await Kitsu.rebuildProfile()) {
+            Printer.printInfo(
+                'Your profile information has been refreshed using the live version',
+                'Profile Rebuilt',
+                3
+            );
+        }
+    }
 }

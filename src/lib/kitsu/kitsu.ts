@@ -202,8 +202,8 @@ export class Kitsu {
         _sK('about', userData.attributes.about);
         _sK('stats', stats);
         stopLoader();
-        _con.info(`;bc;Profile: ;by;Updated!`);
         Config.save();
+        return true;
     }
 
     static async findAnime(name: string) {

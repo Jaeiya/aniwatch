@@ -124,14 +124,15 @@ function showTokenInfo(title: string, description: Log[] = []) {
 }
 
 function getTokenExpirationStr(secondsUntilExpired: number) {
-    const daysToExpiration = Math.floor(
-        getTimeUnits(secondsUntilExpired - Date.now() / 1000).days
-    );
+    const daysToExpiration = getTimeUnits(secondsUntilExpired - Date.now() / 1000).days;
+    const roundedDays = Math.floor(daysToExpiration);
     return daysToExpiration >= 14
-        ? `;bg;${daysToExpiration} Days`
+        ? `;bg;${roundedDays} Days`
         : daysToExpiration >= 7
-        ? `;by;${daysToExpiration} Days`
-        : daysToExpiration > 0
-        ? `;br;${daysToExpiration} Days`
+        ? `;by;${roundedDays} Days`
+        : daysToExpiration >= 1
+        ? `;br;${roundedDays} Days`
+        : daysToExpiration < 1
+        ? ';br;FEW HOURS ;by;(You need to ;br;REFRESH ;by;the token immediately)'
         : ';br;EXPIRED ;by;(You need to ;br;RESET ;by;the token)';
 }

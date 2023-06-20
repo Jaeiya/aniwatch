@@ -34,6 +34,14 @@ const _maxLogLength = 70;
 const _colorText = PrinterColor.colorText;
 
 export class Printer {
+    static printInfo(message: string, header?: string, marginOffset = 0) {
+        this.print([
+            null,
+            ['h1', [`;bc;${header ?? 'INFO'}`], marginOffset],
+            ['p', `;g;${message}`, marginOffset],
+        ]);
+    }
+
     static printWarning(message: string, header?: string, marginOffset = 0) {
         this.print([
             ['h1', [`;by;${header ?? 'WARNING'}`], marginOffset],

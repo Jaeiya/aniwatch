@@ -1,6 +1,6 @@
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Kitsu } from '../../kitsu/kitsu.js';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 
 export class RebuildCacheFlag extends CLIFlag {
     name: CLIFlagName = ['rc', 'rebuild-cache'];
@@ -23,7 +23,7 @@ export class RebuildCacheFlag extends CLIFlag {
     }
 
     exec() {
-        _con.chainInfo(['', ';bm;... Rebuild Cache ...']);
+        Printer.print([null, ['h3', ['Rebuild Cache']]]);
         Kitsu.rebuildCache();
     }
 }

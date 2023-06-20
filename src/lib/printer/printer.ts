@@ -97,19 +97,13 @@ export class Printer {
         const stack = Error('').stack;
         if (!stack) return;
         const [offender, filePath, lineNumber] = getStackInfo(stack);
-        this.print([
-            null,
-            null,
-            ['h1', [';br;DEBUG']],
-            ['p', `;br;${'─'.repeat(65)};x;\n`],
-            null,
-        ]);
+        this.print([null, null, ['h1', [';br;DEBUG']], ['', `;br;${'─'.repeat(65)};x;\n`]]);
         [...args].forEach((a) =>
             console.log(inspect(a, { showHidden: true, depth: null, colors: true }))
         );
         this.print([
             null,
-            ['p', `;br;${'─'.repeat(65)};x;\n`],
+            ['', `;br;${'─'.repeat(65)};x;\n`],
             [
                 'p',
                 `;g;Exec ;x;by ;g;${offender || 'root'} ;x;in file ;g;${pathBasename(

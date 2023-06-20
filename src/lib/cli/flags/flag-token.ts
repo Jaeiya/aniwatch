@@ -86,7 +86,7 @@ export class TokenFlag extends CLIFlag {
             'p',
             'Shown below, is an expiration timer that goes from ;bg;Green ;bk;to ;by;Yellow ' +
                 ';bk;to ;br;Red;bk;. The closer you get to Red, the closer the token is to ' +
-                'expiring.. You should refresh the token ;x;as soon as ;k;it turns Red.',
+                'expiring.. You should refresh the token ;x;as soon as ;bk;it turns Red.',
         ],
         null,
     ];

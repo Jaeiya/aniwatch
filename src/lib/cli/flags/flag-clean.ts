@@ -2,7 +2,7 @@ import { readdir, stat, unlink } from 'node:fs/promises';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { pathJoin } from '../../utils.js';
 import { Dirent } from 'node:fs';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 
 export class CleanFlag extends CLIFlag {
     name: CLIFlagName = ['cln', 'clean'];
@@ -67,14 +67,14 @@ export class CleanFlag extends CLIFlag {
         const [arg] = cli.nonFlagArgs;
         if (arg == 'old') {
             if (!(await hasConsent())) {
-                return _con.chainInfo(['', ';bc;Operation: ;bg;Aborted!']);
+                return Printer.printInfo('Operation cancelled by user', 'Operation Aborted');
             }
             await tryDeleteOldFiles();
         }
 
         if (arg == 'all') {
             if (!(await hasConsent())) {
-                return _con.chainInfo(['', ';bc;Operation: ;bg;Aborted!']);
+                return Printer.printInfo('Operation cancelled by user', 'Operation Aborted');
             }
             await deleteAllFiles();
         }
@@ -89,14 +89,13 @@ async function hasConsent() {
 async function tryDeleteOldFiles() {
     const filesPendingDeletion = await deleteOldFiles();
     if (!filesPendingDeletion.length) {
-        _con.chainInfo(['', ';bc;Watch Directory: ;bg;Already Clean!']);
-        return;
+        return Printer.printWarning('Old files already cleaned out!', 'Operation Aborted');
     }
     await Promise.all(filesPendingDeletion);
-    _con.chainInfo([
-        '',
-        `;bc;Watch Directory: ;bg;${filesPendingDeletion.length} ;by;Files Cleaned!`,
-    ]);
+    Printer.printInfo(
+        `Removed ;bg;${filesPendingDeletion.length} ;g;Old Files!`,
+        'Operation Successful'
+    );
 }
 
 async function deleteOldFiles() {
@@ -116,14 +115,14 @@ async function deleteOldFiles() {
 async function deleteAllFiles() {
     const fileNames = await readdir(pathJoin(process.cwd(), 'watched'));
     if (!fileNames.length) {
-        return _con.chainInfo(['', ';bc;Watch Directory: ;bg;Already Clean!']);
+        return Printer.printWarning('Watch directory is empty!', 'Operation Aborted');
     }
     const pendingFiles = [];
     for (const name of fileNames) {
         pendingFiles.push(unlink(pathJoin(process.cwd(), 'watched', name)));
     }
     await Promise.all(pendingFiles);
-    _con.chainInfo(['', `;bc;Watch Directory: ;bg;${pendingFiles.length} ;by;Files Deleted!`]);
+    Printer.printInfo(`Removed ;bg;${pendingFiles.length} ;g;Files!`, 'Operation Successful');
 }
 
 function findLatestFilesPerSeries(stats: (readonly [string, number])[]) {

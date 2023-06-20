@@ -1,7 +1,6 @@
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import * as rss from '../../rss.js';
-import { truncateStr } from '../../utils.js';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 
 export class RSSFeedFlag extends CLIFlag {
     name: CLIFlagName = ['rss', 'rss-feed'];
@@ -52,18 +51,18 @@ export class RSSFeedFlag extends CLIFlag {
     }
 
     async exec(cli: typeof CLI) {
-        _con.chainInfo(['', ';bm;... RSS Lookup ...']);
+        Printer.print([null, ['h3', ['RSS Lookup']]]);
         const result = await rss.getFansubRSS(cli.nonFlagArgs.join(' '));
-        _con.chainInfo([
-            `;bc;Entries Found: ;g;${result.entryCount}`,
-            `;bc;RSS: ;x;${result.rss}`,
-            '',
-            `;bm;... Latest Entry ...`,
-            `;bc;  Title: ;y;${truncateStr(result.title, 60)}`,
-            `;bc; FanSub: ;y;${result.fansub}`,
-            `;bc;Episode: ;y;${result.episode}`,
-            `;bc; Season: ;y;${result.season ?? ';m;unspecified'}`,
-            `;bc;BitRate: ;y;${result.bitrate ?? ';m;unknown'}`,
+        Printer.print([
+            ['py', ['Entries', `${result.entryCount}`]],
+            ['', `;c;RSS: ;x;${result.rss}`, 7],
+            null,
+            ['h3', ['Latest Entry']],
+            ['py', ['Title', `${result.title}`], 2],
+            ['py', ['FanSub', `${result.fansub}`], 1],
+            ['py', ['Episode', `${result.episode}`]],
+            ['py', ['Season', `${result.season ?? ';m;unspecified'}`], 1],
+            ['py', ['BitRate', `${result.bitrate ?? ';m;unknown'}`]],
         ]);
     }
 }

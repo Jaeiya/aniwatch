@@ -1,6 +1,6 @@
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { Config } from '../../config.js';
-import { Log } from '../../printer/printer.js';
+import { Log, Printer } from '../../printer/printer.js';
 
 export class ColorFlag extends CLIFlag {
     name: CLIFlagName = ['cl', 'color'];
@@ -33,8 +33,8 @@ export class ColorFlag extends CLIFlag {
 
     exec = () => {
         const colorState = Config.get('useColor');
-        Config.set('useColor', (_con.showColor = !colorState));
-        _con.chainInfo(['', `;bc;Color: ;by;${!colorState ? 'On' : 'Off'}`]);
+        Config.set('useColor', !colorState);
+        Printer.print([null, ['py', ['Color', `${!colorState ? 'On' : 'Off'}`]]]);
         Config.save();
     };
 }

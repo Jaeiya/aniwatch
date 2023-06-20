@@ -63,7 +63,6 @@ async function getAnimeList(cli: typeof CLI) {
     const animeList = await Kitsu.findLibraryAnime(cli.nonFlagArgs.join(' '));
     stopLoader();
     if (!animeList.length) {
-        Printer.print([null]);
         Printer.printWarning(
             'The anime is either not in your cache or your search terms were ' +
                 'incorrectly spelled',

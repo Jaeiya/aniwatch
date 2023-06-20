@@ -322,7 +322,6 @@ async function tryGetSetupConsent() {
     const hasCreationConsent =
         (await _con.prompt(`;y;Proceed with setup? ;bw;(y/n);x;: ;by;`)) == 'y';
     if (!hasCreationConsent) {
-        Printer.print([null]);
         Printer.printWarning('You have decided not to consent', 'Setup Aborted');
         process.exit(0);
     }

@@ -44,6 +44,7 @@ export class Printer {
 
     static printWarning(message: string, header?: string, marginOffset = 0) {
         this.print([
+            null,
             ['h1', [`;by;${header ?? 'WARNING'}`], marginOffset],
             ['p', `;c;${message}`, marginOffset],
         ]);
@@ -51,6 +52,7 @@ export class Printer {
 
     static printError(message: string, header?: string, marginOffset = 0) {
         this.print([
+            null,
             ['h1', [`;r;${header ?? 'ERROR'}`], marginOffset],
             ['p', `;y;${message}`, marginOffset],
         ]);

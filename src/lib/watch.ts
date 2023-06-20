@@ -64,7 +64,7 @@ function tryCreateWatchedDir(workingDir: string) {
 
     if (!existsSync(watchedDir)) {
         mkdirSync(watchedDir);
-        _con.info(`Watched directory created: ;by;${watchedDir}`);
+        Printer.print([null, ['', `;c;Watch Dir: ;by;${watchedDir}`]]);
     }
 }
 

@@ -1,4 +1,4 @@
-import { DefaultFlag } from './flag-default.js';
+import { DefaultFlag } from './flag-watch.js';
 import { DirInfoFlag } from './flag-dir-size.js';
 import { FindAnimeFlag } from './flag-find-anime.js';
 import { HelpFlag } from './flag-help.js';

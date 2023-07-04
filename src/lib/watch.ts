@@ -15,13 +15,14 @@ type ProgressOptions = {
     /** Override episode number to set as progress */
     forcedEpNum: number;
     /** File name of the anime to update */
-    fileName: string;
+    fileName?: string;
 };
 
 export async function watchAnime(
     epName: string,
     epNumStrings: [string, string],
-    workingDir: string
+    workingDir: string,
+    manual = false
 ) {
     const [fileEpNumStr, forcedEpNumStr] = epNumStrings;
 
@@ -38,25 +39,31 @@ export async function watchAnime(
 
     const fileTitle = Kitsu.getFileBinding(validAnime.libID) ?? epName;
 
-    const fansubFileNames = filterFansubFilenames(workingDir, fileTitle, fileEpNumStr);
-    if (!fansubFileNames.length) {
-        _con.error(`;by;${fileTitle} ;x;episode ;by;${fileEpNumStr} ;x;does NOT exist`);
-        process.exit(1);
+    let fileName = '';
+    if (!manual) {
+        const fansubFileNames = filterFansubFilenames(workingDir, fileTitle, fileEpNumStr);
+        if (!fansubFileNames.length) {
+            _con.error(`;by;${fileTitle} ;x;episode ;by;${fileEpNumStr} ;x;does NOT exist`);
+            process.exit(1);
+        }
+        if (fansubFileNames.length > 1) {
+            displayErrorTooManyFiles(fansubFileNames);
+            process.exit(1);
+        }
+        fileName = fansubFileNames[0];
     }
-    if (fansubFileNames.length > 1) {
-        displayErrorTooManyFiles(fansubFileNames);
-        process.exit(1);
-    }
-    const [foundFileName] = fansubFileNames;
 
     await saveAnimeProgress({
         anime: validAnime,
         cacheIndex,
         epNum: Number(fileEpNumStr),
         forcedEpNum: Number(forcedEpNumStr),
-        fileName: foundFileName,
+        fileName,
     });
-    moveFileToWatchedDir(foundFileName, workingDir);
+
+    if (!manual) {
+        moveFileToWatchedDir(fileName, workingDir);
+    }
 }
 
 function tryCreateWatchedDir(workingDir: string) {
@@ -142,7 +149,7 @@ async function saveAnimeProgress(opt: ProgressOptions) {
         return Config.save();
     }
 
-    if (!Kitsu.getFileBinding(anime.libID)) {
+    if (!Kitsu.getFileBinding(anime.libID) && fileName) {
         Kitsu.setFileBinding(anime.libID, parseFansubFilename(fileName).title.toLowerCase());
     }
 

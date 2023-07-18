@@ -73,7 +73,6 @@ export class Config {
             pathJoin(process.cwd(), _configFileName),
             JSON.stringify(_config, null, 2)
         );
-        _con.info(';bc;Config File: ;g;Saved');
     }
 }
 

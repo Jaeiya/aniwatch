@@ -118,6 +118,14 @@ export class Printer {
         ]);
         console.log('');
     }
+
+    static printLoader(text: string) {
+        const spinner = createSpinner(
+            _colorText(`${' '.repeat(3)};bg;@@@@@@ ;bb;${text} ;bg;@@@@@@`)
+        );
+        spinner.start(13);
+        return spinner.stop;
+    }
 }
 
 function printLog(log: Log) {

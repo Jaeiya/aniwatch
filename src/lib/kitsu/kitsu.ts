@@ -458,6 +458,7 @@ function serializeAnimeInfo(entries: KitsuAnimeInfoEntry[]) {
         id: entry.id,
         jpTitle: entry.attributes.titles.en_jp,
         enTitle: entry.attributes.titles.en,
+        usTitle: entry.attributes.titles.en_us,
         synonyms: entry.attributes.abbreviatedTitles,
         epCount: entry.attributes.episodeCount || 0,
         // There's a flaw in Kitsu's slugging algorithm

@@ -98,7 +98,8 @@ const KitsuAnimeDataSchema = z.object({
         slug: z.string(),
         titles: z.object({
             en: z.string().default(''),
-            en_jp: z.string(),
+            en_jp: z.string().default(''),
+            en_us: z.string().default(''),
         }),
         averageRating: z.string().nullable(),
         canonicalTitle: z.string(),

@@ -148,6 +148,7 @@ function printLog(log: Log) {
         case 's':
             return console.log(getSyntaxLog(log));
 
+        case 'cd':
         case 'd':
             return console.log(getDefinitionLog(log));
 

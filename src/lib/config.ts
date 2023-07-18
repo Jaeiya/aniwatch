@@ -4,6 +4,7 @@ import { parseWithZod, pathJoin, tryCatchAsync } from './utils.js';
 import * as z from 'zod';
 import { readFile } from 'fs/promises';
 import { DeepPartial } from '../types/globals.js';
+import { Printer } from './printer/printer.js';
 
 export type ConfigFile = z.infer<typeof ConfigSchema>;
 type PartialConfigFile = DeepPartial<ConfigFile>;
@@ -87,6 +88,10 @@ async function tryUpdateConfig(
         process.exit(1);
     }
     _config = data;
-    _con.info(';bc;Config: ;by;Updated!');
+    Printer.printWarning(
+        'An older version of the Config file has been discovered and updated ' +
+            'to reflect latest Wakitsu changes.',
+        'Config Updated'
+    );
     Config.save();
 }

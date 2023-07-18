@@ -127,7 +127,7 @@ export function createReadableBytesFunc() {
 
 export function parseFansubFilename(name: string) {
     const fansubRegEx =
-        /^\[([\w|\d|\s-]+)\]\s(.+)(\sS[0-9]{1,2})?\s-\s([0-9]{2,4}|S([0-9]{2})E([0-9]{2,4})|[0-9]{2,4}v[0-9])\s[[(]([0-9]{3,4}p)?/gi;
+        /^\[([\w|\d|\s-]+)\]\s(.+)(\sS[0-9]{1,2})?\s([0-9]{2,4}|S([0-9]{2})E([0-9]{2,4})|[0-9]{2,4}v[0-9])\s[[(]([0-9]{3,4}p)?/gi;
     const parts = fansubRegEx.exec(name);
     if (!parts) {
         const errorMessage =

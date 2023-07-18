@@ -1,5 +1,6 @@
 import { resolve, join, basename } from 'path';
 import { z, ZodSchema } from 'zod';
+import { Printer } from './printer/printer.js';
 
 export type FansubFilenameData = {
     fansub: string;
@@ -134,12 +135,12 @@ export function parseFansubFilename(name: string) {
             name.toLowerCase().includes('(batch)') || name.toLowerCase().includes('[batch]')
                 ? 'This is a batch file, which means the season is over.'
                 : 'Try to find another fansub group.';
-        _con.chainError([
-            '',
-            ';r;Unsupported File Name',
-            `;by;Failed to parse file name: "${name}"`,
-            `;bc;${errorMessage}`,
-        ]);
+        Printer.printError(
+            [`;bc;${errorMessage}`, '', `Failed to parse file name: ;bk;${name}`],
+            'Unsupported',
+            3
+        );
+        Printer.log('');
         process.exit(1);
     }
     return serializeFansubFilename(parts);

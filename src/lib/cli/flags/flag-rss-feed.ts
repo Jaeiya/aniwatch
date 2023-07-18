@@ -63,6 +63,7 @@ export class RSSFeedFlag extends CLIFlag {
             ['py', ['Episode', `${result.episode}`]],
             ['py', ['Season', `${result.season ?? ';m;unspecified'}`], 1],
             ['py', ['BitRate', `${result.bitrate ?? ';m;unknown'}`]],
+            null,
         ]);
     }
 }

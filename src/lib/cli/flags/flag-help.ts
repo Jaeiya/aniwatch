@@ -95,6 +95,7 @@ export class HelpFlag extends CLIFlag {
         } else {
             Printer.print([null, null]);
             flag.printHelp();
+            Printer.print([null, null]);
         }
     }
 }

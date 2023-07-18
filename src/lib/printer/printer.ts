@@ -50,12 +50,13 @@ export class Printer {
         ]);
     }
 
-    static printError(message: string, header?: string, marginOffset = 0) {
-        this.print([
-            null,
-            ['h1', [`;r;${header ?? 'ERROR'}`], marginOffset],
-            ['p', `;y;${message}`, marginOffset],
-        ]);
+    static printError(message: string | string[], header?: string, marginOffset = 0) {
+        const msgs: Log[] =
+            typeof message == 'string'
+                ? [['p', `;y;${message}`, marginOffset]]
+                : message.map((m) => ['p', `;y;${m}`, marginOffset]);
+
+        this.print([null, ['h1', [`;r;${header ?? 'ERROR'}`], marginOffset], ...msgs]);
     }
 
     static printInfoBlock(messages: string[], header?: string) {

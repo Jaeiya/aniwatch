@@ -39,6 +39,7 @@ export class Printer {
             null,
             ['h1', [`;bc;${header ?? 'INFO'}`], marginOffset],
             ['p', `;g;${message}`, marginOffset],
+            null,
         ]);
     }
 
@@ -47,6 +48,7 @@ export class Printer {
             null,
             ['h1', [`;by;${header ?? 'WARNING'}`], marginOffset],
             ['p', `;c;${message}`, marginOffset],
+            null,
         ]);
     }
 
@@ -56,7 +58,7 @@ export class Printer {
                 ? [['p', `;y;${message}`, marginOffset]]
                 : message.map((m) => ['p', `;y;${m}`, marginOffset]);
 
-        this.print([null, ['h1', [`;r;${header ?? 'ERROR'}`], marginOffset], ...msgs]);
+        this.print([null, ['h1', [`;r;${header ?? 'ERROR'}`], marginOffset], ...msgs, null]);
     }
 
     static printInfoBlock(messages: string[], header?: string) {

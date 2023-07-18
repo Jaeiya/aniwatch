@@ -127,31 +127,31 @@ function printLog(log: Log) {
 
     switch (kind) {
         case '':
-            return console.log(getBasicLog(log));
+            return console.log(getBasicLog(log), _colorText(';x;'));
 
         case 'hl':
-            return console.log(getBorderLog(log));
+            return console.log(getBorderLog(log), _colorText(';x;'));
 
         case 'h1':
         case 'h2':
         case 'h3':
-            return console.log(getHeaderLog(log));
+            return console.log(getHeaderLog(log), _colorText(';x;'));
 
         case 'p':
-            return console.log(getParagraphLog(log));
+            return console.log(getParagraphLog(log), _colorText(';x;'));
 
         case 'py':
-            return console.log(getPropertyLog(log));
+            return console.log(getPropertyLog(log), _colorText(';x;'));
 
         case 'e':
-            return console.log(getExampleLog(log));
+            return console.log(getExampleLog(log), _colorText(';x;'));
 
         case 's':
-            return console.log(getSyntaxLog(log));
+            return console.log(getSyntaxLog(log), _colorText(';x;'));
 
         case 'cd':
         case 'd':
-            return console.log(getDefinitionLog(log));
+            return console.log(getDefinitionLog(log), _colorText(';x;'));
 
         default:
             throw Error(`Invalid Log Kind: "${kind}"`);

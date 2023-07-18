@@ -2,29 +2,43 @@ import { HTTP } from './http.js';
 import { parseFansubFilename } from './utils.js';
 
 const _nyaaURLStr = 'https://nyaa.si';
-const _printLoader = _con.getLoadPrinter();
+
+type RSSEntry = {
+    entryCount: number;
+    fansub: `[${string}]`;
+    title: string;
+    episode: string;
+    season?: string;
+    bitrate?: string;
+    rss: string;
+};
 
 /**
  * Gets a list of RSS entries matching the searchString
  * and returns a breakdown of the latest entry.
  */
 export async function getFansubRSS(searchString: string) {
-    _printLoader.start(`Looking up "${searchString}"`);
     const url = new URL(_nyaaURLStr);
     url.searchParams.append('f', '0');
     url.searchParams.append('c', '1_2');
     url.searchParams.append('q', searchString);
     const resp = await HTTP.get(url);
     if (!resp.ok) {
-        _printLoader.stop();
         console.log(await resp.text());
         process.exit(1);
     }
     const [entryCount, latestEntryName] = await getLatestAnimeEntry(await resp.text());
     url.searchParams.append('page', 'rss');
-    const { title, fansub, paddedEpNum, season, bitrate } =
-        parseFansubFilename(latestEntryName);
-    return {
+    if (!latestEntryName) {
+        return [null, null] as const;
+    }
+    const [error, data] = parseFansubFilename(latestEntryName);
+    if (error) {
+        return [error, null] as const;
+    }
+    const { title, fansub, paddedEpNum, season, bitrate } = data;
+
+    const entry: RSSEntry = {
         entryCount,
         fansub: `[${fansub}]`,
         title,
@@ -33,6 +47,7 @@ export async function getFansubRSS(searchString: string) {
         bitrate,
         rss: url.toString(),
     };
+    return [null, entry] as const;
 }
 
 async function getLatestAnimeEntry(html: string) {
@@ -47,10 +62,8 @@ async function getLatestAnimeEntry(html: string) {
         }
     }
     const latestEntryName = torrents[0];
-    _printLoader.stop();
     if (!torrents.length) {
-        _con.error('Anime Not Found');
-        process.exit(1);
+        return [0, null] as const;
     }
     return [torrents.length, latestEntryName] as const;
 }

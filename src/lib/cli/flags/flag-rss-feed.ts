@@ -51,8 +51,26 @@ export class RSSFeedFlag extends CLIFlag {
     }
 
     async exec(cli: typeof CLI) {
-        Printer.print([null, ['h3', ['RSS Lookup']]]);
-        const result = await rss.getFansubRSS(cli.nonFlagArgs.join(' '));
+        Printer.print([null]);
+        const stopLoader = Printer.printLoader('RSS Lookup');
+        const [error, result] = await rss.getFansubRSS(cli.nonFlagArgs.join(' '));
+        stopLoader();
+        Printer.print([['h3', ['RSS Lookup']]]);
+
+        if (error && !result) {
+            Printer.printError(
+                [`;bc;${error.parseError}`, '', `Failed to parse: ;x;${error.fileName}`],
+                'Unsupported',
+                3
+            );
+            return;
+        }
+
+        if (!error && !result) {
+            Printer.printInfo('Anime Not Found', undefined, 3);
+            return;
+        }
+
         Printer.print([
             ['py', ['Entries', `${result.entryCount}`]],
             ['', `;c;RSS: ;x;${result.rss}`, 7],

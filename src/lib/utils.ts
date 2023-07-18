@@ -135,15 +135,9 @@ export function parseFansubFilename(name: string) {
             name.toLowerCase().includes('(batch)') || name.toLowerCase().includes('[batch]')
                 ? 'This is a batch file, which means the season is over.'
                 : 'Try to find another fansub group.';
-        Printer.printError(
-            [`;bc;${errorMessage}`, '', `Failed to parse file name: ;bk;${name}`],
-            'Unsupported',
-            3
-        );
-        Printer.log('');
-        process.exit(1);
+        return [{ parseError: errorMessage, fileName: name }, null] as const;
     }
-    return serializeFansubFilename(parts);
+    return [null, serializeFansubFilename(parts)] as const;
 }
 
 function serializeFansubFilename(filenameParts: string[]) {

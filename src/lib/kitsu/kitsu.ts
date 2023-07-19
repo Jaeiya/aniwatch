@@ -258,8 +258,8 @@ export class Kitsu {
         const cachedAnime = await buildAnimeCache();
         _sK('cache', cachedAnime);
         stopLoader();
-        _con.info(`;bc;Cache Reloaded: ;by;${cachedAnime.length}`);
         Config.save();
+        return { cachedAnimeCount: cachedAnime.length };
     }
 
     static async refreshToken() {

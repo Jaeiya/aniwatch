@@ -58,7 +58,7 @@ export class FindAnimeFlag extends CLIFlag {
 }
 
 async function getAnimeList(cli: typeof CLI) {
-    Printer.print([null, null, ['h3', ['Find Anime']]]);
+    Printer.print([null, ['h3', ['Find Anime']]]);
     const stopLoader = _con.printLoader('Fetching Anime');
     const animeList = await Kitsu.findLibraryAnime(cli.nonFlagArgs.join(' '));
     stopLoader();
@@ -96,6 +96,7 @@ function displayAnimeList(animeList: SerializedAnime[]) {
             ['py', ['Synopsis', `${anime.synopsis.trim()}`], 3],
             ['', `;b;Link: ;x;${anime.link}`, 10],
             ['hl', 'c', 70],
+            null,
         ]);
     });
 }

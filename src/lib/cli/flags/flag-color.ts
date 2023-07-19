@@ -34,7 +34,7 @@ export class ColorFlag extends CLIFlag {
     exec = () => {
         const colorState = Config.get('useColor');
         Config.set('useColor', !colorState);
-        Printer.print([null, ['py', ['Color', `${!colorState ? 'On' : 'Off'}`]]]);
+        Printer.print([null, ['py', ['Color', `${!colorState ? ';bg;On' : 'Off'}`]], null]);
         Config.save();
     };
 }

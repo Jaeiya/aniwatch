@@ -28,5 +28,3 @@ await Config.init({
         return config;
     },
 });
-
-_con.showColor = Config.get('useColor');

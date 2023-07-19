@@ -57,7 +57,7 @@ export class Config {
                 await options.setupNewConfig();
                 return Config.save();
             }
-            _con.error(asyncRes.error.message);
+            Printer.printError(asyncRes.error.message);
             process.exit(1);
         }
         const respDataObj: PartialConfigFile = JSON.parse(asyncRes.data.toString('utf-8'));

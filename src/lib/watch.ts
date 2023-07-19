@@ -35,7 +35,7 @@ export async function watchAnime(
             anime.synonyms.some((s) => s.toLowerCase().includes(epName))
     );
 
-    const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime);
+    const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime, epName);
 
     const fileTitle = Kitsu.getFileBinding(validAnime.libID) ?? epName;
 
@@ -43,7 +43,17 @@ export async function watchAnime(
     if (!manual) {
         const fansubFileNames = filterFansubFilenames(workingDir, fileTitle, fileEpNumStr);
         if (!fansubFileNames.length) {
-            _con.error(`;by;${fileTitle} ;x;episode ;by;${fileEpNumStr} ;x;does NOT exist`);
+            Printer.printError(
+                [
+                    `File: ;c;${fileTitle} ;y;episode ;c;${fileEpNumStr};y;`,
+                    '',
+                    '(Possible Issues)',
+                    `(;bc;1;y;) ;c;Make sure you didn't ;m;misspell ;c;the file name.`,
+                    `(;bc;2;y;) ;c;Make sure the ;m;episode number ;c;matches the file name.`,
+                ],
+                'File Not Found',
+                3
+            );
             process.exit(1);
         }
         if (fansubFileNames.length > 1) {
@@ -99,15 +109,20 @@ function displayErrorTooManyFiles(fileNames: string[]) {
     _con.chainError(errorChain);
 }
 
-function validateCachedAnime(cache: KitsuCache) {
+function validateCachedAnime(cache: KitsuCache, animeName: string) {
     if (!cache.length) {
-        _con.chainError([
-            '',
-            `;r;Anime Not Found -- for 3 possible reasons`,
-            `;bc;(1) The Anime is not in your ;by;Kitsu ;bc;watch list`,
-            `;bc;(2) You forgot to ;by;-rc ;bc;after updating ;by;Kitsu ;bc;watch list`,
-            `;bc;(3) File name of the Anime has not been bound to the cache yet`,
-        ]);
+        Printer.printError(
+            [
+                `[;c;${animeName};y;] could not be found in the cache.`,
+                '',
+                ';bc;... ;y;Possible Issues ;bc;...',
+                '(;bc;1;y;) ;c;You ;m;misspelled ;c;the file name or anime name.',
+                '(;bc;2;y;) ;c;The Anime is ;m;not ;c;in your ;m;watch list;c;.',
+                '(;bc;3;y;) ;c;You forgot to ;by;-rc ;c;after updating your ;m;watch list;c; manually.',
+                '(;bc;4;y;) ;c;File name has not been ;m;bound ;c;to the cache yet.',
+            ],
+            'Anime Not Found'
+        );
         process.exit(1);
     }
 

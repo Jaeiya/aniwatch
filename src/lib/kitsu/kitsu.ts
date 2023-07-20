@@ -328,9 +328,9 @@ async function promptUser(): Promise<UserData> {
     const user = await getUserData(username);
     Printer.print([
         null,
-        ['py', ['Name', `${user.attributes.name}`]],
-        ['', `;c;Profile: ;g;https://kitsu.io/users/${user.attributes.name}`],
-        ['py', ['About', `${user.attributes.about}`]],
+        ['py', ['Name', `${user.attributes.name}`], 3],
+        ['py', ['Profile', `;g;https://kitsu.io/users/${user.attributes.name}`]],
+        ['py', ['About', `${user.attributes.about}`], 2],
         null,
     ]);
     const isVerifiedUser = (await _con.prompt(`;y;Is this you? ;bw;(y/n): ;by;`)) == 'y';

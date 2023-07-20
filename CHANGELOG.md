@@ -77,7 +77,7 @@ Unfortunately, this time around, you'll need to delete your `wakitsu.json` confi
 
 ### Features
 
-- **flags**: add `-t` and `--token` flags to alow refreshing, resetting, and displaying token information ([6330710](https://github.com/Jaeiya/aniwatch/commit/6330710))
+- **flags**: add `-t` and `--token` flags to allow refreshing, resetting, and displaying token information ([6330710](https://github.com/Jaeiya/aniwatch/commit/6330710))
 - **flags**: add `-cl` and `--color` flags to allow toggling console color on/off ([69cbf26](https://github.com/Jaeiya/aniwatch/commit/69cbf26))
 - **watch**: update episode count after each watch execution (Kitsu does not always have an accurate episode count until later in a series) ([d4bd666](https://github.com/Jaeiya/aniwatch/commit/d4bd666))
 - **--profile**: added number of series currently being watched ([c98208a](https://github.com/Jaeiya/aniwatch/commit/c98208a))

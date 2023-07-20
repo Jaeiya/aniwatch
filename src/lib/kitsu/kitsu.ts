@@ -196,14 +196,26 @@ export class Kitsu {
 
     static async rebuildProfile() {
         const stopLoader = _con.printLoader('Fetching Profile Data');
-        const userData = await getUserData(_gK('username'));
-        const { time, completed } = userData.stats;
+        const user = await getUserData(_gK('username'));
+        if (!user) {
+            Printer.printError([
+                'Your profile could not be found',
+                '',
+                ';bc;... ;y;Possible Issues ;bc;...',
+                '(;bc;1;y;) ;c;You changed your account name.',
+                '(;bc;2;y;) ;c;Your account is temporarily inaccessible.',
+                '(;bc;3;y;) ;c;Your account has been deleted.',
+                '(;bc;4;y;) ;c;Wakitsu configuration ;m;might ;c;be corrupted',
+            ]);
+            process.exit(1);
+        }
+        const { time, completed } = user.stats;
         const { secondsSpentWatching, completedSeries } = _gK('stats');
         const stats = {
             secondsSpentWatching: time ?? secondsSpentWatching,
             completedSeries: completed ?? completedSeries,
         };
-        _sK('about', userData.attributes.about);
+        _sK('about', user.attributes.about);
         _sK('stats', stats);
         stopLoader();
         Config.save();

@@ -4,6 +4,7 @@ import { parseFansubFilename, pathJoin, truncateStr } from './utils.js';
 import { KitsuCacheItem, KitsuCache } from './kitsu/kitsu-types.js';
 import { Config } from './config.js';
 import { Log, Printer } from './printer/printer.js';
+import { ColorCode, colorWord } from './printer/print-colors.js';
 
 type ProgressOptions = {
     /** Anime being updated */
@@ -127,9 +128,21 @@ function validateCachedAnime(cache: KitsuCache, animeName: string) {
     }
 
     if (cache.length > 1) {
-        const errorChain = ['', `;r;Multiple Cached Titles Found`];
-        cache.forEach((anime) => errorChain.push(`;bc;Title: ;x;${anime.jpTitle}`));
-        _con.chainError([...errorChain, `;by;Use a more unique name to reference the episode`]);
+        const files = cache.map(
+            (c, i) => `(;bc;${i + 1};y;): ;bk;${colorWord(c.jpTitle, animeName, 'bw', 'bk')}`
+        );
+        Printer.printError(
+            [
+                ...files,
+                '',
+                ';bc;... ;y;Solutions ;bc;...',
+                '(;bc;1;y;) ;c;Use a ;m;different word ;c;of the title to reference the episode.',
+                '(;bc;2;y;) ;c;Use a ;m;whole segment ;c;of the title to reference the episode.',
+                '(;bc;3;y;) ;c;Use part of the ;m;English title ;c;to reference the episode.',
+                '(;bc;3;y;) ;c;Use one of the ;m;Alt Titles ;c;to reference the episode.',
+            ],
+            'Multiple Titles Found'
+        );
         process.exit(1);
     }
     return [

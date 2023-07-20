@@ -1,6 +1,6 @@
 import { Config } from '../config.js';
 
-type ColorCode = keyof typeof _consoleColors;
+export type ColorCode = keyof typeof _consoleColors;
 type HexColor = string;
 
 const _consoleColors = {
@@ -99,4 +99,30 @@ function toRGBFromHex(hex: string) {
     const fullHex = hex.length > 3 ? hex : [...hex].map((c) => c + c).join('');
     const intFromHex = parseInt(fullHex, 16);
     return [(intFromHex >> 16) & 0xff, (intFromHex >> 8) & 0xff, intFromHex & 0xff];
+}
+
+/**
+ * Takes a string and adds the color code to any words
+ * where a substring of the word can be found.
+ *
+ * @param str The string to use to lookup the `word`
+ * @param word The word to find within the `string`
+ * @param color The color-code to use as the `word` color
+ * @param defaultColor The default color-code of the `string`
+ */
+export function colorWord(
+    str: string,
+    word: string,
+    color: ColorCode,
+    defaultColor: ColorCode
+) {
+    return str
+        .split(' ')
+        .map((p) => {
+            if (p.toLowerCase().includes(word.toLowerCase())) {
+                return `;${color};${p};${defaultColor};`;
+            }
+            return p;
+        })
+        .join(' ');
 }

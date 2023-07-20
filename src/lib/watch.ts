@@ -4,7 +4,7 @@ import { parseFansubFilename, pathJoin, truncateStr } from './utils.js';
 import { KitsuCacheItem, KitsuCache } from './kitsu/kitsu-types.js';
 import { Config } from './config.js';
 import { Log, Printer } from './printer/printer.js';
-import { ColorCode, colorWord } from './printer/print-colors.js';
+import { colorWord } from './printer/print-colors.js';
 
 type ProgressOptions = {
     /** Anime being updated */

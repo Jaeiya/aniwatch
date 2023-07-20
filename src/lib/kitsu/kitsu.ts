@@ -324,8 +324,12 @@ async function tryGetSetupConsent() {
 }
 
 async function promptUser(): Promise<UserData> {
-    const username = await _con.prompt(`;y;Enter Kitsu username: ;by;`);
+    const username = await _con.prompt(`;y;Enter Kitsu username:;by; `);
     const user = await getUserData(username);
+    if (!user) {
+        Printer.printError(`;c;${username};y; not found`);
+        return promptUser();
+    }
     Printer.print([
         null,
         ['py', ['Name', `${user.attributes.name}`], 3],
@@ -345,8 +349,7 @@ async function getUserData(userName: string) {
     const resp = await HTTP.get(url);
     const resolvedResp = await resp.json();
     if (!resolvedResp.data.length) {
-        _con.error(`;by;${userName} ;x;not found`);
-        process.exit(1);
+        return null;
     }
     const [error, user] = parseWithZod(UserDataRespSchema, resolvedResp, 'UserData');
     if (error) {

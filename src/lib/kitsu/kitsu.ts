@@ -250,10 +250,6 @@ export class Kitsu {
     }
 
     static async rebuildCache() {
-        if (!_gK('access_token')) {
-            _con.error('KitsuAPI not initialized');
-            process.exit(1);
-        }
         const stopLoader = _con.printLoader('Fetching Kitsu Data');
         const cachedAnime = await buildAnimeCache();
         _sK('cache', cachedAnime);

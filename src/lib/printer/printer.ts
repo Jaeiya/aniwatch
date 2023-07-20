@@ -142,8 +142,9 @@ export class Printer {
         });
     }
 
-    static promptYesNo(query: string) {
-        return this.prompt(`${query}? ;bk;[;bw;y;bk;/;bw;n;bk;]:`);
+    static async promptYesNo(query: string) {
+        const answer = await this.prompt(`${query}? ;bk;[;bw;y;bk;/;bw;n;bk;]:`);
+        return answer.toLowerCase() == 'y' || answer.toLowerCase() == 'yes';
     }
 }
 

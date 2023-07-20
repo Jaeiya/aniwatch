@@ -9,9 +9,9 @@ global._con = ConsoleLogger;
 
 await Config.init({
     setupNewConfig: async () => {
+        Config.set('useColor', true);
         Printer.print([null, ['py', ['Working Directory', `${process.cwd()}`]]]);
         await Kitsu.init();
-        Config.set('useColor', true);
     },
     setDefaultProps: (config) => {
         config.useColor ??= true;

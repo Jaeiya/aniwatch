@@ -1,3 +1,4 @@
+import { Printer } from './printer/printer.js';
 import { tryCatchAsync } from './utils.js';
 
 export class HTTP {
@@ -62,5 +63,5 @@ export class HTTP {
 }
 
 function execError(resp: Error, method: string, url: string) {
-    _con.chainError(['', `;r;Failed ${method}ing ${url}`, resp.message]);
+    Printer.printError(resp.message, `Failed ${method}ing ;c;${url}`);
 }

@@ -84,7 +84,8 @@ async function tryUpdateConfig(
     const config = setDefaultProps({ ...partialConfig });
     const [error, data] = parseWithZod(ConfigSchema, config, 'ConfigFile');
     if (error) {
-        _con.chainError(error);
+        const header = error.shift();
+        Printer.printError([...error], header);
         process.exit(1);
     }
     _config = data;

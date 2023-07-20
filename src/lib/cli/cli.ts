@@ -76,7 +76,7 @@ export class CLI {
 
 function validateFlag(flag?: CLIFlag): flag is CLIFlag {
     if (!flag) {
-        _con.chainError(['', `;r;Flag Error`, `;bc;Unknown Flag: ;by;${flagArgs[0]}`]);
+        Printer.printError(`;bc;Unknown Flag: ;by;${flagArgs[0]}`, 'Unknown Flag');
         return false;
     }
 
@@ -88,11 +88,10 @@ function validateFlag(flag?: CLIFlag): flag is CLIFlag {
 
 function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
     if (nonFlagArgs.length > numOfArgs || flagArgs.length > 1) {
-        _con.chainError([
-            `;r;Invalid Flag Syntax`,
+        Printer.printError(
             'Read the help below to learn the correct syntax',
-            '',
-        ]);
+            'Invalid Flag Syntax'
+        );
         flag.printHelp();
         return false;
     }
@@ -101,12 +100,10 @@ function isValidSingleFlag(numOfArgs: number, flag: CLIFlag) {
 
 function isMultiArg(flag: CLIFlag) {
     if (!nonFlagArgs.length) {
-        _con.chainError([
-            '',
-            `;r;Missing Argument`,
+        Printer.printError(
             'Read the help below to learn the correct syntax:',
-            '',
-        ]);
+            'Missing Argument'
+        );
         flag.printSyntax();
         return false;
     }

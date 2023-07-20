@@ -55,10 +55,10 @@ export class Kitsu {
         await tryGetSetupConsent();
         const user = await promptUser();
         if (!areStatsDefined(user)) {
-            _con.chainError([
-                'Failed to Serialize Kitsu Data',
+            Printer.printError(
                 `;bc;Stats Undefined: ;by;stats.time ;x;|| ;by;stats.completed`,
-            ]);
+                'Serialization Failed'
+            );
             process.exit(1);
         }
         const password = await promptPassword();
@@ -126,7 +126,8 @@ export class Kitsu {
         );
 
         if (error) {
-            _con.chainError(['', ...error]);
+            const header = error.shift();
+            Printer.printError([...error], header);
             process.exit(1);
         }
 
@@ -155,13 +156,13 @@ export class Kitsu {
         if (!resp.ok) {
             const errData = resolvedData as KitsuError;
             if (errData.errors[0].title == 'Invalid token') {
-                _con.chainError(['', ';r;Kitsu API Error', 'Authentication Tokens Expired']);
+                Printer.printError('Authentication Token Expired', 'API Error');
                 process.exit(1);
             }
             const errMessage = errData.errors[0].detail
                 ? errData.errors[0].detail
                 : errData.errors[0].title;
-            _con.chainError(['', `;r;Kitsu API Error`, errMessage]);
+            Printer.printError(errMessage, 'API Error');
             process.exit(1);
         }
 
@@ -172,7 +173,8 @@ export class Kitsu {
         );
 
         if (error) {
-            _con.chainError(error);
+            const header = error.shift();
+            Printer.printError([...error], header);
             process.exit(1);
         }
 
@@ -231,7 +233,8 @@ export class Kitsu {
             'AnimeEntries'
         );
         if (error) {
-            _con.chainError(error);
+            const header = error.shift();
+            Printer.printError([...error], header);
             process.exit(1);
         }
         return serializeAnimeInfo(entries.data);
@@ -255,7 +258,8 @@ export class Kitsu {
             'LibraryEntries'
         );
         if (error) {
-            _con.chainError(error);
+            const header = error.shift();
+            Printer.printError([...error], header);
             process.exit(1);
         }
         return serializeLibraryAnimeInfo(filteredCache, entries);
@@ -365,7 +369,8 @@ async function getUserData(userName: string) {
     }
     const [error, user] = parseWithZod(UserDataRespSchema, resolvedResp, 'UserData');
     if (error) {
-        _con.chainError(error);
+        const header = error.shift();
+        Printer.printError([...error], header);
         process.exit(1);
     }
     return {
@@ -430,12 +435,16 @@ function serializeKitsuData(
 async function tryGetDataFromResp<T = unknown>(resp: Response): Promise<T> {
     const data = await resp.json();
     if (!resp.ok) {
-        const errorType = data['error'];
-        _con.chainError(['', `${errorType}`]);
-        if (errorType == 'invalid_grant') {
-            _con.error(`;by;Make sure you entered the correct password`);
-        }
-        _con.error(`${data['error_description']}`);
+        const header = data['error'];
+        Printer.printError(
+            [
+                data['error_description'],
+                '',
+                ';bc;... ;y;Possible Issues ;bc;...',
+                '(;bc;1;y;) ;c;Make sure you entered the correct password.',
+            ],
+            header
+        );
         process.exit(1);
     }
     return data;
@@ -445,7 +454,8 @@ async function buildAnimeCache() {
     const resp = await HTTP.get(KitsuURLs.getWatchListURL());
     const [error, library] = parseWithZod(LibraryInfoSchema, await resp.json(), 'Library');
     if (error) {
-        _con.chainError(error);
+        const header = error.shift();
+        Printer.printError([...error], header);
         process.exit(1);
     }
     const cache: KitsuCache = [];

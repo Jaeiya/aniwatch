@@ -113,12 +113,11 @@ export class DefaultFlag extends CLIFlag {
         }
 
         if (flagArgs.length < 2 || flagArgs.length > 3) {
-            _con.chainError([
-                `;r;Invalid Syntax`,
+            Printer.printError(
                 'Read the help below to learn the correct syntax:',
-                '',
-            ]);
             this.printSyntax();
+                'Invalid Syntax'
+            );
             process.exit(1);
         }
 

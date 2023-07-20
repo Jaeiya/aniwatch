@@ -102,7 +102,16 @@ function displayErrorTooManyFiles(fileNames: string[]) {
     const errorChain = ['', `;r;More than one file name found`];
 
     for (const fileName of fileNames) {
-        const { title, paddedEpNum } = parseFansubFilename(fileName);
+        const [error, data] = parseFansubFilename(fileName);
+        if (error) {
+            Printer.printError(
+                [`;bc;${error.parseError}`, '', `Failed to parse: ;x;${error.fileName}`],
+                'Unsupported',
+                3
+            );
+            process.exit(1);
+        }
+        const { title, paddedEpNum } = data;
         const saneFileName = truncateStr(title, 60);
         errorChain.push(`;by;${saneFileName} ;x;- ${paddedEpNum}`);
     }
@@ -178,7 +187,16 @@ async function saveAnimeProgress(opt: ProgressOptions) {
     }
 
     if (!Kitsu.getFileBinding(anime.libID) && fileName) {
-        Kitsu.setFileBinding(anime.libID, parseFansubFilename(fileName).title.toLowerCase());
+        const [error, data] = parseFansubFilename(fileName);
+        if (error) {
+            Printer.printError(
+                [`;bc;${error.parseError}`, '', `Failed to parse: ;x;${error.fileName}`],
+                'Unsupported',
+                3
+            );
+            process.exit(1);
+        }
+        Kitsu.setFileBinding(anime.libID, data.title.toLowerCase());
     }
 
     Config.getKitsuProp('cache')[cacheIndex] = anime;

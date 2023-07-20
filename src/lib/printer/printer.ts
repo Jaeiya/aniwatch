@@ -2,6 +2,7 @@ import { createSpinner } from '../cli/cli-spinner.js';
 import { pathBasename } from '../utils.js';
 import { PrinterColor } from './print-colors.js';
 import { inspect } from 'util';
+import readline from 'readline';
 
 type LogBasic = [kind: '', message: string] | [kind: '', message: string, marginOffset: number];
 type LogHeader =
@@ -125,6 +126,24 @@ export class Printer {
         );
         spinner.start(13);
         return spinner.stop;
+    }
+
+    static async prompt(query: string) {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        return new Promise<string>((rs) => {
+            rl.question('\n' + applyLogMargin(_colorText(`;bc;${query};g;`)), (answer) => {
+                rs(answer);
+                rl.close();
+            });
+        });
+    }
+
+    static promptYesNo(query: string) {
+        return this.prompt(`${query}? ;bk;[;bw;y;bk;/;bw;n;bk;]: `);
     }
 }
 

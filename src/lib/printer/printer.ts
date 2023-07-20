@@ -3,17 +3,6 @@ import { pathBasename } from '../utils.js';
 import { PrinterColor } from './print-colors.js';
 import { inspect } from 'util';
 
-export type Log =
-    | LogBasic
-    | LogHeader
-    | LogParagraph
-    | LogProperty
-    | LogCommandDefinition
-    | LogSyntax
-    | LogCommandExample
-    | LogBorder
-    | null;
-
 type LogBasic = [kind: '', message: string] | [kind: '', message: string, marginOffset: number];
 type LogHeader =
     | [kind: 'h1' | 'h2' | 'h3', header: [title: string, text?: string], marginOffset?: number];
@@ -27,6 +16,17 @@ type LogCommandDefinition =
 type LogSyntax = [kind: 's', commands: string[] | null, args: string];
 type LogCommandExample = [kind: 'e', command: [name: string, example: string]];
 type LogBorder = [kind: 'hl', colorCode: string, length: number, marginOffset?: number];
+
+export type Log =
+    | LogBasic
+    | LogHeader
+    | LogParagraph
+    | LogProperty
+    | LogCommandDefinition
+    | LogSyntax
+    | LogCommandExample
+    | LogBorder
+    | null;
 
 const _leftLogMargin = 3;
 const _defaultIndent = 3;

@@ -331,20 +331,19 @@ function saveTokenData(data: KitsuSerializedTokenData) {
 }
 
 async function tryGetSetupConsent() {
-    const hasCreationConsent =
-        (await _con.prompt(`;y;Proceed with setup? ;bw;(y/n);x;: ;by;`)) == 'y';
-    if (!hasCreationConsent) {
+    const hasSetupConsent = await Printer.promptYesNo(`Proceed with setup`);
+    if (!hasSetupConsent) {
         Printer.printWarning('You have decided not to consent', 'Setup Aborted');
         process.exit(0);
     }
 }
 
 async function promptUser(): Promise<UserData> {
-    const username = await _con.prompt(`;y;Enter Kitsu username:;by; `);
+    const username = await Printer.prompt(`Enter Kitsu username:`);
     const user = await getUserData(username);
     if (!user) {
         Printer.printError(`;c;${username};y; not found`);
-        return promptUser();
+        return await promptUser();
     }
     Printer.print([
         null,
@@ -353,7 +352,7 @@ async function promptUser(): Promise<UserData> {
         ['py', ['About', `${user.attributes.about}`], 2],
         null,
     ]);
-    const isVerifiedUser = (await _con.prompt(`;y;Is this you? ;bw;(y/n): ;by;`)) == 'y';
+    const isVerifiedUser = await Printer.promptYesNo(`Is the above info correct`);
     if (!isVerifiedUser) {
         return await promptUser();
     }
@@ -389,7 +388,7 @@ function buildUserDataURL(userName: string) {
 }
 
 async function promptPassword() {
-    return await _con.prompt(`;y;Enter password: ;by;`);
+    return await Printer.prompt(`Enter password:`);
 }
 
 async function grantTokenData(

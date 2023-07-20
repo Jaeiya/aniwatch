@@ -120,7 +120,7 @@ function displayAnimeSelection(animeArray: AnimeResults) {
 async function promptAnimeSelection(animeResultsLength: number) {
     let userNumber = 0;
     while (userNumber == 0) {
-        const userChoice = await _con.prompt('Type the ;bw;Number ;x;of an Anime to add: ;bc;');
+        const userChoice = await Printer.prompt('Type the ;x;Number ;bb;of an Anime to add:');
         if (userChoice == '') {
             return 0;
         }

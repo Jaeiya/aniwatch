@@ -65,25 +65,21 @@ export class CleanFlag extends CLIFlag {
 
     exec: (cli: typeof CLI) => void | Promise<void> = async (cli) => {
         const [arg] = cli.nonFlagArgs;
+
+        const hasConsent = await Printer.promptYesNo('Are you sure');
+
+        if (!hasConsent) {
+            return Printer.printInfo('Cancelled by user input', 'Operation Aborted');
+        }
+
         if (arg == 'old') {
-            if (!(await hasConsent())) {
-                return Printer.printInfo('Operation cancelled by user', 'Operation Aborted');
-            }
             await tryDeleteOldFiles();
         }
 
         if (arg == 'all') {
-            if (!(await hasConsent())) {
-                return Printer.printInfo('Operation cancelled by user', 'Operation Aborted');
-            }
             await deleteAllFiles();
         }
     };
-}
-
-async function hasConsent() {
-    const resp = await _con.prompt(';by;Are you sure? ;bw;(y/n);x;: ;bc;');
-    return resp == 'y';
 }
 
 async function tryDeleteOldFiles() {

@@ -143,7 +143,7 @@ export class Printer {
     }
 
     static promptYesNo(query: string) {
-        return this.prompt(`${query}? ;bk;[;bw;y;bk;/;bw;n;bk;]: `);
+        return this.prompt(`${query}? ;bk;[;bw;y;bk;/;bw;n;bk;]:`);
     }
 }
 

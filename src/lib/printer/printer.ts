@@ -135,7 +135,7 @@ export class Printer {
         });
 
         return new Promise<string>((rs) => {
-            rl.question('\n' + applyLogMargin(_colorText(`;bc;${query};g;`)), (answer) => {
+            rl.question('\n' + applyLogMargin(_colorText(`;bb;${query};g; `)), (answer) => {
                 rs(answer);
                 rl.close();
             });

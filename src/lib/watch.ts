@@ -58,8 +58,7 @@ export async function watchAnime(
             process.exit(1);
         }
         if (fansubFileNames.length > 1) {
-            displayErrorTooManyFiles(fansubFileNames);
-            process.exit(1);
+            throw Error('Expected one, but found many files with same name');
         }
         fileName = fansubFileNames[0];
     }
@@ -96,27 +95,6 @@ function filterFansubFilenames(workingDir: string, epName: string, epNum: string
                 name.toLowerCase().includes(epName) &&
                 name.includes(epNum.length == 1 ? `- 0${epNum}` : `- ${epNum}`)
         );
-}
-
-function displayErrorTooManyFiles(fileNames: string[]) {
-    const errorChain = ['', `;r;More than one file name found`];
-
-    for (const fileName of fileNames) {
-        const [error, data] = parseFansubFilename(fileName);
-        if (error) {
-            Printer.printError(
-                [`;bc;${error.parseError}`, '', `Failed to parse: ;x;${error.fileName}`],
-                'Unsupported',
-                3
-            );
-            process.exit(1);
-        }
-        const { title, paddedEpNum } = data;
-        const saneFileName = truncateStr(title, 60);
-        errorChain.push(`;by;${saneFileName} ;x;- ${paddedEpNum}`);
-    }
-
-    _con.chainError(errorChain);
 }
 
 function validateCachedAnime(cache: KitsuCache, animeName: string) {

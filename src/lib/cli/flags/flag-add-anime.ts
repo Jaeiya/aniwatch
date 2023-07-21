@@ -74,11 +74,12 @@ export class AddAnime extends CLIFlag {
         displayAnimeSelection(animeResults);
         const userChoice = await promptAnimeSelection(animeResults.length);
 
-        Printer.print([null, ['h3', ['Adding Anime']]]);
         if (!userChoice) {
             Printer.printWarning('Operation cancelled manually', 'Aborted', 3);
             process.exit(0);
         }
+
+        Printer.print([null, ['h3', ['Adding Anime']]]);
 
         if (userChoice > 0) {
             const anime = animeResults[userChoice - 1];

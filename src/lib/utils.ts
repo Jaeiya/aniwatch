@@ -1,6 +1,5 @@
 import { resolve, join, basename } from 'path';
 import { z, ZodSchema } from 'zod';
-import { Printer } from './printer/printer.js';
 
 export type FansubFilenameData = {
     fansub: string;

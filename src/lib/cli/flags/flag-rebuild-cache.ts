@@ -23,8 +23,11 @@ export class RebuildCacheFlag extends CLIFlag {
     }
 
     async exec() {
-        Printer.print([null, ['h3', ['Rebuild Cache']]]);
+        Printer.print([null]);
+        const stopLoader = Printer.printLoader('Rebuilding Cache');
         const { cachedAnimeCount } = await Kitsu.rebuildCache();
+        stopLoader();
+        Printer.print([['h3', ['Rebuilding Cache']]]);
         Printer.printInfo(`;bg;${cachedAnimeCount} ;g;Anime Reloaded`, 'Success', 3);
     }
 }

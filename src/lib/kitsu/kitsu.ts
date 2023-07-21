@@ -255,10 +255,8 @@ export class Kitsu {
     }
 
     static async rebuildCache() {
-        const stopLoader = _con.printLoader('Fetching Kitsu Data');
         const cachedAnime = await buildAnimeCache();
         _sK('cache', cachedAnime);
-        stopLoader();
         Config.save();
         return { cachedAnimeCount: cachedAnime.length };
     }

@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
 import { Kitsu } from './kitsu/kitsu.js';
-import { parseFansubFilename, pathJoin, truncateStr } from './utils.js';
+import { parseFansubFilename, pathJoin } from './utils.js';
 import { KitsuCacheItem, KitsuCache } from './kitsu/kitsu-types.js';
 import { Config } from './config.js';
-import { Log, Printer } from './printer/printer.js';
+import { Printer } from './printer/printer.js';
 import { colorWord } from './printer/print-colors.js';
 
 type ProgressOptions = {
@@ -63,7 +63,7 @@ export async function watchAnime(
         fileName = fansubFileNames[0];
     }
 
-    await saveAnimeProgress({
+    const progress = await saveAnimeProgress({
         anime: validAnime,
         cacheIndex,
         epNum: Number(fileEpNumStr),
@@ -74,6 +74,8 @@ export async function watchAnime(
     if (!manual) {
         moveFileToWatchedDir(fileName, workingDir);
     }
+
+    return progress;
 }
 
 function tryCreateWatchedDir(workingDir: string) {
@@ -146,12 +148,6 @@ async function saveAnimeProgress(opt: ProgressOptions) {
     );
     anime.epProgress = progress;
 
-    const titleLogs: Log[] = [
-        null,
-        ['py', ['JP Title', anime.jpTitle]],
-        ['py', ['EN Title', anime.enTitle || ';m;None']],
-    ];
-
     // Kitsu may or may not know how many episodes an anime
     // will be at the beginning of a season, so we need to
     // make sure we keep up with those changes.
@@ -160,8 +156,11 @@ async function saveAnimeProgress(opt: ProgressOptions) {
     // If an anime is completed, remove it from cache
     if (progress > 0 && progress == episodeCount) {
         Kitsu.removeAnimeFromCache(anime, { saveConfig: false });
-        Printer.print([...titleLogs, ['py', ['Progress', ';bg;Completed']], null]);
-        return Config.save();
+        Config.save();
+        return {
+            completed: true,
+            anime,
+        } as const;
     }
 
     if (!Kitsu.getFileBinding(anime.libID) && fileName) {
@@ -178,12 +177,11 @@ async function saveAnimeProgress(opt: ProgressOptions) {
     }
 
     Config.getKitsuProp('cache')[cacheIndex] = anime;
-    Printer.print([
-        ...titleLogs,
-        ['py', ['Progress', `;g;${anime.epProgress} ;by;/ ;m;${anime.epCount || 'unknown'}`]],
-        null,
-    ]);
     Config.save();
+    return {
+        completed: false,
+        anime,
+    } as const;
 }
 
 function buildLibPatchReqArgs(id: string, progress: number) {

@@ -100,7 +100,7 @@ export class DefaultFlag extends CLIFlag {
         ];
     }
 
-    exec(cli: typeof CLI) {
+    async exec(cli: typeof CLI) {
         const flagArgs = cli.nonFlagArgs;
 
         if (!cli.userArgs.length) {
@@ -151,11 +151,33 @@ export class DefaultFlag extends CLIFlag {
             return;
         }
 
-        if (cli.flagArgs.length) {
-            watchAnime(epName, [epNumber, epForcedNum || '0'], process.cwd(), true);
-            return;
-        }
+        Printer.print([null]);
+        const stopLoader = Printer.printLoader('Setting Progress');
+        const { completed, anime } = await watchAnime(
+            epName,
+            [epNumber, epForcedNum || '0'],
+            process.cwd(),
+            !!cli.flagArgs.length
+        );
+        const { epCount, epProgress, jpTitle, enTitle } = anime;
+        stopLoader();
 
-        watchAnime(epName, [epNumber, epForcedNum || '0'], process.cwd());
+        Printer.print([['h3', ['Setting Progress']]]);
+
+        const percent = epCount ? Math.floor((epProgress / epCount) * 100) : 0;
+        const percentText = percent ? `;bk;(;c;~${percent}%;bk;)` : '';
+        const progressText = completed
+            ? ';bg;Completed!'
+            : `;bg;${epProgress} ;x;/ ;y;${epCount || ';r;Unknown'} ${percentText}`;
+
+        Printer.printInfo(
+            [
+                `JP Title: ;x;${jpTitle || ';m;None'}`,
+                `EN Title: ;bk;${enTitle || ';m;None'}`,
+                `Progress: ${progressText}`,
+            ],
+            'Success',
+            3
+        );
     }
 }

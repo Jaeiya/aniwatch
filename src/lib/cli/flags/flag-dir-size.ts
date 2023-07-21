@@ -77,7 +77,6 @@ function displayFolderInfo(fileStats: Awaited<ReturnType<typeof serializeFileSta
 
     Printer.print([
         null,
-        null,
         ['h2', ['Directory Details']],
         [
             'p',
@@ -101,6 +100,7 @@ function displayFolderInfo(fileStats: Awaited<ReturnType<typeof serializeFileSta
         null,
         ['p', `;c;${fitStringEnd('Smallest', 8)} ;bk;: ;x;${smallestFile}`],
         ['p', `: ;y;${smallestFileSize}`, indent],
+        null,
     ]);
 }
 

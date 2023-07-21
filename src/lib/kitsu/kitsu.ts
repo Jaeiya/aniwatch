@@ -280,14 +280,16 @@ export class Kitsu {
         );
         Printer.print([
             null,
-            ['h3', ['Current User Profile']],
+            ['h3', ['User Profile']],
+            null,
             ['py', ['Name', `${_gK('username')}`], 6],
             ['py', ['About', `${_gK('about')}`], 5],
             ['', `;c;Link: ;g;${_gK('urls').profile}`, 9],
             ['py', ['Watch Time', `${allTimeStr} ;m;or ${hoursAndMinutesLeft}`]],
-            ['py', ['Watching', `${_gK('cache').length} ;g;Series`], 2],
-            ['py', ['Time Left', `;by;${toWatchTimeLeft(_gK('cache'))}`], 1],
-            ['py', ['Completed', `;by;${stats.completedSeries} ;g;Series`], 1],
+            ['py', ['Watching', `;y;${_gK('cache').length} ;g;Series`], 2],
+            ['py', ['Time Left', `;y;${toWatchTimeLeft(_gK('cache'))}`], 1],
+            ['py', ['Completed', `;y;${stats.completedSeries} ;g;Series`], 1],
+            null,
         ]);
     }
 
@@ -518,7 +520,7 @@ function toWatchTimeLeft(cache: KitsuCache) {
     );
     const timeLeft = getTimeUnits(episodesLeft * 24 * 60);
     return timeLeft.hours > 2
-        ? `${timeLeft.hours.toFixed(0)} ;g;hours, ;by;${Math.ceil(
+        ? `${timeLeft.hours.toFixed(0)} ;g;hours, ;y;${Math.ceil(
               (timeLeft.hours % 1) * 60
           )} ;g;Minutes`
         : `${timeLeft.minutes} Minutes`;

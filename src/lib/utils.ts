@@ -83,10 +83,10 @@ export function truncateStr(str: string, length: number) {
 export function getColoredTimeWatchedStr(seconds: number) {
     const { hours, days, months } = getTimeUnits(seconds);
     const leftOverMinutes = (hours % 1) * 60;
-    const coloredMinutesLeft = `;by;${leftOverMinutes.toFixed(0)} ;g;Minutes`;
-    const coloredHours = `;by;${Math.floor(hours)} ;g;Hours`;
-    const coloredDays = `;by;${hours.toFixed(1)} ;g;Days`;
-    const coloredMonths = `;by;${months.toFixed(1)} ;g;Months`;
+    const coloredMinutesLeft = `;y;${leftOverMinutes.toFixed(0)} ;g;Minutes`;
+    const coloredHours = `;y;${Math.floor(hours)} ;g;Hours`;
+    const coloredDays = `;y;${hours.toFixed(1)} ;g;Days`;
+    const coloredMonths = `;y;${months.toFixed(1)} ;g;Months`;
 
     const allTimeStr = months >= 1 ? coloredMonths : days >= 1 ? coloredDays : coloredHours;
 

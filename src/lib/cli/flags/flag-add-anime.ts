@@ -55,13 +55,12 @@ export class AddAnime extends CLIFlag {
     }
 
     async exec(cli: typeof CLI) {
-        const loader = _con.getLoadPrinter();
-        Printer.print([null, ['h3', ['Generating Anime Selection']]]);
-        loader.start('Looking up Anime');
+        Printer.print([null]);
+        const stopLoader = Printer.printLoader('Generating Anime Selection');
         const animeResults = await Kitsu.findAnime(cli.nonFlagArgs.join(' '));
-        loader.stop();
+        stopLoader();
+        Printer.print([['h3', ['Generating Anime Selection']]]);
         if (!animeResults.length) {
-            Printer.print([null]);
             Printer.printWarning(
                 'Try using a different query strategy like an alternate title, if ' +
                     `you don't know the exact Japanese name. You could also try describing ` +
@@ -103,6 +102,7 @@ export class AddAnime extends CLIFlag {
 }
 
 function displayAnimeSelection(animeArray: AnimeResults) {
+    Printer.print([null]);
     animeArray.forEach((anime, i) => {
         const synonyms: Log[] = anime.synonyms.map((s) => ['py', ['Alias', `;b;${s}`], 3]);
         Printer.print([

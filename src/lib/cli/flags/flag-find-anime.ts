@@ -58,10 +58,11 @@ export class FindAnimeFlag extends CLIFlag {
 }
 
 async function getAnimeList(cli: typeof CLI) {
-    Printer.print([null, ['h3', ['Find Anime']]]);
-    const stopLoader = _con.printLoader('Fetching Anime');
+    Printer.print([null]);
+    const stopLoader = Printer.printLoader('Find Anime');
     const animeList = await Kitsu.findLibraryAnime(cli.nonFlagArgs.join(' '));
     stopLoader();
+    Printer.print([['h3', ['Find Anime']]]);
     if (!animeList.length) {
         Printer.printWarning(
             'The anime is either not in your cache or your search terms were ' +

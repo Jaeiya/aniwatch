@@ -1,11 +1,9 @@
 import { Config } from './lib/config.js';
 import { Kitsu } from './lib/kitsu/kitsu.js';
-import { ConsoleLogger } from './lib/logger.js';
 import { Printer } from './lib/printer/printer.js';
 
 // Fetch creates a warning
 process.removeAllListeners('warning');
-global._con = ConsoleLogger;
 
 await Config.init({
     setupNewConfig: async () => {

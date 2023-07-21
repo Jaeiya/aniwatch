@@ -104,14 +104,14 @@ export class AddAnime extends CLIFlag {
 function displayAnimeSelection(animeArray: AnimeResults) {
     Printer.print([null]);
     animeArray.forEach((anime, i) => {
-        const synonyms: Log[] = anime.synonyms.map((s) => ['py', ['Alias', `;b;${s}`], 3]);
+        const synonyms: Log[] = anime.synonyms.map((s) => ['py', ['Alias', `;b;${s}`], 6]);
         Printer.print([
-            ['h1', [`${i + 1}`]],
-            ['py', ['Title JP', `;y;${anime.jpTitle}`]],
-            ['py', ['Title EN', anime.enTitle || ';m;None']],
-            ['py', ['Title US', anime.usTitle || ';m;None']],
+            ['h1', [`${i + 1}`], 3],
+            ['py', ['Title JP', `;y;${anime.jpTitle}`], 3],
+            ['py', ['Title EN', anime.enTitle || ';m;None'], 3],
+            ['py', ['Title US', anime.usTitle || ';m;None'], 3],
             ...synonyms,
-            ['', `;c;Link: ;x;https://kitsu.io/anime/${anime.slug}`, 7],
+            ['', `;c;Link: ;x;https://kitsu.io/anime/${anime.slug}`, 10],
             null,
         ]);
     });

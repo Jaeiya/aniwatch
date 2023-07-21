@@ -25,7 +25,8 @@ export class AddAnime extends CLIFlag {
             [
                 'p',
                 'This flag allows you to lookup an anime from Kitsu and add it to your ' +
-                    'watch list.',
+                    'watch list. When executed, you will be presented with 5 of the most ' +
+                    'accurate anime results, based on your search terms.',
             ],
             null,
         ];

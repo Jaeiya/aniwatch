@@ -142,7 +142,11 @@ function loadFileStats(dirEntries: Dirent[]) {
 
 async function getFileStats(dirEnt: Dirent): Promise<FileStat> {
     const stats = await stat(pathJoin(process.cwd(), 'watched', dirEnt.name));
-    return [stats.size, stats.mtimeMs, dirEnt.name, parseFansubFilename(dirEnt.name)];
+    const [error, data] = parseFansubFilename(dirEnt.name);
+    if (error) {
+        throw Error(error.parseError);
+    }
+    return [stats.size, stats.mtimeMs, dirEnt.name, data];
 }
 
 function toLatestFileStat(lastStat: FileStat, currentStat: FileStat) {

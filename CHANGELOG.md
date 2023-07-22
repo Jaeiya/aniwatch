@@ -1,3 +1,46 @@
+# [5.2.0](https://github.com/jaeiya/wakitsu/compare/v5.1.0...v5.2.0) (7/21/2023)
+
+### Update Anime without Files
+
+The `-m` and `--manual` flags have been added to make sure you can update your anime watch list without needing to have a file on disk. I'm not sure why this took so long, but here it is...😅
+
+It works just like the default command syntax:
+
+```bash
+wak 'anime title' epNum forcedEpNum
+```
+
+The only difference is you use it with the `-m` flag:
+
+```bash
+wak -m 'boku no hero' 13 1
+```
+
+### Features
+
+- **flag**: new `--add-anime` flag, which allows you to selectively add new anime to your watch list. You can execute `wak -h add anime` to get more info. ([c4a8b66](https://github.com/Jaeiya/aniwatch/commit/c4a8b66), [b0c20d8](https://github.com/Jaeiya/aniwatch/commit/b0c20d8), [ae9d46c](https://github.com/Jaeiya/aniwatch/commit/ae9d46c))
+- **flag**: add hour-accuracy to `--token` expiration calculation ([9324201](https://github.com/Jaeiya/aniwatch/commit/9324201))
+- **flag**: `--rss` now displays your search terms ([c2e49d5](https://github.com/Jaeiya/aniwatch/commit/c2e49d5))
+- **console**: rewrote the logging class, allowing for an easier text-formatting experience and more logging features. All menus and logs now have a new look to them. ([8a62b04](https://github.com/Jaeiya/aniwatch/commit/8a62b04))
+- **cli**: decouple flag-help from CLI interface and embed help in the flags themselves using the new `Printer{}` ([c5c7cd5](https://github.com/Jaeiya/aniwatch/commit/c5c7cd5))
+- **kitsu**: every time an anime is updated, the _auth-token_ will be checked to see if it's about to expire. If it is, the user will be notified. ([849d737](https://github.com/Jaeiya/aniwatch/commit/849d737))
+- **kitsu**: if a username is not found during setup, it will now keep prompting for one ([41fe9e4](https://github.com/Jaeiya/aniwatch/commit/41fe9e4))
+- **help**: show full help, instead of syntax help, when `wak` is executed with no arguments ([4e1c2a4](https://github.com/Jaeiya/aniwatch/commit/4e1c2a4))
+- **flag**: updated `--help` description to be more verbose ([0542ecd](https://github.com/Jaeiya/aniwatch/commit/0542ecd))
+- **watch**: added better message display when multiple anime are found having the same name ([be6c9b0](https://github.com/Jaeiya/aniwatch/commit/be6c9b0))
+
+### Minor Changes
+
+- **flags**: `--color` "on" text is now highlighted bright green ([1dae2cd](https://github.com/Jaeiya/aniwatch/commit/1dae2cd))
+- **config**: we no longer display a message every time the config is saved ([e8c55db](https://github.com/Jaeiya/aniwatch/commit/e8c55db))
+
+### Fixes
+
+- **watch**: english title missing default value ([d82af6b](https://github.com/Jaeiya/aniwatch/commit/d82af6b))
+- **flags**: use bang for both test flag names ([33d3548](https://github.com/Jaeiya/aniwatch/commit/33d3548))
+- **kitsu**: provide a default empty string for all titles ([6bac527](https://github.com/Jaeiya/aniwatch/commit/6bac527))
+- **utils**: remove strict `-` fansub parsing. This allows us to match a lot more fansub groups ([6af5d82](https://github.com/Jaeiya/aniwatch/commit/6af5d82))
+
 # [5.1.0](https://github.com/jaeiya/wakitsu/compare/v5.0.0...v5.1.0) (4/12/2023)
 
 ### Features

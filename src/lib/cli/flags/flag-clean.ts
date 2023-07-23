@@ -92,7 +92,7 @@ export class CleanFlag extends CLIFlag {
             Printer.printInfo(
                 [
                     `Removed ;bg;${deletedFileCount} ;g;Old Files`,
-                    `Freed ;bg;${freedBytes} ;g;of space`,
+                    `Freed ;bg;${toReadableBytes(freedBytes)} ;g;of space`,
                 ],
                 'Success',
                 3
@@ -135,14 +135,11 @@ async function deleteOldFiles() {
     const stats = await Promise.all(statPromises);
     const latestFilesPerSeries = findLatestFilesPerSeries(stats);
     const filesToDelete = stats.filter((s) => !latestFilesPerSeries.includes(s[0]));
-    if (!filesToDelete.length) return [0, ''] as const;
+    if (!filesToDelete.length) return [0, 0] as const;
     const deletedFileCount = (
         await Promise.all(filesToDelete.map((file) => unlink(pathJoin(watchDir, file[0]))))
     ).length;
-    return [
-        deletedFileCount,
-        toReadableBytes(filesToDelete.reduce((pv, cv) => (pv += cv[2]), 0)),
-    ] as const;
+    return [deletedFileCount, filesToDelete.reduce((pv, cv) => (pv += cv[2]), 0)] as const;
 }
 
 async function deleteAllFiles() {

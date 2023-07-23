@@ -1,6 +1,6 @@
 import { readdir, stat, unlink } from 'node:fs/promises';
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import { pathJoin } from '../../utils.js';
+import { pathJoin, toReadableBytes } from '../../utils.js';
 import { Dirent } from 'node:fs';
 import { Log, Printer } from '../../printer/printer.js';
 
@@ -72,26 +72,36 @@ export class CleanFlag extends CLIFlag {
             return Printer.printInfo('Cancelled by user input', 'Operation Aborted');
         }
 
+        Printer.print([null]);
+
         if (arg == 'old') {
-            await tryDeleteOldFiles();
+            const stopLoader = Printer.printLoader('Deleting Old Files');
+            const [deletedFileCount, freedBytes] = await deleteOldFiles();
+            stopLoader();
+            Printer.print([['h3', ['Deleting Old Files']]]);
+
+            if (deletedFileCount == 0) {
+                return Printer.printWarning(
+                    'No old files to clean out',
+                    'Operation Aborted',
+                    3
+                );
+            }
+
+            Printer.printInfo(
+                [
+                    `Removed ;bg;${deletedFileCount} ;g;Old Files`,
+                    `Freed ;bg;${freedBytes} ;g;of space`,
+                ],
+                'Success',
+                3
+            );
         }
 
         if (arg == 'all') {
             await deleteAllFiles();
         }
     };
-}
-
-async function tryDeleteOldFiles() {
-    const filesPendingDeletion = await deleteOldFiles();
-    if (!filesPendingDeletion.length) {
-        return Printer.printWarning('Old files already cleaned out!', 'Operation Aborted');
-    }
-    await Promise.all(filesPendingDeletion);
-    Printer.printInfo(
-        `Removed ;bg;${filesPendingDeletion.length} ;g;Old Files!`,
-        'Operation Successful'
-    );
 }
 
 async function deleteOldFiles() {
@@ -103,9 +113,15 @@ async function deleteOldFiles() {
     }
     const stats = await Promise.all(statPromises);
     const latestFilesPerSeries = findLatestFilesPerSeries(stats);
-    const filesToDelete = fileList.filter((v) => !latestFilesPerSeries.includes(v.name));
-    if (!filesToDelete.length) return [];
-    return filesToDelete.map((v) => unlink(pathJoin(watchDir, v.name)));
+    const filesToDelete = stats.filter((s) => !latestFilesPerSeries.includes(s[0]));
+    if (!filesToDelete.length) return [0, ''] as const;
+    const deletedFileCount = (
+        await Promise.all(filesToDelete.map((file) => unlink(pathJoin(watchDir, file[0]))))
+    ).length;
+    return [
+        deletedFileCount,
+        toReadableBytes(filesToDelete.reduce((pv, cv) => (pv += cv[2]), 0)),
+    ] as const;
 }
 
 async function deleteAllFiles() {
@@ -121,7 +137,7 @@ async function deleteAllFiles() {
     Printer.printInfo(`Removed ;bg;${pendingFiles.length} ;g;Files!`, 'Operation Successful');
 }
 
-function findLatestFilesPerSeries(stats: (readonly [string, number])[]) {
+function findLatestFilesPerSeries(stats: (readonly [string, number, number])[]) {
     const latestFiles = [];
     while (stats.length) {
         const similarFiles = stats
@@ -134,7 +150,7 @@ function findLatestFilesPerSeries(stats: (readonly [string, number])[]) {
 }
 
 function hasSimilarFiles(v1: string, isEqual = true) {
-    return (v2: readonly [string, number]) => {
+    return (v2: readonly [string, number, number]) => {
         const isSimilar = v1.split(' - ')[0] == v2[0].split(' - ')[0];
         return isEqual ? isSimilar : !isSimilar;
     };
@@ -146,5 +162,5 @@ function notSimilarFiles(v1: string) {
 
 async function getFileStats(dirEnt: Dirent) {
     const stats = await stat(pathJoin(process.cwd(), 'watched', dirEnt.name));
-    return [dirEnt.name, stats.ctimeMs] as const;
+    return [dirEnt.name, stats.ctimeMs, stats.size] as const;
 }

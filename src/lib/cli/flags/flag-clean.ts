@@ -78,6 +78,7 @@ export class CleanFlag extends CLIFlag {
             const stopLoader = Printer.printLoader('Deleting Old Files');
             const [deletedFileCount, freedBytes] = await deleteOldFiles();
             stopLoader();
+
             Printer.print([['h3', ['Deleting Old Files']]]);
 
             if (deletedFileCount == 0) {
@@ -99,7 +100,27 @@ export class CleanFlag extends CLIFlag {
         }
 
         if (arg == 'all') {
-            await deleteAllFiles();
+            const stopLoader = Printer.printLoader('Deleting ALL Files');
+            const [deletedFileCount, freedBytes] = await deleteAllFiles();
+            stopLoader();
+
+            Printer.print([['h3', ['Deleting ALL Files']]]);
+
+            if (deletedFileCount == 0) {
+                return Printer.printWarning(
+                    'Watch directory is already empty',
+                    'Operation Aborted',
+                    3
+                );
+            }
+
+            Printer.printInfo(
+                [
+                    `Removed ;bg;${deletedFileCount} ;g;Files`,
+                    `Freed ;bg;${toReadableBytes(freedBytes)} ;g;of space`,
+                ],
+                'Operation Successful'
+            );
         }
     };
 }
@@ -125,16 +146,26 @@ async function deleteOldFiles() {
 }
 
 async function deleteAllFiles() {
-    const fileNames = await readdir(pathJoin(process.cwd(), 'watched'));
-    if (!fileNames.length) {
-        return Printer.printWarning('Watch directory is empty!', 'Operation Aborted');
+    const fileList = await readdir(pathJoin(process.cwd(), 'watched'), {
+        withFileTypes: true,
+    });
+
+    if (!fileList.length) {
+        return [0, 0] as const;
     }
-    const pendingFiles = [];
-    for (const name of fileNames) {
-        pendingFiles.push(unlink(pathJoin(process.cwd(), 'watched', name)));
+
+    const statPromises = [];
+    for (const file of fileList) {
+        statPromises.push(getFileStats(file));
     }
-    await Promise.all(pendingFiles);
-    Printer.printInfo(`Removed ;bg;${pendingFiles.length} ;g;Files!`, 'Operation Successful');
+    const stats = await Promise.all(statPromises);
+
+    const pendingDeletion = [];
+    for (const [fileName] of stats) {
+        pendingDeletion.push(unlink(pathJoin(process.cwd(), 'watched', fileName)));
+    }
+    await Promise.all(pendingDeletion);
+    return [pendingDeletion.length, stats.reduce((pv, cv) => (pv += cv[2]), 0)] as const;
 }
 
 function findLatestFilesPerSeries(stats: (readonly [string, number, number])[]) {

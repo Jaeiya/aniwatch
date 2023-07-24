@@ -72,11 +72,13 @@ export class RSSFeedFlag extends CLIFlag {
         }
 
         Printer.print([
+            null,
+            ['h2', ['Details']],
             ['py', ['Query', `;g;${cli.nonFlagArgs.join(' ')}`], 2],
             ['py', ['Entries', `${result.entryCount}`]],
             ['', `;c;RSS: ;x;${result.rss}`, 7],
             null,
-            ['h3', ['Latest Entry']],
+            ['h2', ['Latest Entry']],
             ['py', ['Title', `${result.title}`], 2],
             ['py', ['FanSub', `${result.fansub}`], 1],
             ['py', ['Episode', `${result.episode}`]],

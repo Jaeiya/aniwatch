@@ -1,9 +1,9 @@
 import { readdir } from 'fs/promises';
 import {
     FansubFilenameData,
-    createReadableBytesFunc,
     parseFansubFilename,
     pathJoin,
+    toReadableBytes,
 } from '../../utils.js';
 import { CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
 import { stat } from 'fs/promises';
@@ -17,8 +17,6 @@ type FileStat = [
     fileName: string,
     filenameData: FansubFilenameData
 ];
-
-const toReadableBytes = createReadableBytesFunc();
 
 export class DirInfoFlag extends CLIFlag {
     name: CLIFlagName = ['dir', 'dir-info'];

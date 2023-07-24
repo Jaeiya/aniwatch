@@ -157,7 +157,7 @@ export class DefaultFlag extends CLIFlag {
             epName,
             [epNumber, epForcedNum || '0'],
             process.cwd(),
-            !!cli.flagArgs.length
+            !!cli.flagArgs.length // is it --manual entry?
         );
         const { epCount, epProgress, jpTitle, enTitle } = anime;
         stopLoader();

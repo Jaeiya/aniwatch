@@ -54,6 +54,7 @@ export class FindAnimeFlag extends CLIFlag {
 
     async exec(cli: typeof CLI) {
         displayAnimeList(await getAnimeList(cli));
+        Printer.print([null]);
     }
 }
 
@@ -74,11 +75,11 @@ async function getAnimeList(cli: typeof CLI) {
     }
     Printer.print([
         null,
-        ['py', ['Query', cli.nonFlagArgs.join(' ')], 1],
-        ['py', ['Status', `;m;${animeList.length} ;g;Anime Found`]],
+        ['h2', ['Details Found'], 3],
+        ['py', ['Query', cli.nonFlagArgs.join(' ')], 4],
+        ['py', ['Status', `;m;${animeList.length} ;g;Anime Found`], 3],
         null,
-        ['h3', ['Anime']],
-        ['hl', 'c', 70],
+        ['hl', 'c', 70, 3],
     ]);
     return animeList;
 }
@@ -86,18 +87,17 @@ async function getAnimeList(cli: typeof CLI) {
 function displayAnimeList(animeList: SerializedAnime[]) {
     animeList.forEach((anime) => {
         const totalEps = anime.epCount ? anime.epCount : `;r;unknown`;
-        const synonyms: Log[] = anime.synonyms.map((s) => ['py', [';b;Alt Title', s], 2]);
+        const synonyms: Log[] = anime.synonyms.map((s) => ['py', [';b;Alt Title', s], 5]);
         Printer.print([
-            ['py', ['Title JP', anime.title_jp], 3],
-            ['py', ['Title EN', anime.title_en || ';r;undefined'], 3],
+            ['py', ['Title JP', anime.title_jp], 6],
+            ['py', ['Title EN', anime.title_en || ';r;undefined'], 6],
             ...synonyms,
-            ['py', ['Progress', `;g;${anime.epProgress} ;by;/ ;m;${totalEps}`], 3],
-            ['py', ['My Rating', `;g;${anime.rating ? anime.rating : ';y;Not Rated'}`], 2],
-            ['py', ['Avg. Rating', `;g;${anime.avgRating}`]],
-            ['py', ['Synopsis', `${anime.synopsis.trim()}`], 3],
-            ['', `;b;Link: ;x;${anime.link}`, 10],
-            ['hl', 'c', 70],
-            null,
+            ['py', ['Progress', `;g;${anime.epProgress} ;by;/ ;m;${totalEps}`], 6],
+            ['py', ['My Rating', `;g;${anime.rating ? anime.rating : ';y;Not Rated'}`], 5],
+            ['py', ['Avg. Rating', `;g;${anime.avgRating}`], 3],
+            ['py', ['Synopsis', `${anime.synopsis.trim()}`], 6],
+            ['', `;b;Link: ;x;${anime.link}`, 13],
+            ['hl', 'c', 70, 3],
         ]);
     });
 }

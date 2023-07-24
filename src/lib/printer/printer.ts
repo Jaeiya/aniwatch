@@ -128,22 +128,33 @@ export class Printer {
         return spinner.stop;
     }
 
-    static async prompt(query: string) {
+    static async prompt(query: string, promptFormat?: string) {
         const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout,
         });
 
         return new Promise<string>((rs) => {
-            rl.question('\n' + applyLogMargin(_colorText(`;bb;${query};g; `)), (answer) => {
-                rs(answer);
-                rl.close();
-            });
+            const querySentences = createFixedWidthSentences(query, -3, 50);
+            Printer.print([null, ['', `;g;┌${'─'.repeat(querySentences[0].length + 3)}≪`]]);
+            rl.question(
+                applyLogMargin(
+                    _colorText(
+                        `;g;│ ;bb;${querySentences.join(
+                            `\n${applyLogMargin(';g;│ ;bb;')}`
+                        )}\n;g;   │\n;x;${applyLogMargin(`;g;└─${promptFormat ?? ''};g;≫ ;y;`)}`
+                    )
+                ),
+                (answer) => {
+                    rs(answer);
+                    rl.close();
+                }
+            );
         });
     }
 
     static async promptYesNo(query: string) {
-        const answer = await this.prompt(`${query}? ;bk;[;bw;y;bk;/;bw;n;bk;]:`);
+        const answer = await this.prompt(`${query}?`, '┤;by;Y;bw;/;by;N;g;├');
         return answer.toLowerCase() == 'y' || answer.toLowerCase() == 'yes';
     }
 }

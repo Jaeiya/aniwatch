@@ -40,6 +40,7 @@ const _consoleColors = {
     xbg: '\u001B[49m',
     /** Reset All */
     xx: '\u001B[0m',
+    ul: '\u001B[4m',
 };
 
 const _colorCodeMap = (function () {

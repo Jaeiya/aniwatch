@@ -72,6 +72,21 @@ export class CLI {
         flag.exec instanceof Promise ? await flag.exec(CLI) : flag.exec(CLI);
         return true;
     }
+
+    static validateSingleArg(validArgs: string[], flag: CLIFlag) {
+        const errHeader =
+            this.nonFlagArgs.length > 1
+                ? 'Too Many Arguments'
+                : validArgs.every((a) => !this.nonFlagArgs.includes(a))
+                ? 'Invalid Arguments'
+                : null;
+
+        if (!errHeader) return true;
+
+        Printer.printError('Make sure you use the correct syntax, as shown below:', errHeader);
+        flag.printSyntax();
+        return false;
+    }
 }
 
 function validateFlag(flag?: CLIFlag): flag is CLIFlag {

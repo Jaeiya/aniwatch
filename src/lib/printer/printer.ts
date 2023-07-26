@@ -278,7 +278,7 @@ function getDefinitionLog(log: LogCommandDefinition) {
     const [kind, message, offset] = log;
     const [word, definition] = message;
     const defaultOffset = offset ?? 0;
-    const wordLength = word.length;
+    const wordLength = PrinterColor.stripColorCodes(word).length;
     const [firstSentence, ...leftoverSentences] = createFixedWidthSentences(
         definition,
         0,

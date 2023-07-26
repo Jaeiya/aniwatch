@@ -52,7 +52,10 @@ export class ProfileFlag extends CLIFlag {
 
     exec() {
         const [arg] = CLI.nonFlagArgs;
-        const hasValidArgs = CLI.validateSingleArg(['info', 'rebuild'], this);
+        const hasValidArgs = CLI.validateSingleArg({
+            args: ['info', 'rebuild'],
+            flag: this,
+        });
 
         if (hasValidArgs) {
             if (arg == 'info') {

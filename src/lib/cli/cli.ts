@@ -2,6 +2,11 @@ import { Log, Printer } from '../printer/printer.js';
 
 export type CLIFlagType = 'multiArg' | 'simple';
 export type CLIFlagName = [short: string, long: string];
+type ArgsConfig = {
+    args: string[];
+    argHasArgs?: boolean;
+    flag: CLIFlag;
+};
 
 const _flags: CLIFlag[] = [];
 
@@ -73,12 +78,17 @@ export class CLI {
         return true;
     }
 
-    static validateSingleArg(validArgs: string[], flag: CLIFlag) {
+    static validateSingleArg({ args, argHasArgs, flag }: ArgsConfig) {
+        argHasArgs = argHasArgs ?? false;
+        const argsLength = this.nonFlagArgs.length;
+
         const errHeader =
-            this.nonFlagArgs.length > 1
+            argsLength > 1 && !argHasArgs
                 ? 'Too Many Arguments'
-                : validArgs.every((a) => !this.nonFlagArgs.includes(a))
+                : args.every((a) => this.nonFlagArgs[0] != a)
                 ? 'Invalid Arguments'
+                : argHasArgs && argsLength == 1
+                ? 'Missing Arguments'
                 : null;
 
         if (!errHeader) return true;

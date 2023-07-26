@@ -53,29 +53,19 @@ export class CacheFlag extends CLIFlag {
 
     exec(): void | Promise<void> {
         const [arg] = CLI.nonFlagArgs;
+        const hasValidArgs = CLI.validateSingleArg({
+            args: ['info', 'rebuild'],
+            flag: this,
+        });
 
-        if (CLI.nonFlagArgs.length > 1) {
-            Printer.printError(
-                'Make sure you use the correct syntax, as shown below:',
-                'Too Many Arguments'
-            );
-            return this.printSyntax();
-        }
+        if (hasValidArgs) {
+            if (arg == 'info') {
+                return showCacheInfo();
+            }
 
-        if (arg != 'info' && arg != 'rebuild') {
-            Printer.printError(
-                'Make sure you use the correct syntax, as shown below:',
-                'Invalid Argument'
-            );
-            return this.printSyntax();
-        }
-
-        if (arg == 'info') {
-            return showCacheInfo();
-        }
-
-        if (arg == 'rebuild') {
-            return rebuildCache();
+            if (arg == 'rebuild') {
+                return rebuildCache();
+            }
         }
     }
 }

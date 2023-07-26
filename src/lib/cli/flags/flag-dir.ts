@@ -125,6 +125,13 @@ export class Directory extends CLIFlag {
                 const dirEntries = await readdir(watchPath, {
                     withFileTypes: true,
                 });
+                if (dirEntries.length == 0) {
+                    return Printer.printInfo(
+                        'Your ;x;watch ;g;directory is empty; no meaningful info available.',
+                        'Empty Directory',
+                        3
+                    );
+                }
                 displayFolderInfo(await serializeFileStats(dirEntries));
             }
 

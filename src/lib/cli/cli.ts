@@ -146,10 +146,6 @@ export abstract class CLIFlag {
     isDefault = false;
     shortHelpDisplay = '';
 
-    /**
-     * Print syntax by itself if it exists, otherwise print default
-     * help.
-     */
     printSyntax() {
         Printer.print(this.getSyntaxHelpLogs() || this.getHelpLogs());
     }
@@ -171,6 +167,7 @@ export abstract class CLIFlag {
     abstract readonly name: CLIFlagName;
     abstract readonly type: CLIFlagType;
     abstract readonly helpAliases: string[];
+    /** Default help info for the flag */
     abstract getHelpLogs(): Log[];
     abstract exec(cli: typeof CLI): void | Promise<void>;
 }

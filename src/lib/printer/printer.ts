@@ -223,8 +223,10 @@ function getHeaderLog(log: LogHeader) {
     const headerColor = kind == 'h1' ? ';bw;' : ';b;';
     const styledHeader =
         kind == 'h1' || kind == 'h2'
-            ? `;ul;${headerColor}${title};xx;${headerColor} ;x;${text ?? ''}`
-            : `;bg;... ;bb;;ul;${title};xx; ;bg;...;xx;`;
+            ? `${kind == 'h1' ? ';ul;' : ''}${headerColor}${title};xx;${headerColor} ;x;${
+                  text ?? ''
+              }`
+            : `;bg;... ;bb;${title};xx; ;bg;...;xx;`;
 
     return _colorText(applyLogMargin(styledHeader, _leftLogMargin + (marginOffset ?? 0)));
 }

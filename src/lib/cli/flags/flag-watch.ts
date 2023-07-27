@@ -100,11 +100,11 @@ export class DefaultFlag extends CLIFlag {
         ];
     }
 
-    async exec(cli: typeof CLI) {
-        const flagArgs = cli.nonFlagArgs;
+    async exec() {
+        const flagArgs = CLI.nonFlagArgs;
 
-        if (!cli.userArgs.length) {
-            const helpFlag = cli.flags.find((f) => f.name.includes('help'));
+        if (!CLI.userArgs.length) {
+            const helpFlag = CLI.flags.find((f) => f.name.includes('help'));
             if (helpFlag) {
                 Printer.print([null, null]);
                 helpFlag.printHelp();
@@ -157,7 +157,7 @@ export class DefaultFlag extends CLIFlag {
             epName,
             [epNumber, epForcedNum || '0'],
             process.cwd(),
-            !!cli.flagArgs.length // is it --manual entry?
+            !!CLI.flagArgs.length // is it --manual entry?
         );
         const { epCount, epProgress, jpTitle, enTitle } = anime;
         stopLoader();

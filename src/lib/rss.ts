@@ -5,6 +5,7 @@ const _nyaaURLStr = 'https://nyaa.si';
 
 type RSSEntry = {
     entryCount: number;
+    raw: string;
     fansub: `[${string}]`;
     title: string;
     episode: string;
@@ -36,15 +37,15 @@ export async function getFansubRSS(searchString: string) {
     if (error) {
         return [error, null] as const;
     }
-    const { title, fansub, paddedEpNum, season, bitrate } = data;
+    const { title, fansub, paddedEpNum, season } = data;
 
     const entry: RSSEntry = {
         entryCount,
+        raw: latestEntryName,
         fansub: `[${fansub}]`,
         title,
         episode: paddedEpNum,
         season,
-        bitrate,
         rss: url.toString(),
     };
     return [null, entry] as const;

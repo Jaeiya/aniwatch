@@ -7,7 +7,6 @@ export type FansubFilenameData = {
     epNum: number;
     paddedEpNum: string;
     season: string | undefined;
-    bitrate: string | undefined;
 };
 
 export function isDev() {
@@ -129,7 +128,7 @@ export const toReadableBytes = createReadableBytesFunc();
 
 export function parseFansubFilename(name: string) {
     const fansubRegEx =
-        /^\[([\w|\d|\s-]+)\]\s(.+)(\sS[0-9]{1,2})?\s([0-9]{2,4}|S([0-9]{2})E([0-9]{2,4})|[0-9]{2,4}v[0-9])\s[[(]([0-9]{3,4}p)?/gi;
+        /^\[([\w|\d|\s-]+)\]\s(.+)(\sS[0-9]{1,2})?\s([0-9]{2,4}|S([0-9]{2})E([0-9]{2,4})|[0-9]{2,4}v[0-9])(\s|\.)/gi;
     const parts = fansubRegEx.exec(name);
     if (!parts) {
         const errorMessage =
@@ -142,7 +141,7 @@ export function parseFansubFilename(name: string) {
 }
 
 function serializeFansubFilename(filenameParts: string[]) {
-    const [, fansub, title, seasonP, epNumP, seasonAlt, epNumAlt, bitrate] = filenameParts;
+    const [, fansub, title, seasonP, epNumP, seasonAlt, epNumAlt] = filenameParts;
 
     let epNum = 0;
     let paddedEpNum = '';
@@ -164,7 +163,6 @@ function serializeFansubFilename(filenameParts: string[]) {
         epNum,
         paddedEpNum,
         season,
-        bitrate,
     };
     return filenameData;
 }

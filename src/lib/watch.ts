@@ -145,7 +145,8 @@ function filterFansubFilenames(workingDir: string, epName: string, epNum?: strin
     };
 
     const includesEpNum = (str: string) => {
-        return epNum && str.includes(epNum.length == 1 ? `- 0${epNum}` : `- ${epNum}`);
+        const epStr = epNum?.padStart(2, '0');
+        return epStr && (str.includes(`- ${epStr}`) || str.includes(`E${epStr}`));
     };
 
     return readdirSync(workingDir, { withFileTypes: true })

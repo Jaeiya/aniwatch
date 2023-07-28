@@ -92,6 +92,7 @@ export function autoWatchAnime(epName: string, workingDir: string) {
 
     const fileTitle = Kitsu.getFileBinding(anime.libID) ?? epName;
 
+    // We assume files are watched in ascending order (1, 2, 3)
     const [firstFileName] = filterFansubFilenames(workingDir, fileTitle).sort();
 
     if (!firstFileName) {

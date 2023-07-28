@@ -78,6 +78,57 @@ export async function watchAnime(
     return progress;
 }
 
+export function autoWatchAnime(epName: string, workingDir: string) {
+    tryCreateWatchedDir(workingDir);
+
+    const cachedAnime = Kitsu.animeCache.filter(
+        (anime) =>
+            anime.jpTitle.toLowerCase().includes(epName) ||
+            anime.enTitle.toLowerCase().includes(epName) ||
+            anime.synonyms.some((s) => s.toLowerCase().includes(epName))
+    );
+
+    const [anime, cacheIndex] = validateCachedAnime(cachedAnime, epName);
+
+    const fileTitle = Kitsu.getFileBinding(anime.libID) ?? epName;
+
+    const [firstFileName] = filterFansubFilenames(workingDir, fileTitle).sort();
+
+    if (!firstFileName) {
+        Printer.printError(
+            [
+                `File: ;c;${fileTitle}`,
+                '',
+                '(Possible Issues)',
+                `(;bc;1;y;) ;c;Make sure you didn't ;m;misspell ;c;the file name.`,
+            ],
+            'File Not Found',
+            3
+        );
+    }
+
+    const [error, fileData] = parseFansubFilename(firstFileName);
+    if (error) {
+        throw Error(error.parseError);
+    }
+
+    return [
+        anime,
+        fileData,
+        async () => {
+            const progress = await saveAnimeProgress({
+                anime,
+                cacheIndex,
+                epNum: anime.epProgress + 1,
+                forcedEpNum: 0,
+                fileName: firstFileName,
+            });
+            moveFileToWatchedDir(firstFileName, workingDir);
+            return progress;
+        },
+    ] as const;
+}
+
 function tryCreateWatchedDir(workingDir: string) {
     const watchedDir = pathJoin(workingDir, 'watched');
 
@@ -87,15 +138,14 @@ function tryCreateWatchedDir(workingDir: string) {
     }
 }
 
-function filterFansubFilenames(workingDir: string, epName: string, epNum: string) {
+function filterFansubFilenames(workingDir: string, epName: string, epNum?: string) {
     return readdirSync(workingDir, { withFileTypes: true })
         .filter((file) => file.isFile())
         .map((file) => file.name)
         .filter(
             (name) =>
-                name.match(/^\[([\w|\d|\s-]+)\]/gi) &&
-                name.toLowerCase().includes(epName) &&
-                name.includes(epNum.length == 1 ? `- 0${epNum}` : `- ${epNum}`)
+                (name.match(/^\[([\w|\d|\s-]+)\]/gi) && name.toLowerCase().includes(epName)) ||
+                (epNum && name.includes(epNum.length == 1 ? `- 0${epNum}` : `- ${epNum}`))
         );
 }
 
@@ -163,6 +213,7 @@ async function saveAnimeProgress(opt: ProgressOptions) {
         } as const;
     }
 
+    // TODO - This has nothing to do with anime progress so should be refactored out
     if (!Kitsu.getFileBinding(anime.libID) && fileName) {
         const [error, data] = parseFansubFilename(fileName);
         if (error) {

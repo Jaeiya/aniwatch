@@ -1,6 +1,7 @@
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import { watchAnime } from '../../watch.js';
+import { autoWatchAnime, watchAnime } from '../../watch.js';
 import { Log, Printer } from '../../printer/printer.js';
+import { KitsuCacheItem } from '../../kitsu/kitsu-types.js';
 
 export class DefaultFlag extends CLIFlag {
     name: CLIFlagName = ['m', 'manual'];
@@ -112,6 +113,48 @@ export class DefaultFlag extends CLIFlag {
             return;
         }
 
+        if (flagArgs.length == 1) {
+            const [anime, fileInfo, incrementAnime] = autoWatchAnime(
+                flagArgs[0],
+                process.cwd()
+            );
+
+            Printer.print([
+                null,
+                ['h3', ['Auto Incrementing Anime']],
+                null,
+                ['py', ['JP Title', anime.jpTitle]],
+                ['py', ['EN Title', anime.enTitle]],
+                ['py', ['File', `;y;${fileInfo.title} ;by;${fileInfo.paddedEpNum}`], 4],
+                null,
+                [
+                    'p',
+                    `;b;Progress will be set from ;bg;${anime.epProgress} ;b;to ;by;${
+                        anime.epProgress + 1
+                    }`,
+                ],
+            ]);
+
+            const hasConsent = await Printer.promptYesNo(
+                'Do you want to proceed with the changes above'
+            );
+
+            if (!hasConsent) {
+                return Printer.printWarning(
+                    'User cancelled the operation manually.',
+                    'Operation Aborted',
+                    3
+                );
+            }
+
+            Printer.print([null, null]);
+            const stopLoader = Printer.printLoader('Setting Progress');
+            const { completed, anime: newAnimeObj } = await incrementAnime();
+            stopLoader();
+            displayProgress({ anime: newAnimeObj, autoIncrement: true, completed });
+            return;
+        }
+
         if (flagArgs.length < 2 || flagArgs.length > 3) {
             Printer.printError(
                 'Read the help below to learn the correct syntax:',
@@ -159,25 +202,36 @@ export class DefaultFlag extends CLIFlag {
             process.cwd(),
             !!CLI.flagArgs.length // is it --manual entry?
         );
-        const { epCount, epProgress, jpTitle, enTitle } = anime;
         stopLoader();
-
-        Printer.print([['h3', ['Setting Progress']]]);
-
-        const percent = epCount ? Math.floor((epProgress / epCount) * 100) : 0;
-        const percentText = percent ? `;bk;(;c;~${percent}%;bk;)` : '';
-        const progressText = completed
-            ? ';bg;Completed!'
-            : `;bg;${epProgress} ;x;/ ;y;${epCount || ';r;Unknown'} ${percentText}`;
-
-        Printer.printInfo(
-            [
-                `JP Title: ;x;${jpTitle || ';m;None'}`,
-                `EN Title: ;bk;${enTitle || ';m;None'}`,
-                `Progress: ${progressText}`,
-            ],
-            'Success',
-            3
-        );
+        displayProgress({ anime, completed });
     }
+}
+
+function displayProgress({
+    anime,
+    completed,
+    autoIncrement,
+}: {
+    anime: KitsuCacheItem;
+    completed: boolean;
+    autoIncrement?: boolean;
+}) {
+    Printer.print([['h3', ['Setting Progress']]]);
+    const { epCount, epProgress, jpTitle, enTitle } = anime;
+    autoIncrement ??= false;
+
+    const percent = epCount ? Math.floor((epProgress / epCount) * 100) : 0;
+    const percentText = percent ? `;bk;(;c;~${percent}%;bk;)` : '';
+    const progressText = completed
+        ? ';bg;Completed!'
+        : `;bg;${epProgress} ;x;/ ;y;${epCount || ';r;Unknown'} ${percentText}`;
+    const titles = [
+        `JP Title: ;x;${jpTitle || ';m;None'}`,
+        `EN Title: ;bk;${enTitle || ';m;None'}`,
+    ];
+    const log = autoIncrement
+        ? [`Progress: ${progressText}`]
+        : [...titles, `Progress: ${progressText}`];
+
+    Printer.printInfo(log, 'Success', 3);
 }

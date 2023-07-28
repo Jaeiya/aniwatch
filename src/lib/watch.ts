@@ -106,6 +106,7 @@ export function autoWatchAnime(epName: string, workingDir: string) {
             'File Not Found',
             3
         );
+        process.exit(1);
     }
 
     const [error, fileData] = parseFansubFilename(firstFileName);

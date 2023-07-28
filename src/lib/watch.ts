@@ -140,14 +140,19 @@ function tryCreateWatchedDir(workingDir: string) {
 }
 
 function filterFansubFilenames(workingDir: string, epName: string, epNum?: string) {
+    const includesEpName = (str: string) => {
+        return str.match(/^\[([\w|\d|\s-]+)\]/gi) && str.toLowerCase().includes(epName);
+    };
+
+    const includesEpNum = (str: string) => {
+        return epNum && str.includes(epNum.length == 1 ? `- 0${epNum}` : `- ${epNum}`);
+    };
+
     return readdirSync(workingDir, { withFileTypes: true })
         .filter((file) => file.isFile())
         .map((file) => file.name)
-        .filter(
-            (name) =>
-                //! This is no longer effective
-                (name.match(/^\[([\w|\d|\s-]+)\]/gi) && name.toLowerCase().includes(epName)) ||
-                (epNum && name.includes(epNum.length == 1 ? `- 0${epNum}` : `- ${epNum}`))
+        .filter((name) =>
+            epNum ? includesEpName(name) && includesEpNum(name) : includesEpName(name)
         );
 }
 

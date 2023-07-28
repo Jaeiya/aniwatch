@@ -101,7 +101,7 @@ export class DefaultFlag extends CLIFlag {
         ];
     }
 
-    async exec() {
+    exec(): Promise<void> | void {
         const flagArgs = CLI.nonFlagArgs;
 
         if (!CLI.userArgs.length) {
@@ -114,45 +114,7 @@ export class DefaultFlag extends CLIFlag {
         }
 
         if (flagArgs.length == 1) {
-            const [anime, fileInfo, incrementAnime] = autoWatchAnime(
-                flagArgs[0],
-                process.cwd()
-            );
-
-            Printer.print([
-                null,
-                ['h3', ['Auto Incrementing Anime']],
-                null,
-                ['py', ['JP Title', anime.jpTitle]],
-                ['py', ['EN Title', anime.enTitle]],
-                ['py', ['File', `;y;${fileInfo.title} ;by;${fileInfo.paddedEpNum}`], 4],
-                null,
-                [
-                    'p',
-                    `;b;Progress will be set from ;bg;${anime.epProgress} ;b;to ;by;${
-                        anime.epProgress + 1
-                    }`,
-                ],
-            ]);
-
-            const hasConsent = await Printer.promptYesNo(
-                'Do you want to proceed with the changes above'
-            );
-
-            if (!hasConsent) {
-                return Printer.printWarning(
-                    'User cancelled the operation manually.',
-                    'Operation Aborted',
-                    3
-                );
-            }
-
-            Printer.print([null, null]);
-            const stopLoader = Printer.printLoader('Setting Progress');
-            const { completed, anime: newAnimeObj } = await incrementAnime();
-            stopLoader();
-            displayProgress({ anime: newAnimeObj, autoIncrement: true, completed });
-            return;
+            return execAutoWatch();
         }
 
         if (flagArgs.length < 2 || flagArgs.length > 3) {
@@ -164,47 +126,86 @@ export class DefaultFlag extends CLIFlag {
             process.exit(1);
         }
 
-        const [epName, epNumber, epForcedNum] = flagArgs;
-
-        if (epName.length < 3) {
-            Printer.printWarning(
-                'Episode names must be longer than 2 characters.',
-                'Invalid Name'
-            );
-            return;
-        }
-
-        if (isNaN(parseInt(epNumber))) {
-            Printer.printError(
-                `You entered an invalid Episode Number: ;x;${epNumber}`,
-                'Invalid Number'
-            );
-            Printer.print([null, null]);
-            this.printSyntax();
-            return;
-        }
-
-        if (epForcedNum && isNaN(parseInt(epForcedNum))) {
-            Printer.printError(
-                `You entered an invalid ;bw;Forced ;y;Episode Number: ;x;${epForcedNum}`,
-                'Invalid Number'
-            );
-            Printer.print([null, null]);
-            this.printSyntax();
-            return;
-        }
-
-        Printer.print([null]);
-        const stopLoader = Printer.printLoader('Setting Progress');
-        const { completed, anime } = await watchAnime(
-            epName,
-            [epNumber, epForcedNum || '0'],
-            process.cwd(),
-            !!CLI.flagArgs.length // is it --manual entry?
-        );
-        stopLoader();
-        displayProgress({ anime, completed });
+        return execWatch(this);
     }
+}
+
+async function execAutoWatch() {
+    const [anime, fileInfo, incrementAnime] = autoWatchAnime(CLI.nonFlagArgs[0], process.cwd());
+
+    Printer.print([
+        null,
+        ['h3', ['Auto Incrementing Anime']],
+        null,
+        ['py', ['JP Title', anime.jpTitle]],
+        ['py', ['EN Title', anime.enTitle]],
+        ['py', ['File', `;y;${fileInfo.title} ;by;${fileInfo.paddedEpNum}`], 4],
+        null,
+        [
+            'p',
+            `;b;Progress will be set from ;bg;${anime.epProgress} ;b;to ;by;${
+                anime.epProgress + 1
+            }`,
+        ],
+    ]);
+
+    const hasConsent = await Printer.promptYesNo(
+        'Do you want to proceed with the changes above'
+    );
+
+    if (!hasConsent) {
+        return Printer.printWarning(
+            'User cancelled the operation manually.',
+            'Operation Aborted',
+            3
+        );
+    }
+
+    Printer.print([null, null]);
+    const stopLoader = Printer.printLoader('Setting Progress');
+    const { completed, anime: newAnimeObj } = await incrementAnime();
+    stopLoader();
+    displayProgress({ anime: newAnimeObj, autoIncrement: true, completed });
+}
+
+async function execWatch(flag: CLIFlag) {
+    const [epName, epNumber, epForcedNum] = CLI.nonFlagArgs;
+
+    if (epName.length < 3) {
+        Printer.printWarning('Episode names must be longer than 2 characters.', 'Invalid Name');
+        return;
+    }
+
+    if (isNaN(parseInt(epNumber))) {
+        Printer.printError(
+            `You entered an invalid Episode Number: ;x;${epNumber}`,
+            'Invalid Number'
+        );
+        Printer.print([null, null]);
+        flag.printSyntax();
+        return;
+    }
+
+    if (epForcedNum && isNaN(parseInt(epForcedNum))) {
+        Printer.printError(
+            `You entered an invalid ;bw;Forced ;y;Episode Number: ;x;${epForcedNum}`,
+            'Invalid Number'
+        );
+        Printer.print([null, null]);
+        flag.printSyntax();
+        return;
+    }
+
+    Printer.print([null]);
+    const stopLoader = Printer.printLoader('Setting Progress');
+    const { completed, anime } = await watchAnime(
+        epName,
+        [epNumber, epForcedNum || '0'],
+        process.cwd(),
+        !!CLI.flagArgs.length // is it --manual entry?
+    );
+    stopLoader();
+    displayProgress({ anime, completed });
 }
 
 function displayProgress({

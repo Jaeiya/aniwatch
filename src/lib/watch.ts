@@ -29,12 +29,7 @@ export async function watchAnime(
 
     tryCreateWatchedDir(workingDir);
 
-    const cachedAnime = Kitsu.animeCache.filter(
-        (anime) =>
-            anime.jpTitle.toLowerCase().includes(epName) ||
-            anime.enTitle.toLowerCase().includes(epName) ||
-            anime.synonyms.some((s) => s.toLowerCase().includes(epName))
-    );
+    const cachedAnime = Kitsu.findCachedAnime(epName);
 
     const [validAnime, cacheIndex] = validateCachedAnime(cachedAnime, epName);
 
@@ -81,12 +76,7 @@ export async function watchAnime(
 export function autoWatchAnime(epName: string, workingDir: string) {
     tryCreateWatchedDir(workingDir);
 
-    const cachedAnime = Kitsu.animeCache.filter(
-        (anime) =>
-            anime.jpTitle.toLowerCase().includes(epName) ||
-            anime.enTitle.toLowerCase().includes(epName) ||
-            anime.synonyms.some((s) => s.toLowerCase().includes(epName))
-    );
+    const cachedAnime = Kitsu.findCachedAnime(epName);
 
     const [anime, cacheIndex] = validateCachedAnime(cachedAnime, epName);
 

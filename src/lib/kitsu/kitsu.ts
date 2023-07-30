@@ -254,6 +254,15 @@ export class Kitsu {
         return serializeLibraryAnimeInfo(filteredCache, entries);
     }
 
+    static findCachedAnime(title: string) {
+        return Kitsu.animeCache.filter(
+            (anime) =>
+                anime.jpTitle.toLowerCase().includes(title) ||
+                anime.enTitle.toLowerCase().includes(title) ||
+                anime.synonyms.some((s) => s.toLowerCase().includes(title))
+        );
+    }
+
     static async rebuildCache() {
         const cachedAnime = await buildAnimeCache();
         _sK('cache', cachedAnime);

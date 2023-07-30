@@ -99,10 +99,8 @@ function showCacheInfo() {
 }
 
 async function rebuildCache() {
-    Printer.print([null]);
     const stopLoader = Printer.printLoader('Rebuilding Cache');
     const { cachedAnimeCount } = await Kitsu.rebuildCache();
     stopLoader();
-    Printer.print([['h3', ['Rebuilding Cache']]]);
     Printer.printInfo(`;bg;${cachedAnimeCount} ;g;Anime Reloaded`, 'Success', 3);
 }

@@ -147,12 +147,9 @@ export class Directory extends CLIFlag {
 }
 
 async function cleanOldFiles() {
-    Printer.print([null]);
     const stopLoader = Printer.printLoader('Deleting Old Files');
     const [deletedFileCount, freedBytes] = await deleteOldFiles();
     stopLoader();
-
-    Printer.print([['h3', ['Deleting Old Files']]]);
 
     if (deletedFileCount == 0) {
         return Printer.printWarning('No old files to clean out', 'Operation Aborted', 3);
@@ -169,12 +166,9 @@ async function cleanOldFiles() {
 }
 
 async function cleanAllFiles() {
-    Printer.print([null]);
     const stopLoader = Printer.printLoader('Deleting ALL Files');
     const [deletedFileCount, freedBytes] = await deleteAllFiles();
     stopLoader();
-
-    Printer.print([['h3', ['Deleting ALL Files']]]);
 
     if (deletedFileCount == 0) {
         return Printer.printWarning('Watch directory is already empty', 'Operation Aborted', 3);

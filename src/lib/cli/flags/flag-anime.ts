@@ -105,11 +105,9 @@ export class FindAnimeFlag extends CLIFlag {
 }
 
 async function findAnime(query: string) {
-    Printer.print([null]);
     const stopLoader = Printer.printLoader('Find Anime');
     const animeList = await Kitsu.findLibraryAnime(query);
     stopLoader();
-    Printer.print([['h3', ['Find Anime']]]);
     if (!animeList.length) {
         Printer.printWarning(
             'The anime is either not in your cache or your search terms were ' +
@@ -123,11 +121,9 @@ async function findAnime(query: string) {
 }
 
 async function addAnime() {
-    Printer.print([null]);
     const stopLoader = Printer.printLoader('Generating Anime Selection');
     const animeResults = await Kitsu.findAnime(CLI.nonFlagArgs.join(' '));
     stopLoader();
-    Printer.print([['h3', ['Generating Anime Selection']]]);
     if (!animeResults.length) {
         Printer.printWarning(
             'Try using a different query strategy like an alternate title, if ' +
@@ -194,12 +190,10 @@ async function dropAnime(query: string) {
         );
     }
 
-    Printer.print([null, null]);
-    const stopLoader = Printer.printLoader('Dropping Anime');
+    const stopLoader = Printer.printLoader('Dropping Anime', 2);
     const { data } = await Kitsu.dropAnime(anime.libID);
     if (data.attributes.status != 'dropped') {
         stopLoader();
-        Printer.print([['h3', ['Dropping Anime']]]);
         return Printer.printError('Failed to update status; unknown reason.');
     }
     const cache = Config.getKitsuProp('cache');
@@ -207,7 +201,6 @@ async function dropAnime(query: string) {
     cache.splice(animeIndex, 1);
     Config.save();
     stopLoader();
-    Printer.print([['h3', ['Dropping Anime']]]);
     Printer.printInfo(`;x;${anime.jpTitle} ;g;has been dropped`, 'Success', 3);
 }
 

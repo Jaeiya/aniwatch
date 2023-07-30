@@ -161,8 +161,7 @@ async function execAutoWatch() {
         );
     }
 
-    Printer.print([null, null]);
-    const stopLoader = Printer.printLoader('Setting Progress');
+    const stopLoader = Printer.printLoader('Setting Progress', 2);
     const { completed, anime: newAnimeObj } = await incrementAnime();
     stopLoader();
     displayProgress({ anime: newAnimeObj, autoIncrement: true, completed });
@@ -196,7 +195,6 @@ async function execWatch(flag: CLIFlag) {
         return;
     }
 
-    Printer.print([null]);
     const stopLoader = Printer.printLoader('Setting Progress');
     const { completed, anime } = await watchAnime(
         epName,
@@ -217,7 +215,6 @@ function displayProgress({
     completed: boolean;
     autoIncrement?: boolean;
 }) {
-    Printer.print([['h3', ['Setting Progress']]]);
     const { epCount, epProgress, jpTitle, enTitle } = anime;
     autoIncrement ??= false;
 

@@ -70,12 +70,9 @@ export class ProfileFlag extends CLIFlag {
 }
 
 async function rebuildProfile() {
-    Printer.print([null]);
     const stopLoader = Printer.printLoader('Rebuilding Profile');
     const hasRebuilt = await Kitsu.rebuildProfile();
     stopLoader();
-
-    Printer.print([['h3', ['Rebuilding Profile']]]);
 
     if (!hasRebuilt) {
         return Printer.printError(

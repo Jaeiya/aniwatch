@@ -120,12 +120,17 @@ export class Printer {
         console.log('');
     }
 
-    static printLoader(text: string) {
+    // TODO - Display static H3 log when completed (... some text ...)
+    static printLoader(text: string, topPadding = 1) {
+        Printer.print([...new Array(topPadding).fill(null, 0, topPadding)]);
         const spinner = createSpinner(
             _colorText(`${' '.repeat(3)};bg;@@@@@@ ;bb;${text} ;bg;@@@@@@`)
         );
         spinner.start(13);
-        return spinner.stop;
+        return () => {
+            spinner.stop();
+            this.print([['h3', [text]]]);
+        };
     }
 
     static async prompt(query: string, promptFormat?: string) {

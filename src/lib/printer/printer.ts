@@ -44,13 +44,13 @@ export class Printer {
         this.print([null, ['h1', [`;bc;${header ?? 'INFO'}`], marginOffset], ...msgs, null]);
     }
 
-    static printWarning(message: string, header?: string, marginOffset = 0) {
-        this.print([
-            null,
-            ['h1', [`;by;${header ?? 'WARNING'}`], marginOffset],
-            ['p', `;c;${message}`, marginOffset],
-            null,
-        ]);
+    static printWarning(message: string | string[], header?: string, marginOffset = 0) {
+        const msgs: Log[] =
+            typeof message == 'string'
+                ? [['p', `;c;${message}`, marginOffset]]
+                : message.map((m) => ['p', `;c;${m}`, marginOffset]);
+
+        this.print([null, ['h1', [`;by;${header ?? 'WARNING'}`], marginOffset], ...msgs, null]);
     }
 
     static printError(message: string | string[], header?: string, marginOffset = 0) {

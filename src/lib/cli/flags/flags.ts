@@ -1,6 +1,6 @@
 import { DefaultFlag } from './flag-watch.js';
 import { Directory } from './flag-dir.js';
-import { FindAnimeFlag } from './flag-find-anime.js';
+import { FindAnimeFlag } from './flag-anime.js';
 import { HelpFlag } from './flag-help.js';
 import { ProfileFlag } from './flag-profile.js';
 import { RSSFeedFlag } from './flag-rss-feed.js';

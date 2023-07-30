@@ -167,6 +167,14 @@ function serializeFansubFilename(filenameParts: string[]) {
     return filenameData;
 }
 
+export function wait(delay = 500) {
+    return new Promise((rs) => {
+        setTimeout(() => {
+            rs('');
+        }, delay);
+    });
+}
+
 export const pathResolve = resolve;
 export const pathJoin = join;
 export const pathBasename = basename;

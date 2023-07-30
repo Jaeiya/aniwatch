@@ -73,7 +73,7 @@ export class FindAnimeFlag extends CLIFlag {
     async exec() {
         const [arg, ...query] = CLI.nonFlagArgs;
         const hasValidArgs = CLI.validateSingleArg({
-            args: ['find', 'add'],
+            args: ['find', 'add', 'drop'],
             argHasArgs: true,
             flag: this,
         });
@@ -95,6 +95,10 @@ export class FindAnimeFlag extends CLIFlag {
 
             if (arg == 'add') {
                 return addAnime();
+            }
+
+            if (arg == 'drop') {
+                return dropAnime(query.join(' '));
             }
         }
     }
@@ -161,6 +165,50 @@ async function addAnime() {
         Config.save();
         Printer.printInfo(`Added ;b;${anime.jpTitle};g; to Watch List`, 'Success', 3);
     }
+}
+
+async function dropAnime(query: string) {
+    const [anime] = Kitsu.findCachedAnime(query);
+
+    if (!anime) {
+        return Printer.printWarning(
+            [`The anime ";y;${query};c;" could not be found.`],
+            'Anime Not Found'
+        );
+    }
+
+    Printer.print([
+        null,
+        ['h3', ['Anime Found']],
+        null,
+        ['py', ['Title JP', anime.jpTitle]],
+        ['py', ['Title EN', `;x;${anime.enTitle}`]],
+        ['py', ['Progress', `;bg;${anime.epProgress}`]],
+    ]);
+
+    if (!(await Printer.promptYesNo(`Do you want to drop the above anime`))) {
+        return Printer.printWarning(
+            'User cancelled the operation manually.',
+            'Operation Aborted',
+            3
+        );
+    }
+
+    Printer.print([null, null]);
+    const stopLoader = Printer.printLoader('Dropping Anime');
+    const { data } = await Kitsu.dropAnime(anime.libID);
+    if (data.attributes.status != 'dropped') {
+        stopLoader();
+        Printer.print([['h3', ['Dropping Anime']]]);
+        return Printer.printError('Failed to update status; unknown reason.');
+    }
+    const cache = Config.getKitsuProp('cache');
+    const animeIndex = cache.findIndex((a) => a == anime);
+    cache.splice(animeIndex, 1);
+    Config.save();
+    stopLoader();
+    Printer.print([['h3', ['Dropping Anime']]]);
+    Printer.printInfo(`;x;${anime.jpTitle} ;g;has been dropped`, 'Success', 3);
 }
 
 function getAnimeListLogs(animeList: SerializedAnime[]) {

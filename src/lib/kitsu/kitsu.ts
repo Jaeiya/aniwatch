@@ -134,6 +134,47 @@ export class Kitsu {
         return jsonResp;
     }
 
+    static async dropAnime(libID: string) {
+        const resp = await HTTP.patch(
+            new URL(`https://kitsu.io/api/edge/library-entries/${libID}`),
+            JSON.stringify({
+                data: {
+                    id: libID,
+                    type: 'library-entries',
+                    attributes: { status: 'dropped' },
+                },
+            }),
+            Config.getKitsuProp('access_token')
+        );
+
+        const json = await resp.json();
+
+        if (json.errors) {
+            throw Error(json);
+        }
+
+        const [error, jsonResp] = parseWithZod(
+            z.object({
+                data: z.object({
+                    id: z.string(),
+                    attributes: z.object({
+                        status: z.string(),
+                    }),
+                }),
+            }),
+            json,
+            'DropAnimeScheme'
+        );
+
+        if (error) {
+            const header = error.shift();
+            Printer.printError([...error], header);
+            process.exit(1);
+        }
+
+        return jsonResp;
+    }
+
     static async updateAnime(url: string, data: LibraryPatchData): UpdatedProgress {
         const urlObj = new URL(url);
         urlObj.searchParams.append('include', 'anime');

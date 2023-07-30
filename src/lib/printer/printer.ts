@@ -135,7 +135,7 @@ export class Printer {
         });
 
         return new Promise<string>((rs) => {
-            const querySentences = createFixedWidthSentences(query, -3, 50);
+            const querySentences = createFixedWidthSentences(query, -_leftLogMargin, 50);
             Printer.print([null, ['', `;g;┌${'─'.repeat(querySentences[0].length + 3)}≪`]]);
             rl.question(
                 applyLogMargin(

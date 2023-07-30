@@ -1,3 +1,49 @@
+# [5.3.0](https://github.com/jaeiya/wakitsu/compare/v5.2.0...v5.3.0) (7/30/2023)
+
+## Auto-Watch
+
+The default way to watch anime has **not** changed, but it now has a subtle new feature. Instead of typing an anime title and episode number, you can now simply type the title. This comes with some pros and cons. First of all let me demonstrate how this works below:
+
+```bash
+wak 'title or title keyword'
+```
+
+### The Pros
+
+- Anime that would normally need a forced episode, will now just progress as expected
+- Reduced friction when updating anime, since you only need some of the title
+
+### The Cons
+
+- We had to make some assumptions. The first assumption is that anime will always be watched in order, from beginning to end.
+  - This means that if for some reason you're starting in the middle of a season, you'll have to update your anime the normal way first.
+- The second assumption: all files are from the same fansub group. If you mix and match fansubs for the same anime series, this method will fail to find the correct file to move.
+
+### Why?
+
+So, why did I think this feature was worth adding? This feature would probably have never made it in, if it wasn't for the increased frequency of fansubs not resetting episode numbers for subsequent seasons of an anime.
+
+If the episodes were defined internally (from the studio) as being incremented from the last episode in the season, then it wouldn't be an issue, but fansub groups have decided to inconsistently decide this for themselves. The studio numbering and fansub numbering no longer have parity; this is why we have a `forcedEp` number to begin with.
+
+## Features
+
+- **flags**: new `--anime` flag is a combination of both the **add** and **find** anime operations ([01f3e2a](https://github.com/Jaeiya/aniwatch/commit/01f3e2a))
+- **flags**: new `--anime drop` feature allows you to drop anime ([c178d43](https://github.com/Jaeiya/aniwatch/commit/c178d43))
+- **flags**: new `--dir` flag combines directory info and cleaning functionality ([5f0fd8c](https://github.com/Jaeiya/aniwatch/commit/5f0fd8c))
+- **flags**: `--cache` flag now combines rebuild and display functionality ([1118f4f](https://github.com/Jaeiya/aniwatch/commit/1118f4f))
+- **flags**: `--profile` flag now combines rebuild and display functionality ([3020b33](https://github.com/Jaeiya/aniwatch/commit/3020b33))
+
+## Minor Changes
+
+- **printer**: main headers are underlined ([5ee84df](https://github.com/Jaeiya/aniwatch/commit/5ee84df))
+- **printer**: the prompt has a new look which separates itself from all other messages ([e1b6c0f](https://github.com/Jaeiya/aniwatch/commit/e1b6c0f))
+- **flags**: `--clean` now displays a loader animation and header, along with how much space was cleared
+- **rss**: removed bitrate display and added raw file display; reduced complexity of fansub parsing ([ed0bd8e](https://github.com/Jaeiya/aniwatch/commit/ed0bd8e))
+
+## Fixes
+
+- **flags**: `--dir` will no longer break when the directory is empty ([c7373bd](https://github.com/Jaeiya/aniwatch/commit/c7373bd), [6926afd](https://github.com/Jaeiya/aniwatch/commit/6926afd))
+
 # [5.2.0](https://github.com/jaeiya/wakitsu/compare/v5.1.0...v5.2.0) (7/21/2023)
 
 ### Update Anime without Files

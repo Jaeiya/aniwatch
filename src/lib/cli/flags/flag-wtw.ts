@@ -37,6 +37,18 @@ export class WhatToWatch extends CLIFlag {
                 ';m;NOTE: ;bk;If you have not yet watched at least one episode of a ' +
                     'file it finds, then that title will not be listed.',
             ],
+            null,
+        ];
+    }
+
+    getSyntaxHelpLogs(): Log[] | null {
+        return [
+            ['h2', ['Syntax']],
+            ['s', ['wtw', 'what-to-watch'], ''],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['wtw', '']],
+            ['e', ['what-to-watch', '']],
         ];
     }
 

@@ -296,11 +296,12 @@ export class Kitsu {
     }
 
     static findCachedAnime(title: string) {
+        const lowerTitle = title.toLowerCase();
         return Kitsu.animeCache.filter(
             (anime) =>
-                anime.jpTitle.toLowerCase().includes(title) ||
-                anime.enTitle.toLowerCase().includes(title) ||
-                anime.synonyms.some((s) => s.toLowerCase().includes(title))
+                anime.jpTitle.toLowerCase().includes(lowerTitle) ||
+                anime.enTitle.toLowerCase().includes(lowerTitle) ||
+                anime.synonyms.some((s) => s.toLowerCase().includes(lowerTitle))
         );
     }
 

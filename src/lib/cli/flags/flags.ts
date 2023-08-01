@@ -8,6 +8,7 @@ import { CacheFlag } from './flag-cache.js';
 import { TokenFlag } from './flag-token.js';
 import { ColorFlag } from './flag-color.js';
 import { TestFlag } from './flag-test.js';
+import { WhatToWatch } from './flag-wtw.js';
 
 export const Flags = [
     DefaultFlag,
@@ -20,4 +21,5 @@ export const Flags = [
     FindAnimeFlag,
     RSSFeedFlag,
     TestFlag,
+    WhatToWatch,
 ];

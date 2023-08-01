@@ -1,4 +1,4 @@
-import { resolve, join, basename } from 'path';
+import { join, basename } from 'path';
 import { z, ZodSchema } from 'zod';
 
 export type FansubFilenameData = {
@@ -8,10 +8,6 @@ export type FansubFilenameData = {
     paddedEpNum: string;
     season: string | undefined;
 };
-
-export function isDev() {
-    return process.env.NODE_ENV == 'development';
-}
 
 export function parseWithZod<T extends ZodSchema>(
     schema: T,
@@ -73,11 +69,6 @@ export function fitStringEnd(str: string, maxLength: number) {
     return `${str}${' '.repeat(maxLength - str.length)}`;
 }
 
-export function truncateStr(str: string, length: number) {
-    const substr = str.substring(0, length);
-    return substr.length < str.length ? `${substr}...` : str;
-}
-
 export function getColoredTimeWatchedStr(seconds: number) {
     const { hours, days, months } = getTimeUnits(seconds);
     const leftOverMinutes = (hours % 1) * 60;
@@ -107,6 +98,7 @@ export function getTimeUnits(seconds: number) {
     };
 }
 
+export const toReadableBytes = createReadableBytesFunc();
 export function createReadableBytesFunc() {
     const m = new Map();
     m.set('TB', 1_099_511_627_776);
@@ -123,8 +115,6 @@ export function createReadableBytesFunc() {
         throw Error(`cannot determine size of "${bytes}" bytes`);
     };
 }
-
-export const toReadableBytes = createReadableBytesFunc();
 
 export function parseFansubFilename(name: string) {
     const fansubRegEx =
@@ -175,6 +165,5 @@ export function wait(delay = 500) {
     });
 }
 
-export const pathResolve = resolve;
 export const pathJoin = join;
 export const pathBasename = basename;

@@ -1,4 +1,4 @@
-# [5.4.0](https://github.com/jaeiya/wakitsu/compare/v5.3.0...v5.4.0) (8/1/2023)
+# [5.4.0](https://github.com/jaeiya/wakitsu/compare/v5.3.1...v5.4.0) (8/1/2023)
 
 ## Features
 

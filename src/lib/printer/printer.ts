@@ -68,10 +68,6 @@ export class Printer {
         });
     }
 
-    static log(msg: string, padding = 0) {
-        console.log(`${createFixedWidthSentences(msg, padding)}`);
-    }
-
     static debug(...args: any[]) {
         const stack = Error('').stack;
         if (!stack) return;

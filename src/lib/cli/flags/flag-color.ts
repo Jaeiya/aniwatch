@@ -31,6 +31,17 @@ export class ColorFlag extends CLIFlag {
         ];
     }
 
+    getSyntaxHelpLogs(): Log[] | null {
+        return [
+            ['h2', ['Syntax']],
+            ['s', ['c', 'color'], ''],
+            null,
+            ['h2', ['Examples']],
+            ['e', ['c', '']],
+            ['e', ['color', '']],
+        ];
+    }
+
     exec = () => {
         const colorState = Config.get('useColor');
         Config.set('useColor', !colorState);

@@ -1,3 +1,18 @@
+# [5.4.0](https://github.com/jaeiya/wakitsu/compare/v5.3.0...v5.4.0) (8/1/2023)
+
+## Features
+
+- **flags**: add `-what-to-watch` flag to display a helpful list of available anime for you to watch ([8bac1f5](https://github.com/Jaeiya/aniwatch/commit/8bac1f5))
+
+## Minor Changes
+
+- **flags**: add syntax logs for `-color` flag ([39249f3](https://github.com/Jaeiya/aniwatch/commit/39249f3))
+- **flags**: disable test flag from being accessible ([94dc1b2](https://github.com/Jaeiya/aniwatch/commit/94dc1b2))
+
+## Fixes
+
+- **flags**: anime flag missing drop command help logs ([59d2e0b](https://github.com/Jaeiya/aniwatch/commit/59d2e0b))
+
 # [5.3.0](https://github.com/jaeiya/wakitsu/compare/v5.2.0...v5.3.0) (7/30/2023)
 
 ## Auto-Watch

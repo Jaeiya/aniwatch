@@ -18,6 +18,8 @@ export class FindAnimeFlag extends CLIFlag {
         'search anime',
         'add anime',
         'track anime',
+        'drop anime',
+        'drop',
         'add to watch list',
         'add anime to watch list',
     ];
@@ -27,10 +29,10 @@ export class FindAnimeFlag extends CLIFlag {
             ['h1', ['Anime']],
             [
                 'p',
-                'This flag allows you to perform different operations with your anime. The ' +
-                    'first of which, is to get more details of existing anime in your cache ' +
-                    '(find anime). The second, is to add new anime to your watch list. Read the ' +
-                    'syntax below to get an idea of how it works.',
+                'This flag allows you to perform different operations with anime. The ' +
+                    'available operations are: ;x;adding;bk;, ;x;finding;bk;, and ;x;dropping ' +
+                    ';bk;anime. For a more detailed description of each, check the syntax ' +
+                    'below.',
             ],
             null,
         ];
@@ -39,7 +41,7 @@ export class FindAnimeFlag extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Syntax']],
-            ['s', ['a', 'anime'], '<find|add> ;bm;<query>'],
+            ['s', ['a', 'anime'], '<find|add|drop> ;bm;<query>'],
             null,
             ['h2', ['Details']],
             [
@@ -61,12 +63,24 @@ export class FindAnimeFlag extends CLIFlag {
                 1,
             ],
             null,
+            [
+                'd',
+                [
+                    'drop',
+                    'Looks up the ;bm;query ;bk;in your cache; if the anime is found, ' +
+                        'then that anime is dropped from your watch list on Kitsu.',
+                ],
+            ],
+            null,
             ['h2', ['Examples']],
             ['e', ['a', 'find ;bm;boku no hero']],
             ['e', ['anime', 'find ;bm;re zero']],
             null,
             ['e', ['a', 'add ;bm;berserk']],
             ['e', ['anime', 'add ;bm;dragonball z']],
+            null,
+            ['e', ['a', 'drop ;bm;bleach']],
+            ['e', ['anime', 'drop ;bm;mushoku tensei']],
         ];
     }
 

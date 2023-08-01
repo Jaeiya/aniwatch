@@ -120,7 +120,6 @@ export class Printer {
         console.log('');
     }
 
-    // TODO - Display static H3 log when completed (... some text ...)
     static printLoader(text: string, topPadding = 1) {
         Printer.print([...new Array(topPadding).fill(null, 0, topPadding)]);
         const spinner = createSpinner(

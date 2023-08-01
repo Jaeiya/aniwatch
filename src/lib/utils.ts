@@ -159,7 +159,7 @@ function serializeFansubFilename(filenameParts: string[]) {
 
     const filenameData: FansubFilenameData = {
         fansub,
-        title,
+        title: title[title.length - 1] == '-' ? title.substring(0, title.length - 2) : title,
         epNum,
         paddedEpNum,
         season,

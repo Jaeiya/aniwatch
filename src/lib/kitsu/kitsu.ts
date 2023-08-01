@@ -185,8 +185,8 @@ export class Kitsu {
         );
 
         if (tokenExpiresIn > 1 && tokenExpiresIn < 7) {
-            Printer.printWarningBlock(
-                [`Your ;bm;auth token ;x;expires in ;by;${tokenExpiresIn} ;x;days`],
+            Printer.printWarning(
+                `Your ;bm;auth token ;x;expires in ;by;${tokenExpiresIn} ;x;days`,
                 'Token Needs Attention'
             );
         }

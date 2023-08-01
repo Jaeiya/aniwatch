@@ -88,8 +88,8 @@ export class HelpFlag extends CLIFlag {
 
         const flag = cli.flags.find((f) => f.helpAliases.includes(helpArg));
         if (!flag) {
-            Printer.printWarningBlock(
-                ['Try searching with broader search terms or using a specific flag name.'],
+            Printer.printWarning(
+                'Try searching with broader search terms or using a specific flag name.',
                 'Flag Not Found'
             );
         } else {

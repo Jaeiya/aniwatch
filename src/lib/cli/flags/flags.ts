@@ -20,6 +20,6 @@ export const Flags = [
     TokenFlag,
     FindAnimeFlag,
     RSSFeedFlag,
-    TestFlag,
+    // TestFlag,
     WhatToWatch,
 ];

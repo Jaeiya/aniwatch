@@ -305,8 +305,8 @@ async function deleteOldFiles() {
         statPromises.push(getOldFileStats(file));
     }
     const stats = await Promise.all(statPromises);
-    const latestFilesPerSeries = findLatestFilesPerSeries(stats);
-    const filesToDelete = stats.filter((s) => !latestFilesPerSeries.includes(s[0]));
+    const latestFansubFiles = getLatestFansubFiles(stats);
+    const filesToDelete = stats.filter((s) => !latestFansubFiles.includes(s[0]));
     if (!filesToDelete.length) return [0, 0] as const;
     const deletedFileCount = (
         await Promise.all(filesToDelete.map((file) => unlink(pathJoin(watchDir, file[0]))))
@@ -337,7 +337,7 @@ async function deleteAllFiles() {
     return [pendingDeletion.length, stats.reduce((pv, cv) => (pv += cv[2]), 0)] as const;
 }
 
-function findLatestFilesPerSeries(stats: (readonly [string, number, number])[]) {
+function getLatestFansubFiles(stats: (readonly [string, number, number])[]) {
     const latestFiles = [];
     while (stats.length) {
         const similarFiles = stats
@@ -351,7 +351,17 @@ function findLatestFilesPerSeries(stats: (readonly [string, number, number])[]) 
 
 function hasSimilarFiles(v1: string, isEqual = true) {
     return (v2: readonly [string, number, number]) => {
-        const isSimilar = v1.split(' - ')[0] == v2[0].split(' - ')[0];
+        const [file1Error, file1Data] = parseFansubFilename(v1);
+        const [file2Error, file2Data] = parseFansubFilename(v2[0]);
+
+        if (file1Error || file2Error) {
+            throw Error('Failed to parse files properly');
+        }
+
+        const isSimilar =
+            `${file1Data.fansub} ${file1Data.title}` ==
+            `${file2Data.fansub} ${file2Data.title}`;
+
         return isEqual ? isSimilar : !isSimilar;
     };
 }

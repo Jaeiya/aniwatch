@@ -30,7 +30,9 @@ type KitsuError = {
     errors: { title: string; detail?: string; status: number }[];
 };
 
-type UpdatedProgress = Promise<readonly [progress: number, episodeCount: number | null]>;
+type UpdatedProgress = Promise<
+    readonly [progress: number, episodeCount: number | null, tokenExpirationDays: number]
+>;
 
 const _tokenURL = 'https://kitsu.io/api/oauth/token';
 /** Get Kitsu properties */
@@ -184,13 +186,6 @@ export class Kitsu {
             getTimeUnits(Kitsu.tokenInfo.expiresSec - Date.now() / 1000).days
         );
 
-        if (tokenExpiresIn > 1 && tokenExpiresIn < 7) {
-            Printer.printWarning(
-                `Your ;bm;auth token ;x;expires in ;by;${tokenExpiresIn} ;x;days`,
-                'Token Needs Attention'
-            );
-        }
-
         const resp = await HTTP.patch(urlObj, JSON.stringify(data), _gK('access_token'));
         const resolvedData = await resp.json();
 
@@ -222,6 +217,7 @@ export class Kitsu {
         return [
             libPatchResp.data.attributes.progress,
             libPatchResp.included[0].attributes.episodeCount,
+            tokenExpiresIn,
         ] as const;
     }
 

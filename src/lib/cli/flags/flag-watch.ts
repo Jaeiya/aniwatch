@@ -162,9 +162,9 @@ async function execAutoWatch() {
     }
 
     const stopLoader = Printer.printLoader('Setting Progress', 2);
-    const { completed, anime: newAnimeObj } = await incrementAnime();
+    const { completed, anime: newAnimeObj, tokenExpiresIn } = await incrementAnime();
     stopLoader();
-    displayProgress({ anime: newAnimeObj, autoIncrement: true, completed });
+    displayProgress({ anime: newAnimeObj, autoIncrement: true, completed, tokenExpiresIn });
 }
 
 async function execWatch(flag: CLIFlag) {
@@ -196,23 +196,25 @@ async function execWatch(flag: CLIFlag) {
     }
 
     const stopLoader = Printer.printLoader('Setting Progress');
-    const { completed, anime } = await watchAnime(
+    const { completed, anime, tokenExpiresIn } = await watchAnime(
         epName,
         [epNumber, epForcedNum || '0'],
         process.cwd(),
         !!CLI.flagArgs.length // is it --manual entry?
     );
     stopLoader();
-    displayProgress({ anime, completed });
+    displayProgress({ anime, completed, tokenExpiresIn });
 }
 
 function displayProgress({
     anime,
     completed,
     autoIncrement,
+    tokenExpiresIn,
 }: {
     anime: KitsuCacheItem;
     completed: boolean;
+    tokenExpiresIn: number;
     autoIncrement?: boolean;
 }) {
     const { epCount, epProgress, jpTitle, enTitle } = anime;
@@ -230,6 +232,20 @@ function displayProgress({
     const log = autoIncrement
         ? [`Progress: ${progressText}`]
         : [...titles, `Progress: ${progressText}`];
+
+    if (tokenExpiresIn <= 7) {
+        Printer.printWarning(
+            [
+                `;bw;Your ;c;auth token ;bw;expires in ;by;${tokenExpiresIn} days`,
+                '',
+                ';bc;... ;y;Solutions ;bc;...',
+                ';y;(;bc;1;y;) ;c;Use the command: ;m;wak -t refresh ;c;to refresh your token',
+                ';y;(;bc;2;y;) ;c;Use the command: ;m;wak -t reset ;c;to reset your token',
+            ],
+            'Token Needs Attention',
+            3
+        );
+    }
 
     Printer.printInfo(log, 'Success', 3);
 }

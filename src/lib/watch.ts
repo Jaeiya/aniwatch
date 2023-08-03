@@ -192,7 +192,7 @@ function validateCachedAnime(cache: KitsuCache, animeName: string) {
 async function saveAnimeProgress(opt: ProgressOptions) {
     const { anime, cacheIndex, forcedEpNum, epNum, fileName } = opt;
 
-    const [progress, episodeCount] = await Kitsu.updateAnime(
+    const [progress, episodeCount, tokenExpiresIn] = await Kitsu.updateAnime(
         ...buildLibPatchReqArgs(anime.libID, forcedEpNum || epNum)
     );
     anime.epProgress = progress;
@@ -208,6 +208,7 @@ async function saveAnimeProgress(opt: ProgressOptions) {
         Config.save();
         return {
             completed: true,
+            tokenExpiresIn,
             anime,
         } as const;
     }
@@ -230,6 +231,7 @@ async function saveAnimeProgress(opt: ProgressOptions) {
     Config.save();
     return {
         completed: false,
+        tokenExpiresIn,
         anime,
     } as const;
 }

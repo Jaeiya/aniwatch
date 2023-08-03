@@ -1,3 +1,13 @@
+# [5.4.1](https://github.com/jaeiya/wakitsu/compare/v5.4.0...v5.4.1) (8/3/2023)
+
+## Minor Changes
+
+- **watch**: added better token expiration notification when displaying progress after watch execution ([855ebe1](https://github.com/Jaeiya/aniwatch/commit/855ebe1))
+
+## Fixes
+
+- **flags**: `--dir` now matches all possible fansub files when cleaning ([b8b7bcb](https://github.com/Jaeiya/aniwatch/commit/b8b7bcb))
+
 # [5.4.0](https://github.com/jaeiya/wakitsu/compare/v5.3.1...v5.4.0) (8/1/2023)
 
 ## Features

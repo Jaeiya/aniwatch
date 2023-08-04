@@ -65,7 +65,7 @@ export class CLI {
         if (!cleanFlagArgs[0]) {
             const defaultFlag = _flags.find((f) => f.isDefault);
             if (!defaultFlag) throw Error('missing default flag');
-            defaultFlag.exec(CLI);
+            defaultFlag.exec();
             return true;
         }
         const flag = _flags.find((f) => f.name.includes(cleanFlagArgs[0]));
@@ -74,7 +74,7 @@ export class CLI {
             process.exit(1);
         }
 
-        flag.exec instanceof Promise ? await flag.exec(CLI) : flag.exec(CLI);
+        flag.exec instanceof Promise ? await flag.exec() : flag.exec();
         return true;
     }
 
@@ -169,5 +169,5 @@ export abstract class CLIFlag {
     abstract readonly helpAliases: string[];
     /** Default help info for the flag */
     abstract getHelpLogs(): Log[];
-    abstract exec(cli: typeof CLI): void | Promise<void>;
+    abstract exec(): void | Promise<void>;
 }

@@ -69,16 +69,16 @@ export class HelpFlag extends CLIFlag {
         ];
     }
 
-    exec(cli: typeof CLI) {
-        const helpArg = cli.nonFlagArgs.join(' ');
+    exec() {
+        const helpArg = CLI.nonFlagArgs.join(' ');
         if (helpArg == 'simple') {
             // Help.displaySimpleHelp();
-            Printer.print(getSimpleFlagHelp(cli.flags));
+            Printer.print(getSimpleFlagHelp(CLI.flags));
             return;
         }
 
         if (helpArg == 'all') {
-            cli.flags.forEach((f) => {
+            CLI.flags.forEach((f) => {
                 Printer.print([null, null]);
                 f.printHelp();
                 Printer.print([null, null]);
@@ -86,7 +86,7 @@ export class HelpFlag extends CLIFlag {
             return;
         }
 
-        const flag = cli.flags.find((f) => f.helpAliases.includes(helpArg));
+        const flag = CLI.flags.find((f) => f.helpAliases.includes(helpArg));
         if (!flag) {
             Printer.printWarning(
                 'Try searching with broader search terms or using a specific flag name.',

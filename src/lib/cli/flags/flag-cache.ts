@@ -51,7 +51,7 @@ export class CacheFlag extends CLIFlag {
         ];
     }
 
-    exec(): void | Promise<void> {
+    exec() {
         const [arg] = CLI.nonFlagArgs;
         const hasValidArgs = CLI.validateSingleArg({
             args: ['info', 'rebuild'],

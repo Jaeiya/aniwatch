@@ -91,8 +91,8 @@ export class TokenFlag extends CLIFlag {
         null,
     ];
 
-    exec: (cli: typeof CLI) => void | Promise<void> = async (cli) => {
-        const [arg] = cli.nonFlagArgs;
+    async exec() {
+        const [arg] = CLI.nonFlagArgs;
 
         if (arg == 'info') {
             return showTokenInfo('Token Info', this.longTokenDesc);
@@ -107,7 +107,7 @@ export class TokenFlag extends CLIFlag {
             await Kitsu.resetToken();
             return showTokenInfo('Reset Token Info');
         }
-    };
+    }
 }
 
 function showTokenInfo(title: string, description: Log[] = []) {

@@ -50,9 +50,9 @@ export class RSSFeedFlag extends CLIFlag {
         ];
     }
 
-    async exec(cli: typeof CLI) {
+    async exec() {
         const stopLoader = Printer.printLoader('RSS Lookup');
-        const [error, result] = await rss.getFansubRSS(cli.nonFlagArgs.join(' '));
+        const [error, result] = await rss.getFansubRSS(CLI.nonFlagArgs.join(' '));
         stopLoader();
 
         if (error && !result) {
@@ -72,7 +72,7 @@ export class RSSFeedFlag extends CLIFlag {
         Printer.print([
             null,
             ['h2', ['Details']],
-            ['py', ['Query', `;g;${cli.nonFlagArgs.join(' ')}`], 2],
+            ['py', ['Query', `;g;${CLI.nonFlagArgs.join(' ')}`], 2],
             ['py', ['Entries', `${result.entryCount}`]],
             ['', `;c;RSS: ;x;${result.rss}`, 7],
             ['', `;c;Raw: ;y;${result.raw}`, 7],

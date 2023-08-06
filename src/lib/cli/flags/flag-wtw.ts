@@ -3,9 +3,14 @@ import { Log, Printer } from '../../printer/printer.js';
 import { readdir } from 'fs/promises';
 import { FansubFilenameData, parseFansubFilename, pathJoin } from '../../utils.js';
 import { Config } from '../../config.js';
+import { KitsuCacheItem } from '../../kitsu/kitsu-types.js';
+import open from 'open';
+import { autoWatchAnime } from '../../watch.js';
+import { displayProgress } from './flag-watch.js';
 
 type WhatToWatchData = {
     fileCount: number;
+    fileName: string;
 } & FansubFilenameData;
 
 export class WhatToWatch extends CLIFlag {
@@ -77,15 +82,82 @@ export class WhatToWatch extends CLIFlag {
             const fileCount = fileEntries.length;
             // Remove all entries with same title
             fileEntries = fileEntries.filter((entry) => !entry.name.includes(title));
-            fansubFileData.push({ ...parts, fileCount: fileCount - fileEntries.length });
+            fansubFileData.push({
+                ...parts,
+                fileCount: fileCount - fileEntries.length,
+                fileName: entry.name,
+            });
         }
 
-        displayWhatToWatch(fansubFileData);
+        const [whatToWatch, skippedFiles] = findWhatToWatch(fansubFileData);
+
+        displayWhatToWatch(whatToWatch.map((wtw) => wtw[0]));
+        if (skippedFiles.length) {
+            Printer.print([null]);
+            Printer.printWarning(skippedFiles, 'Not In Watch List');
+        }
+
+        const selection = await Printer.prompt(
+            'Enter a number from the list above or hit enter to skip this.'
+        );
+
+        if (selection == '') return;
+
+        const selectedNumber = Number(selection);
+
+        if (!selectedNumber || selectedNumber > whatToWatch.length) {
+            Printer.printError(
+                `Make sure you enter a number between 1 and ${whatToWatch.length}`,
+                'Invalid Selection',
+                3
+            );
+        }
+
+        const selectedIndex = selectedNumber - 1;
+        const [, wtwData] = whatToWatch[selectedIndex];
+
+        await open(`${pathJoin(process.cwd(), wtwData.fileName)}`, { wait: true });
+
+        const [anime, fileInfo, incrementAnime] = autoWatchAnime(wtwData.title, process.cwd());
+        Printer.print([
+            null,
+            ['h3', ['Auto Incrementing Anime']],
+            null,
+            ['py', ['JP Title', anime.jpTitle]],
+            ['py', ['EN Title', anime.enTitle]],
+            ['py', ['File', `;y;${fileInfo.title} ;by;${fileInfo.paddedEpNum}`], 4],
+            null,
+            [
+                'p',
+                `;b;Progress will be set from ;bg;${anime.epProgress} ;b;to ;by;${
+                    anime.epProgress + 1
+                }`,
+            ],
+        ]);
+
+        const hasConsent = await Printer.promptYesNo(
+            'Do you want to proceed with the procedure above'
+        );
+
+        if (!hasConsent) {
+            return Printer.printWarning(
+                'User cancelled the operation manually.',
+                'Operation Aborted',
+                3
+            );
+        }
+
+        const stopLoader = Printer.printLoader('Updating Progress', 2);
+        const { completed, anime: newAnimeObj, tokenExpiresIn } = await incrementAnime();
+        stopLoader();
+        displayProgress({ anime: newAnimeObj, autoIncrement: true, completed, tokenExpiresIn });
     }
 }
 
-function displayWhatToWatch(fileData: WhatToWatchData[]) {
-    const badFiles = [];
+function findWhatToWatch(fileData: WhatToWatchData[]) {
+    const badFiles: string[] = [];
+    const whatToWatch: [KitsuCacheItem, WhatToWatchData][] = [];
+
     for (const data of fileData) {
         const fileBinding = Config.getKitsuProp('fileBindings').find(
             (fb) => fb.name.toLowerCase() == data.title.toLowerCase()
@@ -104,19 +176,19 @@ function displayWhatToWatch(fileData: WhatToWatchData[]) {
             throw Error(`${data.title} does not exist in anime cache`);
         }
 
-        const totalEps = a.epCount ? a.epCount : `;bm;unknown`;
-        Printer.print([
-            null,
-            ['py', ['Title JP', `;x;${a.jpTitle}`], 2],
-            ['py', ['Title EN', `${a.enTitle}`], 2],
-            ['py', ['Progress', `;g;${a.epProgress} ;by;/ ;m;${totalEps}`], 2],
-            ['py', [';bc;File Count', `;x;${data.fileCount}`]],
-            ['', `;c;File: ;y;[${data.fansub}] ${data.title} - ${data.paddedEpNum}`, 9],
-        ]);
+        whatToWatch.push([a, data]);
     }
 
-    if (badFiles.length) {
-        Printer.print([null]);
-        Printer.printWarning(badFiles, 'Not In Watch List');
-    }
+    return [whatToWatch, badFiles] as const;
+}
+
+function displayWhatToWatch(anime: KitsuCacheItem[]) {
+    anime.forEach((a, i) => {
+        Printer.print([
+            null,
+            ['h1', [`${i + 1}`]],
+            ['py', ['Title JP', `;x;${a.jpTitle}`]],
+            ['py', ['Title EN', `${a.enTitle}`]],
+        ]);
+    });
 }

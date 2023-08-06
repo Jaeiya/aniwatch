@@ -206,7 +206,7 @@ async function execWatch(flag: CLIFlag) {
     displayProgress({ anime, completed, tokenExpiresIn });
 }
 
-function displayProgress({
+export function displayProgress({
     anime,
     completed,
     autoIncrement,

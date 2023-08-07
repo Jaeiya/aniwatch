@@ -1,6 +1,6 @@
 # [5.5.0](https://github.com/jaeiya/wakitsu/compare/v5.4.1...v5.5.0) (8/3/2023)
 
-## What to Watch Improvement
+### What to Watch Improvement
 
 Instead of having to find the file and execute it manually yourself, the `-wtw` flag now prompts you to select a number correlating to a listed anime. Selecting a number will execute the anime on file using your default media player.
 
@@ -13,26 +13,26 @@ Of course there's one exception to the rule, and that's how an anime is referenc
 
 # [5.4.1](https://github.com/jaeiya/wakitsu/compare/v5.4.0...v5.4.1) (8/3/2023)
 
-## Minor Changes
+### Minor Changes
 
 - **watch**: added better token expiration notification when displaying progress after watch execution ([855ebe1](https://github.com/Jaeiya/aniwatch/commit/855ebe1))
 
-## Fixes
+### Fixes
 
 - **flags**: `--dir` now matches all possible fansub files when cleaning ([b8b7bcb](https://github.com/Jaeiya/aniwatch/commit/b8b7bcb))
 
 # [5.4.0](https://github.com/jaeiya/wakitsu/compare/v5.3.1...v5.4.0) (8/1/2023)
 
-## Features
+### Features
 
 - **flags**: add `-what-to-watch` flag to display a helpful list of available anime for you to watch ([8bac1f5](https://github.com/Jaeiya/aniwatch/commit/8bac1f5))
 
-## Minor Changes
+### Minor Changes
 
 - **flags**: add syntax logs for `-color` flag ([39249f3](https://github.com/Jaeiya/aniwatch/commit/39249f3))
 - **flags**: disable test flag from being accessible ([94dc1b2](https://github.com/Jaeiya/aniwatch/commit/94dc1b2))
 
-## Fixes
+### Fixes
 
 - **flags**: anime flag missing drop command help logs ([59d2e0b](https://github.com/Jaeiya/aniwatch/commit/59d2e0b))
 

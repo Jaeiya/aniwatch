@@ -10,6 +10,9 @@ export class DefaultFlag extends CLIFlag {
 
     helpAliases: string[] = [
         ...this.name,
+        'default usage',
+        'how do I watch anime',
+        'watch',
         'normal',
         'normal usage',
         'basic',
@@ -26,7 +29,7 @@ export class DefaultFlag extends CLIFlag {
             ['h1', ['Watch Usage']],
             [
                 'p',
-                'Scan the current working directory for the specified anime ;y;name ;bk;and ' +
+                'Scans the current working directory for the specified anime ;y;name ;bk;and ' +
                     ';y;ep;bk;isode number, then updates your progress on Kitsu for that anime ' +
                     'at the ;y;ep;bk;isode number you specified.',
             ],
@@ -37,6 +40,16 @@ export class DefaultFlag extends CLIFlag {
                     'Kitsu, then you can use the ;y;f;bk;orced ;y;ep;bk;isode number: ' +
                     ';y;fep;bk;, to set episode progress manually.  This will force Kitsu ' +
                     'to update your progress to ;y;fep;bk;.',
+            ],
+            null,
+            [
+                'p',
+                ';m;Auto-Progress: ;bk;If you enter only the ;y;name ;bk;of an anime, then ' +
+                    'you will be prompted to auto-update its progress; ;x;only ;bk;if the file ' +
+                    'can be found on disk. In order for this mechanism to work, you must have ' +
+                    ';x;already ;bk;watched the ;x;first ;bk;episode of the anime, otherwise ' +
+                    'an error will be displayed, telling you to update with an ;y;ep;bk;isode ' +
+                    'number, which you can do by following the ;x;default syntax ;bk;below.',
             ],
             null,
             [
@@ -93,9 +106,10 @@ export class DefaultFlag extends CLIFlag {
             ],
             null,
             ['h2', ['Examples']],
-            ['e', ['', `"boku no hero" 10`]],
-            ['e', ['', 'berserk 3']],
-            ['e', ['', 'bleach 367 1']],
+            ['e', ['', `"boku no hero" 10 ;b;(Sets Boku no Hero progress: ;x;10;b;)`]],
+            ['e', ['', 'berserk 3         ;b;(Sets Berserk progress: ;x;3;b;)']],
+            ['e', ['', 'jujutsu 25 1      ;b;(Sets Jujutsu S02 progress: ;x;1;b;)']],
+            ['e', ['', 'bleach            ;b;(Sets Bleach: ;x;progress + 1;b;)']],
             ['e', ['m', 'boku 20']],
             ['e', ['manual', 'boku 20']],
         ];

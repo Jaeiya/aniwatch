@@ -106,7 +106,7 @@ export class WhatToWatch extends CLIFlag {
         const selectedNumber = Number(selection);
 
         if (!selectedNumber || selectedNumber > whatToWatch.length) {
-            Printer.printError(
+            return Printer.printError(
                 `Make sure you enter a number between 1 and ${whatToWatch.length}`,
                 'Invalid Selection',
                 3

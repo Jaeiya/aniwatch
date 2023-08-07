@@ -80,7 +80,16 @@ export function autoWatchAnime(epName: string, workingDir: string) {
 
     const [anime, cacheIndex] = validateCachedAnime(cachedAnime, epName);
 
-    const fileTitle = Kitsu.getFileBinding(anime.libID) ?? epName;
+    const fileTitle = Kitsu.getFileBinding(anime.libID);
+
+    if (!fileTitle) {
+        Printer.printError(
+            ['Update anime progress using the name ;bc;and ;y;episode number'],
+            'No File Binding',
+            3
+        );
+        process.exit(1);
+    }
 
     // We assume files are watched in ascending order (1, 2, 3)
     const [firstFileName] = filterFansubFilenames(workingDir, fileTitle).sort();

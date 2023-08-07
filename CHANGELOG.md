@@ -1,3 +1,16 @@
+# [5.5.0](https://github.com/jaeiya/wakitsu/compare/v5.4.1...v5.5.0) (8/3/2023)
+
+## What to Watch Improvement
+
+Instead of having to find the file and execute it manually yourself, the `-wtw` flag now prompts you to select a number correlating to a listed anime. Selecting a number will execute the anime on file using your default media player.
+
+Once you finish watching the anime and close the media player, you will be prompted to auto-update the progress for the anime you just watched. If you happen to close the media player before finishing the anime, you can skip the update process.
+
+This means watching anime got a LOT more intuitive. You no longer have to look at files or type in a bunch of commands to update their progress. You can simply type `wak -wtw`, select an anime, watch it, then let it auto-update your progress; it's dead simple.
+
+**Caveat**
+Of course there's one exception to the rule, and that's how an anime is referenced on file. In order for this command to work, you first need to watch the episode the old way, where you manually enter the name, this is because the file name could be too different from the anime title. Once the first episode of an anime has been "watched", you can start using the `-wtw` flag for all subsequent episodes.
+
 # [5.4.1](https://github.com/jaeiya/wakitsu/compare/v5.4.0...v5.4.1) (8/3/2023)
 
 ## Minor Changes

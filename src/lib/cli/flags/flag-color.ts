@@ -33,7 +33,7 @@ export class ColorFlag extends CLIFlag {
 
     getSyntaxHelpLogs(): Log[] | null {
         return [
-            ['h2', ['Syntax']],
+            ['h2', ['Usage']],
             ['s', ['c', 'color'], ''],
             null,
             ['h2', ['Examples']],

@@ -31,7 +31,7 @@ export class HelpFlag extends CLIFlag {
 
     getSyntaxHelpLogs(): Log[] {
         return [
-            ['h2', ['Syntax']],
+            ['h2', ['Usage']],
             ['s', ['h', 'help'], '<all|simple|flag|desc>'],
             null,
             ['h2', ['Details']],
@@ -111,7 +111,7 @@ function getSimpleFlagHelp(flags: CLIFlag[]) {
                 'will occur.',
         ],
     ];
-    const flagSyntax: Log[] = [null, ['h2', ['Syntax']]];
+    const flagSyntax: Log[] = [null, ['h2', ['Usage']]];
     const flagDetails: Log[] = [null, ['h2', ['Details']]];
     for (const flag of flags) {
         if (flag.type == 'simple') {

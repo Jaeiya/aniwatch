@@ -44,7 +44,7 @@ export class TokenFlag extends CLIFlag {
 
     getSyntaxHelpLogs(): Log[] {
         return [
-            ['h2', ['Syntax']],
+            ['h2', ['Usage']],
             ['s', ['t', 'token'], '<info|reset|refresh>'],
             null,
             ['h2', ['Details']],

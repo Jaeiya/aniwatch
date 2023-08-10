@@ -67,7 +67,7 @@ export class DefaultFlag extends CLIFlag {
 
     getSyntaxHelpLogs(): Log[] {
         return [
-            ['h2', ['Default Syntax']],
+            ['h2', ['Usage']],
             ['s', null, ';y;<?;x;[;c;-m ;x;| ;c;-manual;x;];y;> <name> <ep> <?fep>'],
             null,
             ['h2', ['Details']],

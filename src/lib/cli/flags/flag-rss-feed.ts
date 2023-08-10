@@ -38,7 +38,7 @@ export class RSSFeedFlag extends CLIFlag {
 
     getSyntaxHelpLogs(): Log[] {
         return [
-            ['h2', ['Syntax']],
+            ['h2', ['Usage']],
             ['s', ['rss', 'rss-feed'], '<name>'],
             null,
             ['h2', ['Details']],

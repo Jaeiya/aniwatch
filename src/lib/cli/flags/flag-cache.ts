@@ -35,7 +35,7 @@ export class CacheFlag extends CLIFlag {
 
     getSyntaxHelpLogs(): Log[] | null {
         return [
-            ['h2', ['Syntax']],
+            ['h2', ['Usage']],
             ['s', ['c', 'cache'], '<info|rebuild>'],
             null,
             ['h2', ['Details']],

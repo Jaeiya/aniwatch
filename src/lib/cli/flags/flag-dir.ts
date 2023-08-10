@@ -56,7 +56,7 @@ export class Directory extends CLIFlag {
 
     getSyntaxHelpLogs(): Log[] {
         return [
-            ['h2', ['Syntax']],
+            ['h2', ['Usage']],
             ['s', ['d', 'dir'], '<info|clean> ;bm;<all|old>'],
             null,
             ['h2', ['Details']],

@@ -34,7 +34,7 @@ export class ProfileFlag extends CLIFlag {
 
     getSyntaxHelpLogs(): Log[] | null {
         return [
-            ['h2', ['Syntax']],
+            ['h2', ['Usage']],
             ['s', ['p', 'profile'], '<info|rebuild>'],
             null,
             ['h2', ['Details']],

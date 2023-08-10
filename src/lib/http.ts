@@ -25,7 +25,7 @@ export class HTTP {
             })
         );
         if (!asyncRes.success) {
-            execError(asyncRes.error, 'POST', url.toString());
+            execError(asyncRes.error, 'POST');
             process.exit(1);
         }
         return asyncRes.data;
@@ -37,7 +37,7 @@ export class HTTP {
             fetch(url, headers ? { method: 'GET', headers } : { method: 'GET' })
         );
         if (!asyncResp.success) {
-            execError(asyncResp.error, 'GET', url.toString());
+            execError(asyncResp.error, 'GET');
             process.exit(1);
         }
         return asyncResp.data;
@@ -55,13 +55,14 @@ export class HTTP {
             })
         );
         if (!asyncRes.success) {
-            execError(asyncRes.error, 'PATCH', url.toString());
+            execError(asyncRes.error, 'PATCH');
             process.exit(1);
         }
         return asyncRes.data;
     }
 }
 
-function execError(resp: Error, method: string, url: string) {
-    Printer.printError(resp.message, `Failed ${method}ing ;c;${url}`);
+function execError(resp: Error, method: string) {
+    Printer.printError(resp.message, `Failed ${method}ing`);
+    console.error(resp);
 }

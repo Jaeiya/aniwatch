@@ -10,12 +10,14 @@ export class DefaultFlag extends CLIFlag {
 
     helpAliases: string[] = [
         ...this.name,
+        'default',
         'default usage',
         'how do I watch anime',
         'watch',
         'normal',
         'normal usage',
         'basic',
+        'usage',
         'basic usage',
         'how to use',
         'how to use program',
@@ -26,7 +28,7 @@ export class DefaultFlag extends CLIFlag {
 
     getHelpLogs(): Log[] {
         return [
-            ['h1', ['Watch Usage']],
+            ['h1', ['How to progress your Anime']],
             [
                 'p',
                 'Scans the current working directory for the specified anime ;y;name ;bk;and ' +
@@ -44,34 +46,20 @@ export class DefaultFlag extends CLIFlag {
             null,
             [
                 'p',
+                ';m;Manual Mode: ;bk;By default, this command executes without the need to ' +
+                    'pass any flag to the program. If you pass the ;c;-m ;bk;or ;c;-manual ' +
+                    ';bk;flags, then it activates manual mode, which will update your anime ' +
+                    'progress without needing a file on disk.',
+            ],
+            null,
+            [
+                'p',
                 ';m;Auto-Progress: ;bk;If you enter only the ;y;name ;bk;of an anime, then ' +
                     'you will be prompted to auto-update its progress; ;x;only ;bk;if the file ' +
                     'can be found on disk. In order for this mechanism to work, you must have ' +
                     ';x;already ;bk;watched the ;x;first ;bk;episode of the anime, otherwise ' +
                     'an error will be displayed, telling you to update with an ;y;ep;bk;isode ' +
-                    'number, which you can do by following the ;x;default syntax ;bk;below.',
-            ],
-            null,
-            [
-                'p',
-                ';m;Manual Mode: ;bk;By default, this command executes without the need to ' +
-                    'pass any flag to the program. If you pass the ;c;-m ;bk;or ;c;-manual ' +
-                    ';bk;flags, then it activates manual mode, which ignores any physical file ' +
-                    'requirements.',
-            ],
-            null,
-            [
-                'p',
-                'In other words, if you just want to update Kitsu without moving or caring ' +
-                    'about any existing files on disk, you can use manual mode. You use it ' +
-                    'exactly the same way, except you pass the manual flag before the arguments.',
-            ],
-            null,
-            [
-                'p',
-                ';m;NOTE: ;bk;If the ;y;name ;bk;you use returns multiple results, the program ' +
-                    'will display them and exit. This allows you to try again with a more ' +
-                    'specific ;y;name;bk;.',
+                    'number, which you can do by following the ;x;usage ;bk;info below.',
             ],
             null,
         ];
@@ -100,7 +88,7 @@ export class DefaultFlag extends CLIFlag {
                 'd',
                 [
                     'fep',
-                    ';m;(optional) ;x;Update Kitsu progress with ;y;<fep> instead of ;y;<ep>;bk;.',
+                    ';m;(optional) ;x;Update Kitsu progress with ;y;<fep> ;x;instead of ;y;<ep>;bk;.',
                 ],
                 1,
             ],

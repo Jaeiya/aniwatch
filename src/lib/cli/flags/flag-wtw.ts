@@ -33,22 +33,42 @@ export class WhatToWatch extends CLIFlag {
             ['h1', ['What to Watch']],
             [
                 'p',
-                'This flag tries to find files that you have yet to watch, that are a ' +
-                    'part of your watch list. It then displays the list of titles it found.',
+                'This flag tries to find files that you have yet to watch, that are part ' +
+                    'of your watch list. It then displays a numbered list of titles it ' +
+                    'found. Selecting one of the numbered titles, will start that anime in ' +
+                    'your default media player.',
+            ],
+            null,
+            [
+                'p',
+                'Once the media player is ;x;closed;bk;, you will be prompted to set the ' +
+                    'progress for that anime using the auto-progress feature; this allows for ' +
+                    'a very seamless experience from watching an anime to updating its progress.',
             ],
             null,
             [
                 'p',
                 ';m;NOTE: ;bk;If you have not yet watched at least one episode of a ' +
-                    'file it finds, then that title will not be listed.',
+                    'title it finds, then its associated file will be considered ' +
+                    ';x;untracked;bk;.',
             ],
+            null,
+            [
+                'p',
+                ';m;UNTRACKED: ;bk;To begin tracking your files, you need to use the default ' +
+                    'command for watching anime. For more information on how to use the ' +
+                    'default watch command, use the following command:',
+            ],
+            null,
+            ['p', ';by;wak ;c;-h ;y;usage', 5],
+            null,
             null,
         ];
     }
 
     getSyntaxHelpLogs(): Log[] | null {
         return [
-            ['h2', ['Syntax']],
+            ['h2', ['Usage']],
             ['s', ['wtw', 'what-to-watch'], ''],
             null,
             ['h2', ['Examples']],
@@ -94,7 +114,7 @@ export class WhatToWatch extends CLIFlag {
         displayWhatToWatch(whatToWatch.map((wtw) => wtw[0]));
         if (skippedFiles.length) {
             Printer.print([null]);
-            Printer.printWarning(skippedFiles, 'Not In Watch List');
+            Printer.printWarning(skippedFiles, 'Untracked Files');
         }
 
         const selection = await Printer.prompt(

@@ -1,3 +1,17 @@
+# [5.6.0](https://github.com/jaeiya/wakitsu/compare/v5.5.0...v5.6.0) (8/3/2023)
+
+### Features
+
+- **flags**: `--wtw` now has fully detailed help support ([ec8aa04](https://github.com/Jaeiya/aniwatch/commit/ec8aa04))
+- **watch**: full re-write ([9e736b6](https://github.com/Jaeiya/aniwatch/commit/9e736b6))
+
+### Fixes
+
+- **flags**: fix `-wtw`command using file name to lookup anime ([9e736b6](https://github.com/Jaeiya/aniwatch/commit/9e736b6))
+- **flags**: fix `-wtw` command not returning on error ([1461d51](https://github.com/Jaeiya/aniwatch/commit/1461d51))
+- **flags**: default watch flag - missing vital help info about auto-progress feature ([06ea9e7](https://github.com/Jaeiya/aniwatch/commit/06ea9e7))
+- **http**: error messages too long for normal print ([67f83dd](https://github.com/Jaeiya/aniwatch/commit/67f83dd))
+
 # [5.5.0](https://github.com/jaeiya/wakitsu/compare/v5.4.1...v5.5.0) (8/3/2023)
 
 ### What to Watch Improvement

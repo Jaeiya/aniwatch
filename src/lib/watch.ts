@@ -101,13 +101,13 @@ export async function useAnimeAutoWatcher({
     titleOrCache,
     workingDir,
 }: Omit<WatchAnimeProps, 'episode'>) {
-    const watchDir = workingDir ?? process.cwd();
-    tryCreateWatchedDir(watchDir);
+    const rootDir = workingDir ?? process.cwd();
+    tryCreateWatchedDir(rootDir);
 
     const [error, watcher] = await useAnimeWatcher({
         titleOrCache,
         episode: [0, 0],
-        workingDir: watchDir,
+        workingDir: rootDir,
     });
 
     if (error) {
@@ -156,7 +156,7 @@ function manageFile(
     const fileName = fansubFileNames[0];
     const [error, data] = parseFansubFilename(fileName);
     if (error) {
-        throw Error(`watchAnime()::${error.parseError}`);
+        throw Error(`watch::${error.parseError}`);
     }
 
     if (!fileBinding) {

@@ -35,7 +35,7 @@ export type WatchReturns = Awaited<
 
 export type WatchError = WatchReturns[0];
 
-export type IsWatchError<T> = T extends { msg: string } ? T : never;
+export type IsWatchError<T> = T extends { msg: string; data: any } ? T : never;
 
 export async function useAnimeWatcher({ titleOrCache, episode, workingDir }: WatchAnimeProps) {
     const rootDir = workingDir ?? process.cwd();

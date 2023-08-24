@@ -5,8 +5,8 @@ import { FansubFilenameData, parseFansubFilename, pathJoin } from '../../utils.j
 import { Config } from '../../config.js';
 import { KitsuCacheItem } from '../../kitsu/kitsu-types.js';
 import open from 'open';
-import { autoWatchAnime } from '../../watch.js';
-import { displayProgress } from './flag-watch.js';
+import { displayWatchError, displayWatchProgress, useAnimeAutoWatcher } from '../../watch.js';
+import { Kitsu } from '../../kitsu/kitsu.js';
 
 type WhatToWatchData = {
     fileCount: number;
@@ -111,7 +111,7 @@ export class WhatToWatch extends CLIFlag {
 
         const [whatToWatch, skippedFiles] = findWhatToWatch(fansubFileData);
 
-        displayWhatToWatch(whatToWatch.map((wtw) => wtw[0]));
+        displayWhatToWatch(whatToWatch.map((wtw) => wtw[0][0]));
         if (skippedFiles.length) {
             Printer.print([null]);
             Printer.printWarning(skippedFiles, 'Untracked Files');
@@ -134,18 +134,27 @@ export class WhatToWatch extends CLIFlag {
         }
 
         const selectedIndex = selectedNumber - 1;
-        const [, wtwData] = whatToWatch[selectedIndex];
+        const [animeToWatch, wtwData] = whatToWatch[selectedIndex];
 
         await open(`${pathJoin(process.cwd(), wtwData.fileName)}`, { wait: true });
 
-        const [anime, fileInfo, incrementAnime] = autoWatchAnime(wtwData.title, process.cwd());
+        Printer.print([null, ['h3', ['Auto Incrementing Anime']]]);
+
+        const [watchError, watcher] = await useAnimeAutoWatcher({
+            titleOrCache: animeToWatch,
+        });
+
+        if (watchError) {
+            return displayWatchError(watchError, wtwData.title);
+        }
+
+        const { anime, fileData, setProgress, moveFansubFile } = watcher;
+
         Printer.print([
-            null,
-            ['h3', ['Auto Incrementing Anime']],
             null,
             ['py', ['JP Title', anime.jpTitle]],
             ['py', ['EN Title', anime.enTitle]],
-            ['py', ['File', `;y;${fileInfo.title} ;by;${fileInfo.paddedEpNum}`], 4],
+            ['py', ['File', `;y;${fileData.title} ;by;${fileData.paddedEpNum}`], 4],
             null,
             [
                 'p',
@@ -156,7 +165,7 @@ export class WhatToWatch extends CLIFlag {
         ]);
 
         const hasConsent = await Printer.promptYesNo(
-            'Do you want to proceed with the procedure above'
+            'Do you want to proceed with the changes above'
         );
 
         if (!hasConsent) {
@@ -168,15 +177,24 @@ export class WhatToWatch extends CLIFlag {
         }
 
         const stopLoader = Printer.printLoader('Updating Progress', 2);
-        const { completed, anime: newAnimeObj, tokenExpiresIn } = await incrementAnime();
+        moveFansubFile();
+        const { completed, anime: newAnimeObj, tokenExpiresIn } = await setProgress();
         stopLoader();
-        displayProgress({ anime: newAnimeObj, autoIncrement: true, completed, tokenExpiresIn });
+        displayWatchProgress({
+            anime: newAnimeObj,
+            autoIncrement: true,
+            completed,
+            tokenExpiresIn,
+        });
     }
 }
 
 function findWhatToWatch(fileData: WhatToWatchData[]) {
     const badFiles: string[] = [];
-    const whatToWatch: [KitsuCacheItem, WhatToWatchData][] = [];
+    const whatToWatch: [
+        [Anime: KitsuCacheItem, CacheIndex: number, FileBinding: string],
+        WhatToWatchData
+    ][] = [];
 
     for (const data of fileData) {
         const fileBinding = Config.getKitsuProp('fileBindings').find(
@@ -188,15 +206,22 @@ function findWhatToWatch(fileData: WhatToWatchData[]) {
             continue;
         }
 
-        const a = Config.getKitsuProp('cache').find(
-            (cachedAnime) => cachedAnime.libID == fileBinding.id
-        );
+        let anime: KitsuCacheItem | undefined;
+        let cacheIndex = 0;
+        const cache = Config.getKitsuProp('cache');
+        for (let i = 0; i < cache.length; i++) {
+            if (cache[i].libID == fileBinding.id) {
+                anime = cache[i];
+                cacheIndex = i;
+                break;
+            }
+        }
 
-        if (!a) {
+        if (!anime) {
             throw Error(`${data.title} does not exist in anime cache`);
         }
 
-        whatToWatch.push([a, data]);
+        whatToWatch.push([[anime, cacheIndex, fileBinding.name], data]);
     }
 
     return [whatToWatch, badFiles] as const;

@@ -1,7 +1,11 @@
 import { CLI, CLIFlag, CLIFlagName, CLIFlagType } from '../cli.js';
-import { autoWatchAnime, watchAnime } from '../../watch.js';
 import { Log, Printer } from '../../printer/printer.js';
-import { KitsuCacheItem } from '../../kitsu/kitsu-types.js';
+import {
+    displayWatchError,
+    displayWatchProgress,
+    useAnimeAutoWatcher,
+    useAnimeWatcher,
+} from '../../watch.js';
 
 export class DefaultFlag extends CLIFlag {
     name: CLIFlagName = ['m', 'manual'];
@@ -104,7 +108,7 @@ export class DefaultFlag extends CLIFlag {
     }
 
     exec(): Promise<void> | void {
-        const flagArgs = CLI.nonFlagArgs;
+        const args = CLI.nonFlagArgs;
 
         if (!CLI.userArgs.length) {
             const helpFlag = CLI.flags.find((f) => f.name.includes('help'));
@@ -115,40 +119,93 @@ export class DefaultFlag extends CLIFlag {
             return;
         }
 
-        if (flagArgs.length == 1) {
+        if (args.length == 1) {
             return execAutoWatch();
         }
 
-        if (flagArgs.length < 2 || flagArgs.length > 3) {
+        if (args.length < 2 || args.length > 3) {
             Printer.printError(
                 'Read the help below to learn the correct syntax:',
                 'Invalid Syntax'
             );
-            this.printHelp();
-            process.exit(1);
+            return this.printHelp();
         }
 
-        return execWatch(this);
+        return execWatch();
     }
 }
 
+async function execWatch() {
+    const [title, ep, forcedEp] = CLI.nonFlagArgs;
+
+    const epNum = Number(ep);
+    const forcedEpNum = Number(forcedEp);
+
+    if (title.length < 4) {
+        return Printer.printWarning(
+            'Use a title with at least 4 characters to prevent collisions.'
+        );
+    }
+
+    if (isNaN(epNum)) {
+        return Printer.printError(`";c;${ep};y;" is not a valid ;by;episode ;y;number`);
+    }
+
+    if (forcedEp && isNaN(forcedEpNum)) {
+        return Printer.printError(
+            `";c;${forcedEp};y;" is not a valid ;by;forced episode ;y;number`
+        );
+    }
+
+    const [watchError, watcher] = await useAnimeWatcher({
+        titleOrCache: title,
+        episode: [epNum, forcedEp ? forcedEpNum : 0],
+    });
+
+    const stopLoader = Printer.printLoader('Setting Progress');
+
+    if (watchError) {
+        stopLoader();
+        return displayWatchError(watchError, title);
+    }
+
+    // Check --manual flag presence
+    if (CLI.flagArgs.length == 0) {
+        const [fileError, mover] = watcher.useFansubMover();
+        if (fileError) {
+            stopLoader();
+            return displayWatchError(fileError, title);
+        }
+        mover.move();
+    }
+
+    const { anime, completed, tokenExpiresIn } = await watcher.setProgress();
+    stopLoader();
+    displayWatchProgress({ anime, completed, tokenExpiresIn });
+}
+
 async function execAutoWatch() {
-    const [anime, fileInfo, incrementAnime] = autoWatchAnime(CLI.nonFlagArgs[0], process.cwd());
+    Printer.print([null, ['h3', ['Auto Progressing Anime']]]);
+
+    const [title] = CLI.nonFlagArgs;
+
+    const [watchError, autoWatcher] = await useAnimeAutoWatcher({
+        titleOrCache: title,
+    });
+
+    if (watchError) {
+        return displayWatchError(watchError, title);
+    }
+
+    const { anime, fileData, setProgress, newProgress, moveFansubFile } = autoWatcher;
 
     Printer.print([
         null,
-        ['h3', ['Auto Incrementing Anime']],
-        null,
         ['py', ['JP Title', anime.jpTitle]],
         ['py', ['EN Title', anime.enTitle]],
-        ['py', ['File', `;y;${fileInfo.title} ;by;${fileInfo.paddedEpNum}`], 4],
+        ['py', ['File', `;y;${fileData.title} ;by;${fileData.paddedEpNum}`], 4],
         null,
-        [
-            'p',
-            `;b;Progress will be set from ;bg;${anime.epProgress} ;b;to ;by;${
-                anime.epProgress + 1
-            }`,
-        ],
+        ['p', `;b;Progress will be set from ;bg;${anime.epProgress} ;b;to ;by;${newProgress}`],
     ]);
 
     const hasConsent = await Printer.promptYesNo(
@@ -164,90 +221,13 @@ async function execAutoWatch() {
     }
 
     const stopLoader = Printer.printLoader('Setting Progress', 2);
-    const { completed, anime: newAnimeObj, tokenExpiresIn } = await incrementAnime();
+    moveFansubFile();
+    const { completed, anime: newAnimeObj, tokenExpiresIn } = await setProgress();
     stopLoader();
-    displayProgress({ anime: newAnimeObj, autoIncrement: true, completed, tokenExpiresIn });
-}
-
-async function execWatch(flag: CLIFlag) {
-    const [epName, epNumber, epForcedNum] = CLI.nonFlagArgs;
-
-    if (epName.length < 3) {
-        Printer.printWarning('Episode names must be longer than 2 characters.', 'Invalid Name');
-        return;
-    }
-
-    if (isNaN(parseInt(epNumber))) {
-        Printer.printError(
-            `You entered an invalid Episode Number: ;x;${epNumber}`,
-            'Invalid Number'
-        );
-        Printer.print([null, null]);
-        flag.printSyntax();
-        return;
-    }
-
-    if (epForcedNum && isNaN(parseInt(epForcedNum))) {
-        Printer.printError(
-            `You entered an invalid ;bw;Forced ;y;Episode Number: ;x;${epForcedNum}`,
-            'Invalid Number'
-        );
-        Printer.print([null, null]);
-        flag.printSyntax();
-        return;
-    }
-
-    const stopLoader = Printer.printLoader('Setting Progress');
-    const { completed, anime, tokenExpiresIn } = await watchAnime(
-        epName,
-        [epNumber, epForcedNum || '0'],
-        process.cwd(),
-        !!CLI.flagArgs.length // is it --manual entry?
-    );
-    stopLoader();
-    displayProgress({ anime, completed, tokenExpiresIn });
-}
-
-export function displayProgress({
-    anime,
-    completed,
-    autoIncrement,
-    tokenExpiresIn,
-}: {
-    anime: KitsuCacheItem;
-    completed: boolean;
-    tokenExpiresIn: number;
-    autoIncrement?: boolean;
-}) {
-    const { epCount, epProgress, jpTitle, enTitle } = anime;
-    autoIncrement ??= false;
-
-    const percent = epCount ? Math.floor((epProgress / epCount) * 100) : 0;
-    const percentText = percent ? `;bk;(;c;~${percent}%;bk;)` : '';
-    const progressText = completed
-        ? ';bg;Completed!'
-        : `;bg;${epProgress} ;x;/ ;y;${epCount || ';r;Unknown'} ${percentText}`;
-    const titles = [
-        `JP Title: ;x;${jpTitle || ';m;None'}`,
-        `EN Title: ;bk;${enTitle || ';m;None'}`,
-    ];
-    const log = autoIncrement
-        ? [`Progress: ${progressText}`]
-        : [...titles, `Progress: ${progressText}`];
-
-    if (tokenExpiresIn <= 7) {
-        Printer.printWarning(
-            [
-                `;bw;Your ;c;auth token ;bw;expires in ;by;${tokenExpiresIn} days`,
-                '',
-                ';bc;... ;y;Solutions ;bc;...',
-                ';y;(;bc;1;y;) ;c;Use the command: ;m;wak -t refresh ;c;to refresh your token',
-                ';y;(;bc;2;y;) ;c;Use the command: ;m;wak -t reset ;c;to reset your token',
-            ],
-            'Token Needs Attention',
-            3
-        );
-    }
-
-    Printer.printInfo(log, 'Success', 3);
+    displayWatchProgress({
+        anime: newAnimeObj,
+        autoIncrement: true,
+        completed,
+        tokenExpiresIn,
+    });
 }

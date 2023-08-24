@@ -178,7 +178,7 @@ async function addAnime() {
 }
 
 async function dropAnime(query: string) {
-    const [anime] = Kitsu.findCachedAnime(query);
+    const [[anime]] = Kitsu.findCachedAnime(query);
 
     if (!anime) {
         return Printer.printWarning(

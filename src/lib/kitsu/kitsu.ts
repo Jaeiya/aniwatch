@@ -291,14 +291,25 @@ export class Kitsu {
         return serializeLibraryAnimeInfo(filteredCache, entries);
     }
 
-    static findCachedAnime(title: string) {
+    static findCachedAnime(
+        title: string
+    ): Array<[CachedAnime: KitsuCacheItem, CacheIndex: number]> {
         const lowerTitle = title.toLowerCase();
-        return Kitsu.animeCache.filter(
-            (anime) =>
-                anime.jpTitle.toLowerCase().includes(lowerTitle) ||
-                anime.enTitle.toLowerCase().includes(lowerTitle) ||
-                anime.synonyms.some((s) => s.toLowerCase().includes(lowerTitle))
-        );
+        const cachedAnime: Array<[KitsuCacheItem, number]> = [];
+
+        for (let i = 0; i < Kitsu.animeCache.length; i++) {
+            const a = Kitsu.animeCache[i];
+            const isCached =
+                a.jpTitle.toLowerCase().includes(lowerTitle) ||
+                a.enTitle.toLowerCase().includes(lowerTitle) ||
+                a.synonyms.some((s) => s.toLowerCase().includes(lowerTitle));
+
+            if (isCached) {
+                cachedAnime.push([a, i]);
+            }
+        }
+
+        return cachedAnime;
     }
 
     static async rebuildCache() {

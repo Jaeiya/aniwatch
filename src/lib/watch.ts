@@ -27,6 +27,11 @@ type ProgressOptions = {
     forcedEpNum: number;
 };
 
+type MoverProps = {
+    newEp?: number;
+    filterEpNum?: boolean;
+};
+
 export type WatchReturns = Awaited<
     | ReturnType<typeof useAnimeWatcher>
     | ReturnType<typeof manageFile>
@@ -76,9 +81,18 @@ export async function useAnimeWatcher({ titleOrCache, episode, workingDir }: Wat
         });
     }
 
-    function useFansubMover(newEp?: number) {
+    function useFansubMover(props?: MoverProps) {
+        const filterEpNum = props?.filterEpNum ?? true;
+        const newEp = props?.newEp ?? epNum;
+        const fileNames = filterFansubFilenames(
+            rootDir,
+            fileNameQuery,
+            filterEpNum ? newEp : undefined
+        );
         return manageFile(
-            filterFansubFilenames(rootDir, fileNameQuery, newEp ?? epNum),
+            // If you do not filter by episode number, that means
+            // you only care about the first file name found.
+            filterEpNum ? fileNames : [fileNames[0]],
             rootDir,
             anime.libID,
             newEp ?? epNum,
@@ -117,7 +131,7 @@ export async function useAnimeAutoWatcher({
     const { anime, useFansubMover } = watcher;
     const newProgress = anime.epProgress + 1;
 
-    const [fansubError, mover] = useFansubMover(newProgress);
+    const [fansubError, mover] = useFansubMover({ newEp: newProgress, filterEpNum: false });
     if (fansubError) {
         return [fansubError, null] as const;
     }
@@ -153,7 +167,7 @@ function manageFile(
         ] as const;
     }
 
-    const fileName = fansubFileNames[0];
+    const [fileName] = fansubFileNames;
     const [error, data] = parseFansubFilename(fileName);
     if (error) {
         throw Error(`watch::${error.parseError}`);

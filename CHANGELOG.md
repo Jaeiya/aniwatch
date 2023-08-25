@@ -1,4 +1,4 @@
-# [5.6.0](https://github.com/jaeiya/wakitsu/compare/v5.6.0...v5.6.1) (8/3/2023)
+# [5.6.1](https://github.com/jaeiya/wakitsu/compare/v5.6.0...v5.6.1) (8/3/2023)
 
 ### Fixes
 

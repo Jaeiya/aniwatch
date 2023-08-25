@@ -1,3 +1,9 @@
+# [5.6.0](https://github.com/jaeiya/wakitsu/compare/v5.6.0...v5.6.1) (8/3/2023)
+
+### Fixes
+
+- **watch**: auto-progress regression ([50db41a](https://github.com/Jaeiya/aniwatch/commit/50db41a))
+
 # [5.6.0](https://github.com/jaeiya/wakitsu/compare/v5.5.0...v5.6.0) (8/3/2023)
 
 ### Features

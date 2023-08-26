@@ -327,6 +327,7 @@ function displayFansubFileNotFound(title: string, ep: number) {
             '(Possible Issues)',
             `(;bc;1;y;) ;c;Make sure you didn't ;m;misspell ;c;the file name.`,
             `(;bc;2;y;) ;c;Make sure the ;m;episode number ;c;matches the file name.`,
+            `(;bc;3;y;) ;c;Make sure the file is the ;m;same fansub ;c;as previous updates.`,
         ],
         'File Not Found',
         3

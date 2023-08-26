@@ -1,10 +1,10 @@
-# [5.6.1](https://github.com/jaeiya/wakitsu/compare/v5.6.0...v5.6.1) (8/3/2023)
+# [5.6.1](https://github.com/jaeiya/wakitsu/compare/v5.6.0...v5.6.1) (8/25/2023)
 
 ### Fixes
 
 - **watch**: auto-progress regression ([eec4968](https://github.com/Jaeiya/aniwatch/commit/eec4968))
 
-# [5.6.0](https://github.com/jaeiya/wakitsu/compare/v5.5.0...v5.6.0) (8/3/2023)
+# [5.6.0](https://github.com/jaeiya/wakitsu/compare/v5.5.0...v5.6.0) (8/24/2023)
 
 ### Features
 
@@ -18,7 +18,7 @@
 - **flags**: default watch flag - missing vital help info about auto-progress feature ([06ea9e7](https://github.com/Jaeiya/aniwatch/commit/06ea9e7))
 - **http**: error messages too long for normal print ([67f83dd](https://github.com/Jaeiya/aniwatch/commit/67f83dd))
 
-# [5.5.0](https://github.com/jaeiya/wakitsu/compare/v5.4.1...v5.5.0) (8/3/2023)
+# [5.5.0](https://github.com/jaeiya/wakitsu/compare/v5.4.1...v5.5.0) (8/7/2023)
 
 ### What to Watch Improvement
 

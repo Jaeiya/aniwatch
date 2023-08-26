@@ -89,10 +89,11 @@ export async function useAnimeWatcher({ titleOrCache, episode, workingDir }: Wat
             fileNameQuery,
             filterEpNum ? newEp : undefined
         );
+        const firstFileName = fileNames[0] ? [fileNames[0]] : [];
         return manageFile(
             // If you do not filter by episode number, that means
             // you only care about the first file name found.
-            filterEpNum ? fileNames : [fileNames[0]],
+            filterEpNum ? fileNames : firstFileName,
             rootDir,
             anime.libID,
             newEp ?? epNum,

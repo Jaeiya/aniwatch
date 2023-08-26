@@ -1,3 +1,13 @@
+# [5.6.2](https://github.com/jaeiya/wakitsu/compare/v5.6.1...v5.6.2) (8/26/2023)
+
+### Minor Changes
+
+- **watch**: add possible issue to "FILE_NOT_FOUND" display ([193a4a5](https://github.com/Jaeiya/aniwatch/commit/193a4a5))
+
+### Fixes
+
+- **watch**: first file name could be undefined ([bccee5a](https://github.com/Jaeiya/aniwatch/commit/bccee5a))
+
 # [5.6.1](https://github.com/jaeiya/wakitsu/compare/v5.6.0...v5.6.1) (8/25/2023)
 
 ### Fixes

@@ -210,10 +210,7 @@ async function dropAnime(query: string) {
         stopLoader();
         return Printer.printError('Failed to update status; unknown reason.');
     }
-    const cache = Config.getKitsuProp('cache');
-    const animeIndex = cache.findIndex((a) => a == anime);
-    cache.splice(animeIndex, 1);
-    Config.save();
+    Kitsu.removeAnimeFromCache(anime);
     stopLoader();
     Printer.printInfo(`;x;${anime.jpTitle} ;g;has been dropped`, 'Success', 3);
 }

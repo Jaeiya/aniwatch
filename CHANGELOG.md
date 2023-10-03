@@ -1,3 +1,9 @@
+# [5.6.3](https://github.com/jaeiya/wakitsu/compare/v5.6.2...v5.6.3) (10/02/2023)
+
+### Fixes
+
+- **flags**: `--anime drop` not removing file bindings ([0d5b678](https://github.com/Jaeiya/aniwatch/commit/0d5b678))
+
 # [5.6.2](https://github.com/jaeiya/wakitsu/compare/v5.6.1...v5.6.2) (8/26/2023)
 
 ### Minor Changes

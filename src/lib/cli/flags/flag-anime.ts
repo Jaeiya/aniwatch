@@ -160,7 +160,7 @@ async function addAnime() {
 
     if (userChoice > 0) {
         const anime = animeResults[userChoice - 1];
-        const foundAnime = Config.getKitsuProp('cache').find((a) => anime.enTitle == a.enTitle);
+        const foundAnime = Config.getKitsuProp('cache').find((a) => anime.slug == a.slug);
         if (foundAnime) {
             Printer.printWarning('Anime already added to watch list', 'Aborted', 3);
             process.exit(0);

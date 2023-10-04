@@ -44,7 +44,7 @@ export class KitsuUrlAPI {
         return this;
     }
 
-    filterStatus(status: 'current' | 'dropped' | 'planned' | 'completed') {
+    filterStatus(status: 'current' | 'dropped' | 'planned' | 'completed' | 'finished') {
         this.#url.searchParams.append('filter[status]', status);
         return this;
     }

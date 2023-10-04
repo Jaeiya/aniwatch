@@ -2,11 +2,12 @@ import { Config } from '../config.js';
 import { KitsuUrlAPI } from './kitsu-url-api.js';
 
 export class KitsuURLs {
-    static getAnimeInfoURL(queryText: string) {
+    static getAnimeInfoURL(queryText: string, status?: 'current' | 'finished') {
         return new KitsuUrlAPI('https://kitsu.io/api/edge/anime')
             .setQueryText(queryText)
             .setPageLimit(5)
             .filterAnimeType('tv')
+            .filterStatus(status ?? 'current')
             .filterAnimeFields([
                 'titles',
                 'canonicalTitle',

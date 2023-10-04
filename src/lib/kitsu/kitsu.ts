@@ -250,8 +250,8 @@ export class Kitsu {
         return true;
     }
 
-    static async findAnime(name: string) {
-        const resp = await HTTP.get(KitsuURLs.getAnimeInfoURL(name));
+    static async findAnime(name: string, status: 'current'|'finished') {
+        const resp = await HTTP.get(KitsuURLs.getAnimeInfoURL(name, status));
         const jsonResp = await resp.json();
         const [error, entries] = parseWithZod(
             KitsuAnimeEntriesSchema,

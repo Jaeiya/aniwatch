@@ -135,8 +135,16 @@ async function findAnime(query: string) {
 }
 
 async function addAnime() {
+    const isCurrentlyAiring = await Printer.promptYesNo(
+        'Are you looking for a currently airing anime'
+    );
+
     const stopLoader = Printer.printLoader('Generating Anime Selection');
-    const animeResults = await Kitsu.findAnime(CLI.nonFlagArgs.join(' '));
+    const animeQuery = CLI.nonFlagArgs.slice(1).join(' ');
+    const animeResults = await Kitsu.findAnime(
+        animeQuery,
+        isCurrentlyAiring ? 'current' : 'finished'
+    );
     stopLoader();
     if (!animeResults.length) {
         Printer.printWarning(

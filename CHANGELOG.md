@@ -1,3 +1,14 @@
+# [5.7.0](https://github.com/jaeiya/wakitsu/compare/v5.6.3...v5.7.0) (10/04/2023)
+
+### Features
+
+- **flags**: `--anime add` now prompts you whether or not you want to add an anime that is current (currently airing) or not (finished) ([b613fc7](https://github.com/Jaeiya/aniwatch/commit/b613fc7))
+
+### Fixes
+
+- **kitsu-url-api**: incorrect subtype syntax ([935065d](https://github.com/Jaeiya/aniwatch/commit/935065d))
+- **flag-anime**: using faulty cache compare logic ([ef6cb6a](https://github.com/Jaeiya/aniwatch/commit/ef6cb6a))
+
 # [5.6.3](https://github.com/jaeiya/wakitsu/compare/v5.6.2...v5.6.3) (10/02/2023)
 
 ### Fixes

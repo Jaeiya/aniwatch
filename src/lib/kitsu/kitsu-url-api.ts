@@ -40,7 +40,7 @@ export class KitsuUrlAPI {
     }
 
     filterAnimeType(type: 'tv' | 'movie' | 'ova') {
-        this.#url.searchParams.append(`filter[subtype[]`, type);
+        this.#url.searchParams.append(`filter[subtype]`, type);
         return this;
     }
 

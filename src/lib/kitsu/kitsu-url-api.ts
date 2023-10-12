@@ -45,7 +45,10 @@ export class KitsuUrlAPI {
     }
 
     filterStatus(status: 'current' | 'dropped' | 'planned' | 'completed' | 'finished') {
-        this.#url.searchParams.append('filter[status]', status);
+        // Sometimes Kitsu will not update the status to "current"
+        // even if the anime is already airing
+        const normalizedStatus = status == 'current' ? 'current,upcoming' : status;
+        this.#url.searchParams.append('filter[status]', normalizedStatus);
         return this;
     }
 

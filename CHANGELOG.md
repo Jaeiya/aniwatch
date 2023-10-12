@@ -1,3 +1,10 @@
+# [5.7.1](https://github.com/jaeiya/wakitsu/compare/v5.7.0...v5.7.1) (10/12/2023)
+
+### Fixes
+
+- **kitsu-url-api**: include `upcoming` when status is `current` ([5655865](https://github.com/Jaeiya/aniwatch/commit/5655865)) `10-12-2023`
+  > Unfortunately Kitsu does not always update the status of the anime when it's airing.
+
 # [5.7.0](https://github.com/jaeiya/wakitsu/compare/v5.6.3...v5.7.0) (10/04/2023)
 
 ### Features

@@ -1,3 +1,10 @@
+# [5.7.2](https://github.com/jaeiya/wakitsu/compare/v5.7.1...v5.7.2) (1/4/2024)
+
+### Fixes
+
+- **kitsu-schemas**: english titles can now be nullable ([9ac5ab2](https://github.com/Jaeiya/aniwatch/commit/9ac5ab2)) `1-4-2024`
+  > This is apparently a new development, because not a single english title has been nulled up to this point. They've only been undefined.
+
 # [5.7.1](https://github.com/jaeiya/wakitsu/compare/v5.7.0...v5.7.1) (10/12/2023)
 
 ### Fixes

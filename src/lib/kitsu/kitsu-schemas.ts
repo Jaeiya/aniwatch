@@ -35,7 +35,7 @@ export type KitsuData = z.infer<typeof KitsuDataSchema>;
 export const KitsuCacheSchema = z.object({
     libID: z.string(),
     jpTitle: z.string(),
-    enTitle: z.string(),
+    enTitle: z.string().nullable(),
     synonyms: z.array(z.string()),
     epCount: z.number(),
     epProgress: z.number(),
@@ -97,7 +97,7 @@ const KitsuAnimeDataSchema = z.object({
         episodeCount: z.number().nullable(),
         slug: z.string(),
         titles: z.object({
-            en: z.string().default(''),
+            en: z.string().nullable().default(''),
             en_jp: z.string().default(''),
             en_us: z.string().default(''),
         }),

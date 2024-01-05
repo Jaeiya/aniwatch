@@ -1,3 +1,10 @@
+# [5.7.3](https://github.com/jaeiya/wakitsu/compare/v5.7.2...v5.7.3) (1/4/2024)
+
+### Fixes
+
+- check for null with all instances of en titles ([46f8459](https://github.com/Jaeiya/aniwatch/commit/46f8459)) `1-4-2024`
+  > This was an oversight by me, since I assumed the zod default mechanism would turn null into an empty string.
+
 # [5.7.2](https://github.com/jaeiya/wakitsu/compare/v5.7.1...v5.7.2) (1/4/2024)
 
 ### Fixes

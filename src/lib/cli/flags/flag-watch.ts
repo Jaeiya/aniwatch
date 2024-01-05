@@ -202,7 +202,7 @@ async function execAutoWatch() {
     Printer.print([
         null,
         ['py', ['JP Title', anime.jpTitle]],
-        ['py', ['EN Title', anime.enTitle]],
+        ['py', ['EN Title', anime.enTitle ?? '']],
         ['py', ['File', `;y;${fileData.title} ;by;${fileData.paddedEpNum}`], 4],
         null,
         ['p', `;b;Progress will be set from ;bg;${anime.epProgress} ;b;to ;by;${newProgress}`],

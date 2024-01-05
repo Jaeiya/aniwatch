@@ -251,7 +251,7 @@ function displayAnimeSelection(animeArray: AnimeResults) {
         Printer.print([
             ['h1', [`${i + 1}`], 3],
             ['py', ['Title JP', `;y;${anime.jpTitle}`], 3],
-            ['py', ['Title EN', anime.enTitle || ';m;None'], 3],
+            ['py', ['Title EN', anime.enTitle ?? ';m;None'], 3],
             ['py', ['Title US', anime.usTitle || ';m;None'], 3],
             ...synonyms,
             ['', `;c;Link: ;x;https://kitsu.io/anime/${anime.slug}`, 10],

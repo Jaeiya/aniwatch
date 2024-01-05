@@ -250,7 +250,7 @@ export class Kitsu {
         return true;
     }
 
-    static async findAnime(name: string, status: 'current'|'finished') {
+    static async findAnime(name: string, status: 'current' | 'finished') {
         const resp = await HTTP.get(KitsuURLs.getAnimeInfoURL(name, status));
         const jsonResp = await resp.json();
         const [error, entries] = parseWithZod(
@@ -269,7 +269,9 @@ export class Kitsu {
     static async findLibraryAnime(name: string) {
         const filteredCache = _gK('cache').filter((anime) => {
             const hasCanonTitle = anime.jpTitle.toLowerCase().includes(name.toLowerCase());
-            const hasEnglishTitle = anime.enTitle.toLowerCase().includes(name.toLowerCase());
+            const hasEnglishTitle = anime.enTitle
+                ? anime.enTitle.toLowerCase().includes(name.toLowerCase())
+                : false;
             const hasAltTitle = anime.synonyms.some((s) => s.toLowerCase().includes(name));
             return hasCanonTitle || hasEnglishTitle || hasAltTitle;
         });
@@ -300,8 +302,8 @@ export class Kitsu {
         for (let i = 0; i < Kitsu.animeCache.length; i++) {
             const a = Kitsu.animeCache[i];
             const isCached =
-                a.jpTitle.toLowerCase().includes(lowerTitle) ||
-                a.enTitle.toLowerCase().includes(lowerTitle) ||
+                a.jpTitle.toLowerCase().includes(lowerTitle) ??
+                a.enTitle?.toLowerCase().includes(lowerTitle) ??
                 a.synonyms.some((s) => s.toLowerCase().includes(lowerTitle));
 
             if (isCached) {
@@ -509,8 +511,8 @@ async function buildAnimeCache() {
         cache.push({
             libID: library.data[i].id,
             jpTitle: anime.attributes.canonicalTitle.trim(),
-            enTitle: anime.attributes.titles.en.trim(),
-            epCount: anime.attributes.episodeCount || 0,
+            enTitle: anime.attributes.titles.en ? anime.attributes.titles.en.trim() : '',
+            epCount: anime.attributes.episodeCount ?? 0,
             epProgress: library.data[i].attributes.progress || 0,
             synonyms: anime.attributes.abbreviatedTitles,
             // There's a flaw in Kitsu's slugging algorithm
@@ -527,10 +529,10 @@ function serializeAnimeInfo(entries: KitsuAnimeInfoEntry[]) {
         enTitle: entry.attributes.titles.en,
         usTitle: entry.attributes.titles.en_us,
         synonyms: entry.attributes.abbreviatedTitles,
-        epCount: entry.attributes.episodeCount || 0,
+        epCount: entry.attributes.episodeCount ?? 0,
         // There's a flaw in Kitsu's slugging algorithm
         slug: `${entry.attributes.slug.replaceAll(' ', '%20')}`,
-        synopsis: entry.attributes.synopsis || '',
+        synopsis: entry.attributes.synopsis ?? '',
         avgRating: entry.attributes.averageRating
             ? `${(Number(entry.attributes.averageRating) / 10).toFixed(2)}`
             : 'Not Calculated Yet',
@@ -546,7 +548,7 @@ function serializeLibraryAnimeInfo(
         const avgRating = entries.included[i].attributes.averageRating;
         const anime: SerializedAnime = {
             title_jp: cache.jpTitle,
-            title_en: cache.enTitle,
+            title_en: cache.enTitle ? cache.enTitle : '',
             synonyms: cache.synonyms,
             epProgress: entries.data[i].attributes.progress,
             rating: rating ? `${(rating / 20) * 10}` : rating,

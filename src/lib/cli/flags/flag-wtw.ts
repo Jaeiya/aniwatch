@@ -6,7 +6,6 @@ import { Config } from '../../config.js';
 import { KitsuCacheItem } from '../../kitsu/kitsu-types.js';
 import open from 'open';
 import { displayWatchError, displayWatchProgress, useAnimeAutoWatcher } from '../../watch.js';
-import { Kitsu } from '../../kitsu/kitsu.js';
 
 type WhatToWatchData = {
     fileCount: number;
@@ -153,7 +152,7 @@ export class WhatToWatch extends CLIFlag {
         Printer.print([
             null,
             ['py', ['JP Title', anime.jpTitle]],
-            ['py', ['EN Title', anime.enTitle]],
+            ['py', ['EN Title', anime.enTitle ?? '']],
             ['py', ['File', `;y;${fileData.title} ;by;${fileData.paddedEpNum}`], 4],
             null,
             [

@@ -302,8 +302,8 @@ export class Kitsu {
         for (let i = 0; i < Kitsu.animeCache.length; i++) {
             const a = Kitsu.animeCache[i];
             const isCached =
-                a.jpTitle.toLowerCase().includes(lowerTitle) ??
-                a.enTitle?.toLowerCase().includes(lowerTitle) ??
+                a.jpTitle.toLowerCase().includes(lowerTitle) ||
+                a.enTitle?.toLowerCase().includes(lowerTitle) ||
                 a.synonyms.some((s) => s.toLowerCase().includes(lowerTitle));
 
             if (isCached) {

@@ -1,3 +1,21 @@
+# [5.8.0](https://github.com/jaeiya/wakitsu/compare/v5.7.3...v5.8.0) (4/9/2024)
+
+### Feature
+
+Unfortunately, the fansub groups have literally no standardizations, which means they run amuck with all kinds of different naming conventions. Sometimes, a fansub file name will have literally no synonyms or relationship to the actual anime; this means we're forced to try and find a way to bind the file name to the anime in cache.
+
+You are now able to use the `wak -m raw` command to bind a file name specifically to an anime you've already added to your cache. Of course you can reference that anime using a partial form of either it's Japanese or English title. For instance if you were trying to bind a file to **solo leveling**, you could just type `solo` instead of the whole title. That should be enough in most cases, to find the anime you want to bind to the file. It's the same for the file name; you can use a partial form to look it up.
+
+Along with this change, was a requirement to adjust how the manual flag operates. In order to use manual mode the way it worked **before** this update, you type: `wak -m upd`. You will then be prompted with how to proceed. If it seems confusing, don't worry, the help documentation has been updated. You can type `wak -h default` to see how to access the new commands.
+
+- **watch**: add direct file binding ([c9e939f](https://github.com/Jaeiya/aniwatch/commit/c9e939f))
+
+### Fixes
+
+- **http**: add `wakitsu` user agent and cleanup logic ([e7f6687](https://github.com/Jaeiya/aniwatch/commit/e7f6687))
+
+- **kitsu**: using incorrect comparison operator ([8de6880](https://github.com/Jaeiya/aniwatch/commit/8de6880))
+
 # [5.7.3](https://github.com/jaeiya/wakitsu/compare/v5.7.2...v5.7.3) (1/4/2024)
 
 ### Fixes

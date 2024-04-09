@@ -12,6 +12,7 @@ export class HTTP {
 
     static async rawPost(url: string, contentType: string, body: string, token?: string) {
         const headers: { [key: string]: string } = {
+            'User-Agent': 'wakitsu',
             'Content-Type': contentType,
         };
         if (token) {
@@ -32,10 +33,15 @@ export class HTTP {
     }
 
     static async get(url: URL, token?: string) {
-        const headers = token ? { Authorization: `Bearer ${token}` } : null;
-        const asyncResp = await tryCatchAsync(
-            fetch(url, headers ? { method: 'GET', headers } : { method: 'GET' })
-        );
+        const headers: { [key: string]: string } = {
+            'User-Agent': 'wakitsu',
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const asyncResp = await tryCatchAsync(fetch(url, { method: 'GET', headers }));
         if (!asyncResp.success) {
             execError(asyncResp.error, 'GET');
             process.exit(1);
@@ -49,6 +55,7 @@ export class HTTP {
                 method: 'PATCH',
                 body,
                 headers: {
+                    'User-Agent': 'wakitsu',
                     'Content-Type': 'application/vnd.api+json',
                     Authorization: `Bearer ${token}`,
                 },

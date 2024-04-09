@@ -52,8 +52,9 @@ export class DefaultFlag extends CLIFlag {
                 'p',
                 ';m;Manual Mode: ;bk;By default, this command executes without the need to ' +
                     'pass any flag to the program. If you pass the ;c;-m ;bk;or ;c;-manual ' +
-                    ';bk;flags, then it activates manual mode, which will update your anime ' +
-                    'progress without needing a file on disk.',
+                    ';bk;flags, then it activates manual mode, which will allow you to update ' +
+                    'your anime using two different methods: ;bw;upd ;bk;and ;bw;raw;bk;.' +
+                    ' You can read about them below.',
             ],
             null,
             [
@@ -72,17 +73,13 @@ export class DefaultFlag extends CLIFlag {
     getSyntaxHelpLogs(): Log[] {
         return [
             ['h2', ['Usage']],
-            ['s', null, ';y;<?;x;[;c;-m ;x;| ;c;-manual;x;];y;> <name> <ep> <?fep>'],
+            [
+                's',
+                null,
+                ';y;<name> <ep> <?fep> ;m;or ;by;wak ;x;[;c;-m ;x;| ;c;-manual;x;] ;y;<upd|raw> ',
+            ],
             null,
             ['h2', ['Details']],
-            [
-                'cd',
-                [
-                    'm',
-                    ';m;(optional) ;x;Enables Manual mode. Read description above for details',
-                ],
-                2,
-            ],
             null,
             ['d', ['name', 'Full or partial name of an existing anime on disk.']],
             null,
@@ -97,13 +94,26 @@ export class DefaultFlag extends CLIFlag {
                 1,
             ],
             null,
+            ['h2', ['Manual Details']],
+            null,
+            ['d', ['upd', 'Updates an anime directly without the need for a fansub file.'], 1],
+            null,
+            [
+                'd',
+                [
+                    'raw',
+                    'Allows you to bind a file to a specified anime and update its progress.',
+                ],
+                1,
+            ],
+            null,
             ['h2', ['Examples']],
             ['e', ['', `"boku no hero" 10 ;b;(Sets Boku no Hero progress: ;x;10;b;)`]],
             ['e', ['', 'berserk 3         ;b;(Sets Berserk progress: ;x;3;b;)']],
             ['e', ['', 'jujutsu 25 1      ;b;(Sets Jujutsu S02 progress: ;x;1;b;)']],
             ['e', ['', 'bleach            ;b;(Sets Bleach: ;x;progress + 1;b;)']],
-            ['e', ['m', 'boku 20']],
-            ['e', ['manual', 'boku 20']],
+            ['e', ['m', 'upd            ;b;(Enters Manual ;x;Update Mode;b;)']],
+            ['e', ['m', 'raw            ;b;(Enters Manual ;x;Raw Mode;b;)']],
         ];
     }
 
@@ -119,11 +129,18 @@ export class DefaultFlag extends CLIFlag {
             return;
         }
 
-        if (args.length == 1) {
+        const isManual = !!CLI.flagArgs.find((f) => this.name.includes(f.substring(1)));
+
+        if (!isManual) {
             return execAutoWatch();
         }
 
-        if (args.length < 2 || args.length > 3) {
+        const hasValidArgs = CLI.validateSingleArg({
+            args: ['upd', 'raw'],
+            flag: this,
+        });
+
+        if (!hasValidArgs) {
             Printer.printError(
                 'Read the help below to learn the correct syntax:',
                 'Invalid Syntax'
@@ -131,12 +148,39 @@ export class DefaultFlag extends CLIFlag {
             return this.printHelp();
         }
 
-        return execWatch();
+        const [arg] = CLI.nonFlagArgs;
+
+        if (arg == 'upd') {
+            return execWatch();
+        }
+
+        if (arg == 'raw') {
+            return execWatch(true);
+        }
     }
 }
 
-async function execWatch() {
-    const [title, ep, forcedEp] = CLI.nonFlagArgs;
+async function execWatch(isDiscovering = false) {
+    const titleText = isDiscovering ? 'file name' : 'anime title';
+    const userResp = await Printer.prompt(
+        `Enter ${titleText} (can be partial) and episode number, separated by a | (pipe) ` +
+            'symbol, with an optional forced episode number. ' +
+            'Example: ;y;bleach;bg;|;y;1;bg;|;y;13'
+    );
+
+    if (userResp.trim() == '') {
+        return Printer.printWarning('Operation cancelled manually', 'Aborted', 3);
+    }
+
+    if (!userResp.includes('|')) {
+        return Printer.printError(
+            'Make sure you separate values with a | (pipe)',
+            'Invalid Input',
+            3
+        );
+    }
+
+    const [title, ep, forcedEp] = userResp.split('|');
 
     const epNum = Number(ep);
     const forcedEpNum = Number(forcedEp);
@@ -160,6 +204,7 @@ async function execWatch() {
     const [watchError, watcher] = await useAnimeWatcher({
         titleOrCache: title,
         episode: [epNum, forcedEp ? forcedEpNum : 0],
+        isDiscovering,
     });
 
     const stopLoader = Printer.printLoader('Setting Progress');
@@ -170,7 +215,7 @@ async function execWatch() {
     }
 
     // Check --manual flag presence
-    if (CLI.flagArgs.length == 0) {
+    if (CLI.flagArgs.length == 0 || isDiscovering) {
         const [fileError, mover] = watcher.useFansubMover();
         if (fileError) {
             stopLoader();

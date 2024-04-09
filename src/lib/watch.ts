@@ -14,6 +14,7 @@ type WatchAnimeProps = {
         | [CachedAnime: KitsuCacheItem, CacheIndex: number, FileBinding: string];
     episode: [episode: number, forcedEpisode: number];
     workingDir?: string;
+    isDiscovering?: boolean;
 };
 
 type ProgressOptions = {
@@ -42,18 +43,37 @@ export type WatchError = WatchReturns[0];
 
 export type IsWatchError<T> = T extends { msg: string; data: any } ? T : never;
 
-export async function useAnimeWatcher({ titleOrCache, episode, workingDir }: WatchAnimeProps) {
+export async function useAnimeWatcher({
+    titleOrCache,
+    episode,
+    workingDir,
+    isDiscovering,
+}: WatchAnimeProps) {
     const rootDir = workingDir ?? process.cwd();
     const [epNum, forcedEpNum] = episode;
     let anime: KitsuCacheItem;
     let fileNameQuery: string;
     let fileBinding: string | undefined;
     let cacheIndex: number;
+    const discover = isDiscovering ?? false;
 
     tryCreateWatchedDir(rootDir);
 
     if (typeof titleOrCache == 'string') {
-        const cachedAnime = Kitsu.findCachedAnime(titleOrCache);
+        let animeTitle = titleOrCache;
+        if (discover) {
+            const files = filterFansubFilenames(rootDir, titleOrCache, epNum);
+            if (files.length > 1) {
+                return [
+                    { msg: 'MULTIPLE_FILES', data: { fileNames: files, epNum } },
+                    null,
+                ] as const;
+            }
+
+            animeTitle = await Printer.prompt('Enter anime title (can be partial)');
+        }
+
+        const cachedAnime = Kitsu.findCachedAnime(animeTitle);
         if (!cachedAnime.length) {
             return [{ msg: 'CACHE_NOT_FOUND', data: null }, null] as const;
         }
@@ -61,10 +81,21 @@ export async function useAnimeWatcher({ titleOrCache, episode, workingDir }: Wat
         if (cachedAnime.length > 1) {
             return [{ msg: 'MULTIPLE_CACHES', data: cachedAnime }, null] as const;
         }
+
+        if (discover) {
+            const hasConsent = await Printer.promptYesNo(
+                `Is the japanese title: "${cachedAnime[0][0].jpTitle} and English ` +
+                    `title: "${cachedAnime[0][0].enTitle}" correct`
+            );
+            if (!hasConsent) {
+                return useAnimeWatcher({ titleOrCache, episode, workingDir, isDiscovering });
+            }
+        }
+
         anime = cachedAnime[0][0];
         cacheIndex = cachedAnime[0][1];
         fileBinding = Kitsu.getFileBinding(anime.libID);
-        fileNameQuery = fileBinding ?? titleOrCache;
+        fileNameQuery = fileBinding ?? discover ? titleOrCache : animeTitle;
     } else {
         anime = titleOrCache[0];
         cacheIndex = titleOrCache[1];

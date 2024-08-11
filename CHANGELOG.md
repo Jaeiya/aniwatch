@@ -1,3 +1,15 @@
+# [5.8.1](https://github.com/jaeiya/wakitsu/compare/v5.8.0...v5.8.1) (8/11/2024)
+
+### Fixes
+
+- **flag-anime**: `drop anime` not accessing values properly ([d6e1e81](https://github.com/Jaeiya/aniwatch/commit/d6e1e81))
+
+- **kitsu**: kitsu.io is now kitsu.app ([520c69c](https://github.com/Jaeiya/aniwatch/commit/520c69c))
+
+  > They are now located at kitsu.app but they didn't bother to tell anyone and don't even redirect properly from the old domain.
+
+- **deps**: bump braces from 3.0.2 to 3.0.3 (#22) ([275efe5](https://github.com/Jaeiya/aniwatch/commit/275efe5)) `6-20-2024`
+
 # [5.8.0](https://github.com/jaeiya/wakitsu/compare/v5.7.3...v5.8.0) (4/9/2024)
 
 ### Feature

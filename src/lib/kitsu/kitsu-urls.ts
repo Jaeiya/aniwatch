@@ -3,7 +3,7 @@ import { KitsuUrlAPI } from './kitsu-url-api.js';
 
 export class KitsuURLs {
     static getAnimeInfoURL(queryText: string, status?: 'current' | 'finished') {
-        return new KitsuUrlAPI('https://kitsu.io/api/edge/anime')
+        return new KitsuUrlAPI('https://kitsu.app/api/edge/anime')
             .setQueryText(queryText)
             .setPageLimit(5)
             .filterAnimeType('tv')
@@ -20,7 +20,7 @@ export class KitsuURLs {
     }
 
     static getLibraryAnimeInfoURL(animeLibraryIDs: string[]) {
-        return new KitsuUrlAPI('https://kitsu.io/api/edge/library-entries')
+        return new KitsuUrlAPI('https://kitsu.app/api/edge/library-entries')
             .filterLibraryID(animeLibraryIDs)
             .includeCategory(['anime'])
             .filterAnimeFields(['episodeCount', 'averageRating', 'synopsis'])

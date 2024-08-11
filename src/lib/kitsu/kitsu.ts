@@ -34,7 +34,7 @@ type UpdatedProgress = Promise<
     readonly [progress: number, episodeCount: number | null, tokenExpirationDays: number]
 >;
 
-const _tokenURL = 'https://kitsu.io/api/oauth/token';
+const _tokenURL = 'https://kitsu.app/api/oauth/token';
 /** Get Kitsu properties */
 const _gK = Config.getKitsuProp;
 /** Set Kitsu Properties */
@@ -93,7 +93,7 @@ export class Kitsu {
      */
     static async trackAnime(animeID: string) {
         const resp = await HTTP.postAPI(
-            'https://kitsu.io/api/edge/library-entries',
+            'https://kitsu.app/api/edge/library-entries',
             JSON.stringify({
                 data: {
                     type: 'library-entries',
@@ -138,7 +138,7 @@ export class Kitsu {
 
     static async dropAnime(libID: string) {
         const resp = await HTTP.patch(
-            new URL(`https://kitsu.io/api/edge/library-entries/${libID}`),
+            new URL(`https://kitsu.app/api/edge/library-entries/${libID}`),
             JSON.stringify({
                 data: {
                     id: libID,
@@ -357,7 +357,7 @@ export class Kitsu {
             null,
             [
                 'p',
-                'You will need to provide your ;x;Kitsu.io ;bk;password so that we can ' +
+                'You will need to provide your ;x;kitsu.app ;bk;password so that we can ' +
                     'reset your ;x;Access Token;bk;. You only need to do this if your ' +
                     ';x;Access Token ;bk;is about to ;m;expire;bk;. You can check this\n' +
                     'by typing the following command:',
@@ -397,7 +397,7 @@ async function promptUser(): Promise<UserData> {
     Printer.print([
         null,
         ['py', ['Name', `${user.attributes.name}`], 3],
-        ['py', ['Profile', `;g;https://kitsu.io/users/${user.attributes.name}`]],
+        ['py', ['Profile', `;g;https://kitsu.app/users/${user.attributes.name}`]],
         ['py', ['About', `${user.attributes.about}`], 2],
         null,
     ]);
@@ -430,7 +430,7 @@ async function getUserData(userName: string) {
 }
 
 function buildUserDataURL(userName: string) {
-    const url = new URL('https://kitsu.io/api/edge/users');
+    const url = new URL('https://kitsu.app/api/edge/users');
     url.searchParams.append('filter[name]', userName);
     url.searchParams.append('include', 'stats');
     return url;
@@ -465,8 +465,8 @@ function serializeKitsuData(
     return {
         id: user.id,
         urls: {
-            profile: `https://kitsu.io/users/${user.attributes.name}`,
-            library: `https://kitsu.io/api/edge/users/${user.id}/library-entries`,
+            profile: `https://kitsu.app/users/${user.attributes.name}`,
+            library: `https://kitsu.app/api/edge/users/${user.id}/library-entries`,
         },
         stats: {
             secondsSpentWatching: user.stats.time,
@@ -554,7 +554,7 @@ function serializeLibraryAnimeInfo(
             rating: rating ? `${(rating / 20) * 10}` : rating,
             epCount: entries.included[i].attributes.episodeCount,
             synopsis: entries.included[i].attributes.synopsis,
-            link: `https://kitsu.io/anime/${cache.slug}`,
+            link: `https://kitsu.app/anime/${cache.slug}`,
             avgRating: avgRating
                 ? `${(Number(avgRating) / 10).toFixed(2)}`
                 : 'Not Calculated Yet',

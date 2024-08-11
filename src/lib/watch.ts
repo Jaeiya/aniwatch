@@ -281,7 +281,7 @@ async function saveProgress(opt: ProgressOptions) {
 
 function buildLibPatchReqArgs(id: string, progress: number) {
     return [
-        `https://kitsu.io/api/edge/library-entries/${id}`,
+        `https://kitsu.app/api/edge/library-entries/${id}`,
         {
             data: {
                 id,

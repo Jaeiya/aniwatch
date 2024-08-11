@@ -92,7 +92,7 @@ function showCacheInfo() {
             ['py', ['title_jp', `${c.jpTitle}`]],
             ['py', ['title_en', `${c.enTitle}`]],
             ['py', ['Progress', `;g;${c.epProgress} ;by;/ ;m;${c.epCount || 'Unknown'}`]],
-            ['', `;c;link: ;x;https://kitsu.io/anime/${c.slug}`, 7],
+            ['', `;c;link: ;x;https://kitsu.app/anime/${c.slug}`, 7],
             ['hl', 'bk', 70],
         ]);
     }

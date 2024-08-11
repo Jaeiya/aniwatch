@@ -256,7 +256,7 @@ function displayAnimeSelection(animeArray: AnimeResults) {
             ['py', ['Title EN', anime.enTitle ?? ';m;None'], 3],
             ['py', ['Title US', anime.usTitle || ';m;None'], 3],
             ...synonyms,
-            ['', `;c;Link: ;x;https://kitsu.io/anime/${anime.slug}`, 10],
+            ['', `;c;Link: ;x;https://kitsu.app/anime/${anime.slug}`, 10],
             null,
         ]);
     });

@@ -15,7 +15,7 @@ export class HelpFlag extends CLIFlag {
                 'p',
                 ';m;About: ;bk;This is Wakitsu, which is just a combination of the words ' +
                     ';x;watch ;bk;and ;x;kitsu;bk;; a command line utility for ' +
-                    'interacting with Kitsu.io. It allows you to update your watch list, ' +
+                    'interacting with Kitsu.app. It allows you to update your watch list, ' +
                     'find anime, or add anime to your watch list, to name a few of its ' +
                     'functions.',
             ],

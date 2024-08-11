@@ -186,14 +186,16 @@ async function addAnime() {
 }
 
 async function dropAnime(query: string) {
-    const [[anime]] = Kitsu.findCachedAnime(query);
+    const animeList = Kitsu.findCachedAnime(query);
 
-    if (!anime) {
+    if (!animeList.length) {
         return Printer.printWarning(
             [`The anime ";y;${query};c;" could not be found.`],
             'Anime Not Found'
         );
     }
+
+    const [[anime]] = animeList;
 
     Printer.print([
         null,

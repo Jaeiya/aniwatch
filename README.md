@@ -55,4 +55,4 @@ npm run dev
 npm -g i .
 ```
 
-[kitsu]: https://kitsu.io
+[kitsu]: https://kitsu.app

@@ -6,7 +6,7 @@ const _hideCursorChar = '\u001B[?25l';
 const _showCursorChar = '\u001B[?25h';
 
 export function createSpinner(text: string) {
-    let interval: NodeJS.Timer;
+    let interval: NodeJS.Timeout;
 
     function start(fps: number) {
         if (!text.includes('@@')) {

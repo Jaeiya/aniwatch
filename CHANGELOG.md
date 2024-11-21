@@ -1,3 +1,9 @@
+# [5.8.2](https://github.com/jaeiya/wakitsu/compare/v5.8.1...v5.8.2) (11/21/2024)
+
+### Maintenance
+
+- **deps**: update all dependencies
+
 # [5.8.1](https://github.com/jaeiya/wakitsu/compare/v5.8.0...v5.8.1) (8/11/2024)
 
 ### Fixes
